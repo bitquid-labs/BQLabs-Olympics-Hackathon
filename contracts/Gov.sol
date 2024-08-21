@@ -51,6 +51,8 @@ contract Governance is ReentrancyGuard, Ownable {
 
     struct ProposalParams {
         address user;
+        string validatorAddress;
+        uint256 validator_score;
         string riskType;
         uint256 coverEndDay;
         uint256 coverValue;
@@ -69,6 +71,7 @@ contract Governance is ReentrancyGuard, Ownable {
         uint256 indexed proposalId,
         address indexed creator,
         string description,
+        string riskType,
         uint256 claimAmount
     );
     event VoteCast(
@@ -116,6 +119,7 @@ contract Governance is ReentrancyGuard, Ownable {
             proposalCounter,
             params.user,
             params.description,
+            params.riskType,
             params.claimAmount
         );
     }

@@ -30,8 +30,7 @@ interface ILP {
 contract InsuranceCover is ReentrancyGuard, Ownable {
     struct SlashingCoverInfo {
         address user;
-        string validatorPubkey; // The public key of the validator the user is staked with
-        uint256 validatorIndex; // The index of the validator the user is staked with
+        string validatorAddress; // The address of the validator the user is staked with
         uint256 coverValue; // This is the value of the cover purchased
         uint256 coverFee; // This is the fee of the cover purchased, it would be dynamic and passed in on the frontend based on the value purchased.
         uint256 coverPeriod; // This is the period the cover is purchased for in days
@@ -70,7 +69,6 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         bool isActive;
     }
 
-    IERC20 public coverToken;
     uint public coverFeeBalance;
     ILP public lpContract;
 
@@ -118,38 +116,28 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     constructor(
         address _lpContract,
-        address _coverToken,
         address _initialOwner
     ) Ownable(_initialOwner) {
         lpContract = ILP(_lpContract);
-        coverToken = IERC20(_coverToken);
     }
 
     // coverPeriod is the number of days the user is paying for
     function purchaseSlashingCover(
         uint256 _coverValue,
         uint256 _coverPeriod,
-        string memory _validatorPubKey,
-        uint256 _validatorIndex,
-        uint256 _coverFee
+        string memory _validatorAddress
     ) public payable nonReentrant {
-        require(_coverFee > 0, "Amount must be greater than 0");
+        require(msg.value > 0, "Amount must be greater than 0");
         require(
             _coverPeriod > 27 && _coverPeriod < 366,
             "Duration must be between 28 and 365 days"
         );
 
-        require(
-            coverToken.transferFrom(msg.sender, address(this), _coverFee),
-            "Transfer failed"
-        );
-
         SlashingCoverInfo memory newCover = SlashingCoverInfo({
             user: msg.sender,
-            validatorPubkey: _validatorPubKey,
-            validatorIndex: _validatorIndex,
+            validatorAddress: _validatorAddress,
             coverValue: _coverValue,
-            coverFee: _coverFee,
+            coverFee: msg.value,
             coverPeriod: _coverPeriod,
             startDay: block.timestamp,
             endDay: block.timestamp + (_coverPeriod * 1 days),
@@ -158,12 +146,12 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
         userToSlashingCover[msg.sender] = newCover;
         slashCoveredAddresses.push(msg.sender);
-        coverFeeBalance += _coverFee;
+        coverFeeBalance += msg.value;
 
         emit SlashingCoverPurchased(
             msg.sender,
             _coverValue,
-            _coverFee,
+            msg.value,
             _coverPeriod
         );
     }
@@ -171,22 +159,17 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     function purchaseSmartContractCover(
         uint256 _coverValue,
         uint256 _coverPeriod,
-        uint256 _coverFee
     ) public payable nonReentrant {
-        require(_coverFee > 0, "Amount must be greater than 0");
+        require(msg.value > 0, "Amount must be greater than 0");
         require(
             _coverPeriod > 27 && _coverPeriod < 366,
             "Duration must be between 28 and 365 days"
-        );
-        require(
-            coverToken.transferFrom(msg.sender, address(this), _coverFee),
-            "Transfer failed"
         );
 
         SmartContractCoverInfo memory newCover = SmartContractCoverInfo({
             user: msg.sender,
             coverValue: _coverValue,
-            coverFee: _coverFee,
+            coverFee: msg.value,
             coverPeriod: _coverPeriod,
             startDay: block.timestamp,
             endDay: block.timestamp + (_coverPeriod * 1 days),
@@ -195,12 +178,12 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
         userToSmartContractCover[msg.sender] = newCover;
         smartContractCoveredAddresses.push(msg.sender);
-        coverFeeBalance += _coverFee;
+        coverFeeBalance += msg.value;
 
         emit SmartContractCoverPurchased(
             msg.sender,
             _coverValue,
-            _coverFee,
+            msg.value,
             _coverPeriod
         );
     }
@@ -208,22 +191,17 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     function purchaseStablecoinCover(
         uint256 _coverValue,
         uint256 _coverPeriod,
-        uint256 _coverFee
     ) public payable nonReentrant {
-        require(_coverFee > 0, "Amount must be greater than 0");
+        require(msg.value > 0, "Amount must be greater than 0");
         require(
             _coverPeriod > 27 && _coverPeriod < 366,
             "Duration must be between 28 and 365 days"
-        );
-        require(
-            coverToken.transferFrom(msg.sender, address(this), _coverFee),
-            "Transfer failed"
         );
 
         StablecoinCoverInfo memory newCover = StablecoinCoverInfo({
             user: msg.sender,
             coverValue: _coverValue,
-            coverFee: _coverFee,
+            coverFee: msg.value,
             coverPeriod: _coverPeriod,
             startDay: block.timestamp,
             endDay: block.timestamp + (_coverPeriod * 1 days),
@@ -232,35 +210,30 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
         userToStablecoinCover[msg.sender] = newCover;
         stablecoinCoveredAddresses.push(msg.sender);
-        coverFeeBalance += _coverFee;
+        coverFeeBalance += msg.value;
 
         emit StablecoinCoverPurchased(
             msg.sender,
             _coverValue,
-            _coverFee,
+            msg.value,
             _coverPeriod
         );
     }
 
     function purchaseProtocolCover(
         uint256 _coverValue,
-        uint256 _coverPeriod,
-        uint256 _coverFee
+        uint256 _coverPeriod
     ) public payable nonReentrant {
-        require(_coverFee > 0, "Amount must be greater than 0");
+        require(msg.value > 0, "Amount must be greater than 0");
         require(
             _coverPeriod > 27 && _coverPeriod < 366,
             "Duration must be greater than between 28 and 365"
-        );
-        require(
-            coverToken.transferFrom(msg.sender, address(this), _coverFee),
-            "Transfer failed"
         );
 
         ProtocolCoverInfo memory newCover = ProtocolCoverInfo({
             user: msg.sender,
             coverValue: _coverValue,
-            coverFee: _coverFee,
+            coverFee: msg.value,
             coverPeriod: _coverPeriod,
             startDay: block.timestamp,
             endDay: block.timestamp + (_coverPeriod * 1 days),
@@ -269,12 +242,12 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
         userToProtocolCover[msg.sender] = newCover;
         protocolCoveredAddresses.push(msg.sender);
-        coverFeeBalance += _coverFee;
+        coverFeeBalance += msg.value;
 
         emit ProtocolCoverPurchased(
             msg.sender,
             _coverValue,
-            _coverFee,
+            msg.value,
             _coverPeriod
         );
     }
@@ -337,10 +310,9 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
         NextLpClaimTime[msg.sender] = block.timestamp;
 
-        require(
-            coverToken.transfer(msg.sender, claimableAmount),
-            "Transfer failed"
-        );
+        (bool success, ) = msg.sender.call{value: claimableAmount}("");
+        require(success, "Transfer failed");
+        
         coverFeeBalance -= claimableAmount;
 
         emit PayoutClaimed(msg.sender, _poolId, claimableAmount);
