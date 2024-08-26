@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./CoverLib.sol";
 
 interface ILP {
     struct Deposits {
@@ -28,90 +29,62 @@ interface ILP {
 }
 
 contract InsuranceCover is ReentrancyGuard, Ownable {
-    struct SlashingCoverInfo {
-        address user;
-        string validatorAddress; // The address of the validator the user is staked with
-        uint256 coverValue; // This is the value of the cover purchased
-        uint256 coverFee; // This is the fee of the cover purchased, it would be dynamic and passed in on the frontend based on the value purchased.
-        uint256 coverPeriod; // This is the period the cover is purchased for in days
-        uint256 startDay; // When the cover starts
-        uint256 endDay; // When the cover expires
-        bool isActive;
-    }
+    using CoverLib for *;
 
-    struct SmartContractCoverInfo {
-        address user;
-        uint256 coverValue; // This is the value of the cover purchased
-        uint256 coverFee; // This is the fee of the cover purchased, it would be dynamic and passed in on the frontend based on the value purchased.
-        uint256 coverPeriod; // This is the period the cover is purchased for in days
-        uint256 startDay; // When the cover starts
-        uint256 endDay; // When the cover expires
-        bool isActive;
-    }
-
-    struct StablecoinCoverInfo {
-        address user;
-        uint256 coverValue; // This is the value of the cover purchased
-        uint256 coverFee; // This is the fee of the cover purchased, it would be dynamic and passed in on the frontend based on the value purchased.
-        uint256 coverPeriod; // This is the period the cover is purchased for in days
-        uint256 startDay; // When the cover starts
-        uint256 endDay; // When the cover expires
-        bool isActive;
-    }
-
-    struct ProtocolCoverInfo {
-        address user;
-        uint256 coverValue; // This is the value of the cover purchased
-        uint256 coverFee; // This is the fee of the cover purchased, it would be dynamic and passed in on the frontend based on the value purchased.
-        uint256 coverPeriod; // This is the period the cover is purchased for in days
-        uint256 startDay; // When the cover starts
-        uint256 endDay; // When the cover expires
-        bool isActive;
-    }
+    error LpNotActive();
+    error InsufficientPoolBalance();
+    error NoClaimableReward();
+    error CoverAlreadyExists();
+    error InvalidCoverDuration();
+    error CoverNotAvailable();
+    error InvalidAmount();
+    error UnsupportedCoverType();
 
     uint public coverFeeBalance;
     ILP public lpContract;
-
-    mapping(address => SlashingCoverInfo) public userToSlashingCover;
-    mapping(address => SmartContractCoverInfo) public userToSmartContractCover;
-    mapping(address => StablecoinCoverInfo) public userToStablecoinCover;
-    mapping(address => ProtocolCoverInfo) public userToProtocolCover;
+    uint256[] public chainIds;
+    mapping(uint256 => bool) public isChainIdStored;
     mapping(address => uint256) public NextLpClaimTime;
 
-    address[] public slashCoveredAddresses;
-    address[] public smartContractCoveredAddresses;
-    address[] public stablecoinCoveredAddresses;
-    address[] public protocolCoveredAddresses;
+    mapping(address => mapping(uint256 => CoverLib.SlashingCoverInfo))
+        public userToSlashingCover;
+    mapping(address => mapping(uint256 => CoverLib.GenericCover))
+        public userToSmartContractCover;
+    mapping(address => mapping(uint256 => CoverLib.GenericCover))
+        public userToStablecoinCover;
+    mapping(address => mapping(uint256 => CoverLib.GenericCover))
+        public userToProtocolCover;
 
-    event SlashingCoverPurchased(
+    mapping(uint256 => bool) public availableSlashingCovers;
+    mapping(uint256 => bool) public availableSmartContractCovers;
+    mapping(uint256 => bool) public availableStablecoinCovers;
+    mapping(uint256 => bool) public availableProtocolCovers;
+
+    mapping(address => CoverLib.SlashingCoverInfo[]) public userSlashingCovers;
+    mapping(address => CoverLib.GenericCover[]) public userSmartContractCovers;
+    mapping(address => CoverLib.GenericCover[]) public userStablecoinCovers;
+    mapping(address => CoverLib.GenericCover[]) public userProtocolCovers;
+
+    CoverLib.CoverInfo[] public slashingCovers;
+    CoverLib.CoverInfo[] public smartContractCovers;
+    CoverLib.CoverInfo[] public stablecoinCovers;
+    CoverLib.CoverInfo[] public protocolCovers;
+    event CoverPurchased(
         address indexed user,
         uint256 coverValue,
         uint256 coverFee,
-        uint256 coverPeriod
+        uint256 coverPeriod,
+        CoverLib.CoverType coverType
     );
-    event SmartContractCoverPurchased(
-        address indexed user,
-        uint256 coverValue,
-        uint256 coverFee,
-        uint256 coverPeriod
-    );
-    event StablecoinCoverPurchased(
-        address indexed user,
-        uint256 coverValue,
-        uint256 coverFee,
-        uint256 coverPeriod
-    );
-    event ProtocolCoverPurchased(
-        address indexed user,
-        uint256 coverValue,
-        uint256 coverFee,
-        uint256 coverPeriod
-    );
-    event CoverExpired(address indexed user, string coverType);
     event PayoutClaimed(
         address indexed user,
         uint256 indexed poolId,
         uint256 amount
+    );
+    event CoverCreated(
+        string network,
+        uint256 chainId,
+        CoverLib.CoverType coverType
     );
 
     constructor(
@@ -121,117 +94,115 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         lpContract = ILP(_lpContract);
     }
 
-    // coverPeriod is the number of days the user is paying for
+    function createCover(
+        CoverLib.CoverType _riskType,
+        string memory _network,
+        uint256 _chainId
+    ) public onlyOwner {
+        CoverLib.CoverInfo memory cover = CoverLib.CoverInfo({
+            riskType: _riskType,
+            network: _network,
+            chainId: _chainId
+        });
+
+        if (_riskType == CoverLib.CoverType.Slashing) {
+            if (availableSlashingCovers[_chainId]) {
+                revert CoverAlreadyExists();
+            }
+            availableSlashingCovers[_chainId] = true;
+            slashingCovers.push(cover);
+        } else if (_riskType == CoverLib.CoverType.Stablecoin) {
+            if (availableStablecoinCovers[_chainId]) {
+                revert CoverAlreadyExists();
+            }
+            availableStablecoinCovers[_chainId] = true;
+            stablecoinCovers.push(cover);
+        } else if (_riskType == CoverLib.CoverType.SmartContract) {
+            if (availableSmartContractCovers[_chainId]) {
+                revert CoverAlreadyExists();
+            }
+            availableSmartContractCovers[_chainId] = true;
+            smartContractCovers.push(cover);
+        } else if (_riskType == CoverLib.CoverType.Protocol) {
+            if (availableProtocolCovers[_chainId]) {
+                revert CoverAlreadyExists();
+            }
+            availableProtocolCovers[_chainId] = true;
+            protocolCovers.push(cover);
+        } else {
+            revert UnsupportedCoverType();
+        }
+
+        if (!isChainIdStored[_chainId]) {
+            chainIds.push(_chainId);
+            isChainIdStored[_chainId] = true;
+        }
+
+        emit CoverCreated(_network, _chainId, _riskType);
+    }
+
     function purchaseSlashingCover(
+        string memory _network,
+        uint256 _networkChainId,
         uint256 _coverValue,
         uint256 _coverPeriod,
         string memory _validatorAddress
     ) public payable nonReentrant {
-        require(msg.value > 0, "Amount must be greater than 0");
-        require(
-            _coverPeriod > 27 && _coverPeriod < 366,
-            "Duration must be between 28 and 365 days"
-        );
+        if (!availableSlashingCovers[_networkChainId]) {
+            revert CoverNotAvailable();
+        }
+        if (msg.value <= 0) {
+            revert InvalidAmount();
+        }
+        if (_coverPeriod <= 27 || _coverPeriod >= 366) {
+            revert InvalidCoverDuration();
+        }
 
-        SlashingCoverInfo memory newCover = SlashingCoverInfo({
-            user: msg.sender,
-            validatorAddress: _validatorAddress,
-            coverValue: _coverValue,
-            coverFee: msg.value,
-            coverPeriod: _coverPeriod,
-            startDay: block.timestamp,
-            endDay: block.timestamp + (_coverPeriod * 1 days),
-            isActive: true
-        });
+        CoverLib.SlashingCoverInfo memory newCover = CoverLib
+            .SlashingCoverInfo({
+                user: msg.sender,
+                network: _network,
+                chainId: _networkChainId,
+                validatorAddress: _validatorAddress,
+                coverValue: _coverValue,
+                coverFee: msg.value,
+                coverPeriod: _coverPeriod,
+                startDay: block.timestamp,
+                endDay: block.timestamp + (_coverPeriod * 1 days),
+                isActive: true
+            });
 
-        userToSlashingCover[msg.sender] = newCover;
-        slashCoveredAddresses.push(msg.sender);
+        userToSlashingCover[msg.sender][_networkChainId] = newCover;
+        userSlashingCovers[msg.sender].push(newCover);
         coverFeeBalance += msg.value;
 
-        emit SlashingCoverPurchased(
+        emit CoverPurchased(
             msg.sender,
             _coverValue,
             msg.value,
-            _coverPeriod
+            _coverPeriod,
+            CoverLib.CoverType.Slashing
         );
     }
 
-    function purchaseSmartContractCover(
-        uint256 _coverValue,
-        uint256 _coverPeriod,
-    ) public payable nonReentrant {
-        require(msg.value > 0, "Amount must be greater than 0");
-        require(
-            _coverPeriod > 27 && _coverPeriod < 366,
-            "Duration must be between 28 and 365 days"
-        );
-
-        SmartContractCoverInfo memory newCover = SmartContractCoverInfo({
-            user: msg.sender,
-            coverValue: _coverValue,
-            coverFee: msg.value,
-            coverPeriod: _coverPeriod,
-            startDay: block.timestamp,
-            endDay: block.timestamp + (_coverPeriod * 1 days),
-            isActive: true
-        });
-
-        userToSmartContractCover[msg.sender] = newCover;
-        smartContractCoveredAddresses.push(msg.sender);
-        coverFeeBalance += msg.value;
-
-        emit SmartContractCoverPurchased(
-            msg.sender,
-            _coverValue,
-            msg.value,
-            _coverPeriod
-        );
-    }
-
-    function purchaseStablecoinCover(
-        uint256 _coverValue,
-        uint256 _coverPeriod,
-    ) public payable nonReentrant {
-        require(msg.value > 0, "Amount must be greater than 0");
-        require(
-            _coverPeriod > 27 && _coverPeriod < 366,
-            "Duration must be between 28 and 365 days"
-        );
-
-        StablecoinCoverInfo memory newCover = StablecoinCoverInfo({
-            user: msg.sender,
-            coverValue: _coverValue,
-            coverFee: msg.value,
-            coverPeriod: _coverPeriod,
-            startDay: block.timestamp,
-            endDay: block.timestamp + (_coverPeriod * 1 days),
-            isActive: true
-        });
-
-        userToStablecoinCover[msg.sender] = newCover;
-        stablecoinCoveredAddresses.push(msg.sender);
-        coverFeeBalance += msg.value;
-
-        emit StablecoinCoverPurchased(
-            msg.sender,
-            _coverValue,
-            msg.value,
-            _coverPeriod
-        );
-    }
-
-    function purchaseProtocolCover(
+    function purchaseGenericCover(
+        CoverLib.CoverType _riskType,
+        string memory _network,
+        uint256 _chainId,
         uint256 _coverValue,
         uint256 _coverPeriod
     ) public payable nonReentrant {
-        require(msg.value > 0, "Amount must be greater than 0");
-        require(
-            _coverPeriod > 27 && _coverPeriod < 366,
-            "Duration must be greater than between 28 and 365"
-        );
+        if (msg.value <= 0) {
+            revert InvalidAmount();
+        }
+        if (_coverPeriod <= 27 || _coverPeriod >= 366) {
+            revert InvalidCoverDuration();
+        }
 
-        ProtocolCoverInfo memory newCover = ProtocolCoverInfo({
+        CoverLib.GenericCover memory newCover = CoverLib.GenericCover({
             user: msg.sender,
+            network: _network,
+            chainId: _chainId,
             coverValue: _coverValue,
             coverFee: msg.value,
             coverPeriod: _coverPeriod,
@@ -240,54 +211,99 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             isActive: true
         });
 
-        userToProtocolCover[msg.sender] = newCover;
-        protocolCoveredAddresses.push(msg.sender);
-        coverFeeBalance += msg.value;
+        if (_riskType == CoverLib.CoverType.Slashing) {
+            revert UnsupportedCoverType();
+        } else if (_riskType == CoverLib.CoverType.SmartContract) {
+            userToSmartContractCover[msg.sender][_chainId] = newCover;
+            userSmartContractCovers[msg.sender].push(newCover);
+        } else if (_riskType == CoverLib.CoverType.Stablecoin) {
+            userToStablecoinCover[msg.sender][_chainId] = newCover;
+            userStablecoinCovers[msg.sender].push(newCover);
+        } else if (_riskType == CoverLib.CoverType.Protocol) {
+            userToProtocolCover[msg.sender][_chainId] = newCover;
+            userProtocolCovers[msg.sender].push(newCover);
+        } else {
+            revert UnsupportedCoverType();
+        }
 
-        emit ProtocolCoverPurchased(
+        emit CoverPurchased(
             msg.sender,
             _coverValue,
             msg.value,
-            _coverPeriod
+            _coverPeriod,
+            _riskType
         );
     }
 
-    function getSlashingCoverInfo(
+    function getAllUserCovers(
         address user
-    ) external view returns (SlashingCoverInfo memory) {
-        return userToSlashingCover[user];
+    )
+        external
+        view
+        returns (
+            CoverLib.SlashingCoverInfo[] memory,
+            CoverLib.GenericCover[] memory,
+            CoverLib.GenericCover[] memory,
+            CoverLib.GenericCover[] memory
+        )
+    {
+        return (
+            userSlashingCovers[user],
+            userSmartContractCovers[user],
+            userStablecoinCovers[user],
+            userProtocolCovers[user]
+        );
     }
 
-    function getSmartContractCoverInfo(
-        address user
-    ) external view returns (SmartContractCoverInfo memory) {
-        return userToSmartContractCover[user];
+    function getAllAvailableCovers()
+        external
+        view
+        returns (
+            CoverLib.CoverInfo[] memory,
+            CoverLib.CoverInfo[] memory,
+            CoverLib.CoverInfo[] memory,
+            CoverLib.CoverInfo[] memory
+        )
+    {
+        return (
+            slashingCovers,
+            smartContractCovers,
+            stablecoinCovers,
+            protocolCovers
+        );
     }
 
-    function getStablecoinCoverInfo(
-        address user
-    ) external view returns (StablecoinCoverInfo memory) {
-        return userToStablecoinCover[user];
-    }
-
-    function getProtocolCoverInfo(
-        address user
-    ) external view returns (ProtocolCoverInfo memory) {
-        return userToProtocolCover[user];
-    }
-
-    function deleteExpiredCovers(address user) external onlyOwner {
-        if (block.timestamp > userToSlashingCover[user].endDay) {
-            delete userToSlashingCover[user];
-        }
-        if (block.timestamp > userToSmartContractCover[user].endDay) {
-            delete userToSmartContractCover[user];
-        }
-        if (block.timestamp > userToStablecoinCover[user].endDay) {
-            delete userToStablecoinCover[user];
-        }
-        if (block.timestamp > userToProtocolCover[user].endDay) {
-            delete userToProtocolCover[user];
+    function getUserGenericCoverInfo(
+        address user,
+        CoverLib.CoverType coverType,
+        uint256 _chainId
+    ) external view returns (CoverLib.GenericCoverInfo memory) {
+        if (coverType == CoverLib.CoverType.Slashing) {
+            return
+                CoverLib.GenericCoverInfo({
+                    coverType: CoverLib.CoverType.Slashing,
+                    coverData: abi.encode(userToSlashingCover[user][_chainId])
+                });
+        } else if (coverType == CoverLib.CoverType.SmartContract) {
+            return
+                CoverLib.GenericCoverInfo({
+                    coverType: CoverLib.CoverType.SmartContract,
+                    coverData: abi.encode(
+                        userToSmartContractCover[user][_chainId]
+                    )
+                });
+        } else if (coverType == CoverLib.CoverType.Stablecoin) {
+            return
+                CoverLib.GenericCoverInfo({
+                    coverType: CoverLib.CoverType.Stablecoin,
+                    coverData: abi.encode(userToStablecoinCover[user][_chainId])
+                });
+        } else {
+            return
+                CoverLib.GenericCoverInfo({
+                    coverType: CoverLib.CoverType.Protocol,
+                    coverData: abi.encode(userToProtocolCover[user][_chainId])
+                });
         }
     }
 
@@ -296,23 +312,27 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             _poolId,
             msg.sender
         );
-        require(depositInfo.status == ILP.Status.Active, "LP not active");
+        if (depositInfo.status != ILP.Status.Active) {
+            revert LpNotActive();
+        }
 
         uint256 lastClaimTime = NextLpClaimTime[msg.sender];
         uint256 claimableDays = (block.timestamp - lastClaimTime) / 1 days;
-        require(claimableDays > 0, "No claimable rewards yet");
+
+        if (claimableDays <= 0) {
+            revert NoClaimableReward();
+        }
 
         uint256 claimableAmount = depositInfo.dailyPayout * claimableDays;
-        require(
-            claimableAmount <= coverFeeBalance,
-            "Insufficient balance in pool"
-        );
 
+        if (claimableAmount > coverFeeBalance) {
+            revert InsufficientPoolBalance();
+        }
         NextLpClaimTime[msg.sender] = block.timestamp;
 
         (bool success, ) = msg.sender.call{value: claimableAmount}("");
         require(success, "Transfer failed");
-        
+
         coverFeeBalance -= claimableAmount;
 
         emit PayoutClaimed(msg.sender, _poolId, claimableAmount);
