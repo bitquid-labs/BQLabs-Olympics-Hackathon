@@ -8,12 +8,12 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 interface ILP {
     struct Deposits {
         address lp;
-        uint256 amount; // User Input
-        string category; // User Input
-        uint256 apy; // Annual Percentage Yield. Calculated from the frontend
-        string pool; // FTF
-        uint256 period; // User Input in days
-        uint dailyPayout; // FTF. This would be the amount the depositor would receive daily. Calculated from its deposit amount and apy
+        uint256 amount;
+        string category;
+        uint256 apy;
+        string pool;
+        uint256 period;
+        uint dailyPayout;
         Status status;
         uint256 expiryDate;
     }
@@ -45,19 +45,14 @@ contract Governance is ReentrancyGuard, Ownable {
 
     struct Voter {
         bool voted;
-        bool vote; // true for "for", false for "against"
-        uint256 weight; // voting weight based on tokens held
+        bool vote;
+        uint256 weight;
     }
 
     struct ProposalParams {
         address user;
-        string validatorAddress;
-        uint256 validator_score;
         string riskType;
-        uint256 coverEndDay;
-        uint256 coverValue;
         string description;
-        string txHash;
         uint256 poolId;
         uint256 claimAmount;
     }
@@ -66,6 +61,7 @@ contract Governance is ReentrancyGuard, Ownable {
     uint256 public votingDuration;
     mapping(uint256 => Proposal) public proposals;
     mapping(uint256 => mapping(address => Voter)) public voters;
+    uint256[] public proposalIds; // Array to track proposal IDs
 
     event ProposalCreated(
         uint256 indexed proposalId,
@@ -83,8 +79,6 @@ contract Governance is ReentrancyGuard, Ownable {
     event ProposalExecuted(uint256 indexed proposalId, bool approved);
 
     IERC20 public governanceToken;
-
-    // Reference to the InsurancePool contract
     ILP public lpContract;
 
     constructor(
@@ -98,7 +92,6 @@ contract Governance is ReentrancyGuard, Ownable {
         votingDuration = _votingDuration;
     }
 
-    // Create a new proposal for approving a claim
     function createProposal(ProposalParams memory params) external {
         require(lpContract.poolActive(params.poolId), "Pool does not exist");
         require(params.claimAmount > 0, "Claim amount must be greater than 0");
@@ -115,6 +108,8 @@ contract Governance is ReentrancyGuard, Ownable {
             proposalParam: params
         });
 
+        proposalIds.push(proposalCounter); // Track the proposal ID
+
         emit ProposalCreated(
             proposalCounter,
             params.user,
@@ -124,7 +119,6 @@ contract Governance is ReentrancyGuard, Ownable {
         );
     }
 
-    // Vote on a proposal
     function vote(uint256 _proposalId, bool _vote) external {
         Proposal storage proposal = proposals[_proposalId];
         require(
@@ -176,16 +170,22 @@ contract Governance is ReentrancyGuard, Ownable {
         }
     }
 
-    // Change the voting duration (only owner can do this)
     function setVotingDuration(uint256 _newDuration) external onlyOwner {
         require(_newDuration > 0, "Voting duration must be greater than 0");
         votingDuration = _newDuration;
     }
 
-    // View proposal details
     function getProposalDetails(
         uint256 _proposalId
     ) external view returns (Proposal memory) {
         return proposals[_proposalId];
+    }
+
+    function getAllProposals() public view returns (Proposal[] memory) {
+        Proposal[] memory result = new Proposal[](proposalIds.length);
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            result[i] = proposals[proposalIds[i]];
+        }
+        return result;
     }
 }
