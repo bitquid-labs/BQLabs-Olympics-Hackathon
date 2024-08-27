@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./CoverLib.sol";
 
 interface ILP {
@@ -34,7 +34,6 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     error LpNotActive();
     error InsufficientPoolBalance();
     error NoClaimableReward();
-    error CoverAlreadyExists();
     error InvalidCoverDuration();
     error CoverNotAvailable();
     error InvalidAmount();
@@ -42,33 +41,42 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     uint public coverFeeBalance;
     ILP public lpContract;
-    uint256[] public chainIds;
+
     mapping(uint256 => bool) public isChainIdStored;
+    mapping(uint256 => bool) public slashingCoverExist;
+    mapping(uint256 => bool) public smartContractCoverExist;
+    mapping(uint256 => bool) public stablecoinCoverExist;
+    mapping(uint256 => bool) public protocolCoverExist;
+
     mapping(address => uint256) public NextLpClaimTime;
 
-    mapping(address => mapping(uint256 => CoverLib.SlashingCoverInfo))
+    mapping(address => mapping(uint256 => CoverLib.GenericCoverInfo))
         public userToSlashingCover;
-    mapping(address => mapping(uint256 => CoverLib.GenericCover))
+    mapping(address => mapping(uint256 => CoverLib.GenericCoverInfo))
         public userToSmartContractCover;
-    mapping(address => mapping(uint256 => CoverLib.GenericCover))
+    mapping(address => mapping(uint256 => CoverLib.GenericCoverInfo))
         public userToStablecoinCover;
-    mapping(address => mapping(uint256 => CoverLib.GenericCover))
+    mapping(address => mapping(uint256 => CoverLib.GenericCoverInfo))
         public userToProtocolCover;
 
-    mapping(uint256 => bool) public availableSlashingCovers;
-    mapping(uint256 => bool) public availableSmartContractCovers;
-    mapping(uint256 => bool) public availableStablecoinCovers;
-    mapping(uint256 => bool) public availableProtocolCovers;
+    mapping(address => CoverLib.GenericCoverInfo[]) public userCovers;
 
-    mapping(address => CoverLib.SlashingCoverInfo[]) public userSlashingCovers;
-    mapping(address => CoverLib.GenericCover[]) public userSmartContractCovers;
-    mapping(address => CoverLib.GenericCover[]) public userStablecoinCovers;
-    mapping(address => CoverLib.GenericCover[]) public userProtocolCovers;
+    CoverLib.Cover[] public slashingCovers;
+    CoverLib.Cover[] public smartContractCovers;
+    CoverLib.Cover[] public stablecoinCovers;
+    CoverLib.Cover[] public protocolCovers;
 
-    CoverLib.CoverInfo[] public slashingCovers;
-    CoverLib.CoverInfo[] public smartContractCovers;
-    CoverLib.CoverInfo[] public stablecoinCovers;
-    CoverLib.CoverInfo[] public protocolCovers;
+    uint256 slashingCoverCount;
+    uint256 smartContractCoverCount;
+    uint256 stablecoinCoverCount;
+    uint256 protocolCoverCount;
+
+    event CoverCreated(
+        string name,
+        string network,
+        uint256 chainId,
+        CoverLib.CoverType coverType
+    );
     event CoverPurchased(
         address indexed user,
         uint256 coverValue,
@@ -81,11 +89,6 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         uint256 indexed poolId,
         uint256 amount
     );
-    event CoverCreated(
-        string network,
-        uint256 chainId,
-        CoverLib.CoverType coverType
-    );
 
     constructor(
         address _lpContract,
@@ -96,98 +99,51 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     function createCover(
         CoverLib.CoverType _riskType,
+        string memory _coverName,
         string memory _network,
-        uint256 _chainId
+        uint256 _chainId,
+        string memory _description
     ) public onlyOwner {
-        CoverLib.CoverInfo memory cover = CoverLib.CoverInfo({
+        CoverLib.Cover memory cover = CoverLib.Cover({
+            id: 0,
+            coverName: _coverName,
             riskType: _riskType,
             network: _network,
-            chainId: _chainId
+            chainId: _chainId,
+            description: _description
         });
 
         if (_riskType == CoverLib.CoverType.Slashing) {
-            if (availableSlashingCovers[_chainId]) {
-                revert CoverAlreadyExists();
-            }
-            availableSlashingCovers[_chainId] = true;
+            cover.id = ++slashingCoverCount;
             slashingCovers.push(cover);
+            slashingCoverExist[cover.id] = true;
         } else if (_riskType == CoverLib.CoverType.Stablecoin) {
-            if (availableStablecoinCovers[_chainId]) {
-                revert CoverAlreadyExists();
-            }
-            availableStablecoinCovers[_chainId] = true;
+            cover.id = ++stablecoinCoverCount;
             stablecoinCovers.push(cover);
+            stablecoinCoverExist[cover.id] = true;
         } else if (_riskType == CoverLib.CoverType.SmartContract) {
-            if (availableSmartContractCovers[_chainId]) {
-                revert CoverAlreadyExists();
-            }
-            availableSmartContractCovers[_chainId] = true;
+            cover.id = ++smartContractCoverCount;
             smartContractCovers.push(cover);
+            smartContractCoverExist[cover.id] = true;
         } else if (_riskType == CoverLib.CoverType.Protocol) {
-            if (availableProtocolCovers[_chainId]) {
-                revert CoverAlreadyExists();
-            }
-            availableProtocolCovers[_chainId] = true;
+            cover.id = ++protocolCoverCount;
             protocolCovers.push(cover);
+            protocolCoverExist[cover.id] = true;
         } else {
             revert UnsupportedCoverType();
         }
 
         if (!isChainIdStored[_chainId]) {
-            chainIds.push(_chainId);
             isChainIdStored[_chainId] = true;
         }
 
-        emit CoverCreated(_network, _chainId, _riskType);
+        emit CoverCreated(_coverName, _network, _chainId, _riskType);
     }
 
-    function purchaseSlashingCover(
-        string memory _network,
-        uint256 _networkChainId,
-        uint256 _coverValue,
-        uint256 _coverPeriod,
-        string memory _validatorAddress
-    ) public payable nonReentrant {
-        if (!availableSlashingCovers[_networkChainId]) {
-            revert CoverNotAvailable();
-        }
-        if (msg.value <= 0) {
-            revert InvalidAmount();
-        }
-        if (_coverPeriod <= 27 || _coverPeriod >= 366) {
-            revert InvalidCoverDuration();
-        }
-
-        CoverLib.SlashingCoverInfo memory newCover = CoverLib
-            .SlashingCoverInfo({
-                user: msg.sender,
-                network: _network,
-                chainId: _networkChainId,
-                validatorAddress: _validatorAddress,
-                coverValue: _coverValue,
-                coverFee: msg.value,
-                coverPeriod: _coverPeriod,
-                startDay: block.timestamp,
-                endDay: block.timestamp + (_coverPeriod * 1 days),
-                isActive: true
-            });
-
-        userToSlashingCover[msg.sender][_networkChainId] = newCover;
-        userSlashingCovers[msg.sender].push(newCover);
-        coverFeeBalance += msg.value;
-
-        emit CoverPurchased(
-            msg.sender,
-            _coverValue,
-            msg.value,
-            _coverPeriod,
-            CoverLib.CoverType.Slashing
-        );
-    }
-
-    function purchaseGenericCover(
+    function purchaseCover(
         CoverLib.CoverType _riskType,
-        string memory _network,
+        uint256 _coverId,
+        string memory _coverName,
         uint256 _chainId,
         uint256 _coverValue,
         uint256 _coverPeriod
@@ -199,9 +155,10 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             revert InvalidCoverDuration();
         }
 
-        CoverLib.GenericCover memory newCover = CoverLib.GenericCover({
+        CoverLib.GenericCoverInfo memory newCover = CoverLib.GenericCoverInfo({
             user: msg.sender,
-            network: _network,
+            coverId: _coverId,
+            coverName: _coverName,
             chainId: _chainId,
             coverValue: _coverValue,
             coverFee: msg.value,
@@ -212,16 +169,29 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         });
 
         if (_riskType == CoverLib.CoverType.Slashing) {
-            revert UnsupportedCoverType();
+            if (!slashingCoverExist[_coverId]) {
+                revert CoverNotAvailable();
+            }
+            userToSlashingCover[msg.sender][_coverId] = newCover;
+            userCovers[msg.sender].push(newCover);
         } else if (_riskType == CoverLib.CoverType.SmartContract) {
-            userToSmartContractCover[msg.sender][_chainId] = newCover;
-            userSmartContractCovers[msg.sender].push(newCover);
+            if (!smartContractCoverExist[_coverId]) {
+                revert CoverNotAvailable();
+            }
+            userToSmartContractCover[msg.sender][_coverId] = newCover;
+            userCovers[msg.sender].push(newCover);
         } else if (_riskType == CoverLib.CoverType.Stablecoin) {
-            userToStablecoinCover[msg.sender][_chainId] = newCover;
-            userStablecoinCovers[msg.sender].push(newCover);
+            if (!stablecoinCoverExist[_coverId]) {
+                revert CoverNotAvailable();
+            }
+            userToStablecoinCover[msg.sender][_coverId] = newCover;
+            userCovers[msg.sender].push(newCover);
         } else if (_riskType == CoverLib.CoverType.Protocol) {
-            userToProtocolCover[msg.sender][_chainId] = newCover;
-            userProtocolCovers[msg.sender].push(newCover);
+            if (!protocolCoverExist[_coverId]) {
+                revert CoverNotAvailable();
+            }
+            userToProtocolCover[msg.sender][_coverId] = newCover;
+            userCovers[msg.sender].push(newCover);
         } else {
             revert UnsupportedCoverType();
         }
@@ -237,32 +207,18 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     function getAllUserCovers(
         address user
-    )
-        external
-        view
-        returns (
-            CoverLib.SlashingCoverInfo[] memory,
-            CoverLib.GenericCover[] memory,
-            CoverLib.GenericCover[] memory,
-            CoverLib.GenericCover[] memory
-        )
-    {
-        return (
-            userSlashingCovers[user],
-            userSmartContractCovers[user],
-            userStablecoinCovers[user],
-            userProtocolCovers[user]
-        );
+    ) external view returns (CoverLib.GenericCoverInfo[] memory) {
+        return (userCovers[user]);
     }
 
     function getAllAvailableCovers()
         external
         view
         returns (
-            CoverLib.CoverInfo[] memory,
-            CoverLib.CoverInfo[] memory,
-            CoverLib.CoverInfo[] memory,
-            CoverLib.CoverInfo[] memory
+            CoverLib.Cover[] memory,
+            CoverLib.Cover[] memory,
+            CoverLib.Cover[] memory,
+            CoverLib.Cover[] memory
         )
     {
         return (
@@ -273,37 +229,55 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         );
     }
 
-    function getUserGenericCoverInfo(
+    function getUserCoverInfo(
         address user,
         CoverLib.CoverType coverType,
-        uint256 _chainId
-    ) external view returns (CoverLib.GenericCoverInfo memory) {
+        uint256 _coverId
+    ) external view returns (CoverLib.GenericCover memory) {
         if (coverType == CoverLib.CoverType.Slashing) {
             return
-                CoverLib.GenericCoverInfo({
+                CoverLib.GenericCover({
                     coverType: CoverLib.CoverType.Slashing,
-                    coverData: abi.encode(userToSlashingCover[user][_chainId])
+                    coverData: abi.encode(userToSlashingCover[user][_coverId])
                 });
         } else if (coverType == CoverLib.CoverType.SmartContract) {
             return
-                CoverLib.GenericCoverInfo({
+                CoverLib.GenericCover({
                     coverType: CoverLib.CoverType.SmartContract,
                     coverData: abi.encode(
-                        userToSmartContractCover[user][_chainId]
+                        userToSmartContractCover[user][_coverId]
                     )
                 });
         } else if (coverType == CoverLib.CoverType.Stablecoin) {
             return
-                CoverLib.GenericCoverInfo({
+                CoverLib.GenericCover({
                     coverType: CoverLib.CoverType.Stablecoin,
-                    coverData: abi.encode(userToStablecoinCover[user][_chainId])
+                    coverData: abi.encode(userToStablecoinCover[user][_coverId])
                 });
         } else {
             return
-                CoverLib.GenericCoverInfo({
+                CoverLib.GenericCover({
                     coverType: CoverLib.CoverType.Protocol,
-                    coverData: abi.encode(userToProtocolCover[user][_chainId])
+                    coverData: abi.encode(userToProtocolCover[user][_coverId])
                 });
+        }
+    }
+
+    function deleteExpiredCovers(
+        address user,
+        uint256 _coverId
+    ) external onlyOwner {
+        if (block.timestamp > userToSlashingCover[user][_coverId].endDay) {
+            delete userToSlashingCover[user][_coverId];
+        }
+        if (block.timestamp > userToSmartContractCover[user][_coverId].endDay) {
+            delete userToSmartContractCover[user][_coverId];
+        }
+        if (block.timestamp > userToStablecoinCover[user][_coverId].endDay) {
+            delete userToStablecoinCover[user][_coverId];
+        }
+        if (block.timestamp > userToProtocolCover[user][_coverId].endDay) {
+            delete userToProtocolCover[user][_coverId];
         }
     }
 
@@ -322,7 +296,6 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         if (claimableDays <= 0) {
             revert NoClaimableReward();
         }
-
         uint256 claimableAmount = depositInfo.dailyPayout * claimableDays;
 
         if (claimableAmount > coverFeeBalance) {
@@ -336,5 +309,9 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         coverFeeBalance -= claimableAmount;
 
         emit PayoutClaimed(msg.sender, _poolId, claimableAmount);
+    }
+
+    function updateLPContract(address _newLpContract) external onlyOwner {
+        lpContract = ILP(_newLpContract);
     }
 }
