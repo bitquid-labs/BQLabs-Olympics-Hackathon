@@ -43,7 +43,7 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "token",
+				"name": "recipient",
 				"type": "address"
 			},
 			{
@@ -69,12 +69,6 @@
 				"indexed": true,
 				"internalType": "address",
 				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "token",
 				"type": "address"
 			},
 			{
@@ -123,9 +117,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "acceptedToken",
-				"type": "address"
+				"internalType": "string",
+				"name": "poolName",
+				"type": "string"
 			}
 		],
 		"name": "PoolCreated",
@@ -151,12 +145,6 @@
 				"internalType": "uint256",
 				"name": "_minPeriod",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "PoolUpdated",
@@ -169,12 +157,6 @@
 				"indexed": true,
 				"internalType": "address",
 				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "token",
 				"type": "address"
 			},
 			{
@@ -209,11 +191,6 @@
 				"internalType": "uint256",
 				"name": "_minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "createPool",
@@ -239,11 +216,6 @@
 			{
 				"internalType": "uint256",
 				"name": "_poolId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
 				"type": "uint256"
 			},
 			{
@@ -281,11 +253,6 @@
 				"internalType": "uint256",
 				"name": "minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "acceptedToken",
-				"type": "address"
 			},
 			{
 				"internalType": "uint256",
@@ -488,11 +455,6 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "acceptedToken",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "tvl",
 				"type": "uint256"
@@ -560,11 +522,6 @@
 				"internalType": "uint256",
 				"name": "_minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "updatePool",

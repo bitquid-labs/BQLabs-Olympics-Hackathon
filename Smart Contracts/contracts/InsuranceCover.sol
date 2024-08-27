@@ -36,7 +36,6 @@ interface ILP {
             string memory name,
             uint256 apy,
             uint256 minPeriod,
-            address acceptedToken,
             uint256 tvl,
             bool isActive
         );
@@ -120,7 +119,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         uint256 _poolId,
         string memory _description
     ) public onlyOwner {
-        (, , , , uint256 _maxAmount, ) = lpContract.getPool(_poolId);
+        (, , , uint256 _maxAmount, ) = lpContract.getPool(_poolId);
         CoverLib.Cover memory cover = CoverLib.Cover({
             id: 0,
             coverName: _coverName,
