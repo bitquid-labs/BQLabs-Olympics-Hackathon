@@ -8,6 +8,9 @@ library CoverLib {
         CoverType riskType;
         string network;
         uint256 chainId;
+        uint256 maxAmount;
+        uint256 currentBalance;
+        uint256 poolId;
         string description;
     }
 

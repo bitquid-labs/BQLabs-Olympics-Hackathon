@@ -26,6 +26,20 @@ interface ILP {
         uint256 _poolId,
         address _user
     ) external view returns (Deposits memory);
+
+    function getPool(
+        uint256 _poolId
+    )
+        external
+        view
+        returns (
+            string memory name,
+            uint256 apy,
+            uint256 minPeriod,
+            address acceptedToken,
+            uint256 tvl,
+            bool isActive
+        );
 }
 
 contract InsuranceCover is ReentrancyGuard, Ownable {
@@ -60,11 +74,12 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         public userToProtocolCover;
 
     mapping(address => CoverLib.GenericCoverInfo[]) public userCovers;
+    CoverLib.Cover[] public allCovers;
 
-    CoverLib.Cover[] public slashingCovers;
-    CoverLib.Cover[] public smartContractCovers;
-    CoverLib.Cover[] public stablecoinCovers;
-    CoverLib.Cover[] public protocolCovers;
+    mapping(uint256 => CoverLib.Cover) public slashingCovers;
+    mapping(uint256 => CoverLib.Cover) public smartContractCovers;
+    mapping(uint256 => CoverLib.Cover) public stablecoinCovers;
+    mapping(uint256 => CoverLib.Cover) public protocolCovers;
 
     uint256 slashingCoverCount;
     uint256 smartContractCoverCount;
@@ -102,32 +117,37 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         string memory _coverName,
         string memory _network,
         uint256 _chainId,
+        uint256 _poolId,
         string memory _description
     ) public onlyOwner {
+        (, , , , uint256 _maxAmount, ) = lpContract.getPool(_poolId);
         CoverLib.Cover memory cover = CoverLib.Cover({
             id: 0,
             coverName: _coverName,
             riskType: _riskType,
             network: _network,
             chainId: _chainId,
+            maxAmount: _maxAmount,
+            currentBalance: _maxAmount,
+            poolId: _poolId,
             description: _description
         });
 
         if (_riskType == CoverLib.CoverType.Slashing) {
             cover.id = ++slashingCoverCount;
-            slashingCovers.push(cover);
+            slashingCovers[cover.id] = cover;
             slashingCoverExist[cover.id] = true;
         } else if (_riskType == CoverLib.CoverType.Stablecoin) {
             cover.id = ++stablecoinCoverCount;
-            stablecoinCovers.push(cover);
+            stablecoinCovers[cover.id] = cover;
             stablecoinCoverExist[cover.id] = true;
         } else if (_riskType == CoverLib.CoverType.SmartContract) {
             cover.id = ++smartContractCoverCount;
-            smartContractCovers.push(cover);
+            smartContractCovers[cover.id] = cover;
             smartContractCoverExist[cover.id] = true;
         } else if (_riskType == CoverLib.CoverType.Protocol) {
             cover.id = ++protocolCoverCount;
-            protocolCovers.push(cover);
+            protocolCovers[cover.id] = cover;
             protocolCoverExist[cover.id] = true;
         } else {
             revert UnsupportedCoverType();
@@ -136,6 +156,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         if (!isChainIdStored[_chainId]) {
             isChainIdStored[_chainId] = true;
         }
+        allCovers.push(cover);
 
         emit CoverCreated(_coverName, _network, _chainId, _riskType);
     }
@@ -172,24 +193,44 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             if (!slashingCoverExist[_coverId]) {
                 revert CoverNotAvailable();
             }
+            uint256 coverBalance = slashingCovers[_coverId].currentBalance;
+            if (_coverValue > coverBalance) {
+                revert InsufficientPoolBalance();
+            }
+            slashingCovers[_coverId].currentBalance -= _coverValue;
             userToSlashingCover[msg.sender][_coverId] = newCover;
             userCovers[msg.sender].push(newCover);
         } else if (_riskType == CoverLib.CoverType.SmartContract) {
             if (!smartContractCoverExist[_coverId]) {
                 revert CoverNotAvailable();
             }
+            uint256 coverBalance = smartContractCovers[_coverId].currentBalance;
+            if (_coverValue > coverBalance) {
+                revert InsufficientPoolBalance();
+            }
+            smartContractCovers[_coverId].currentBalance -= _coverValue;
             userToSmartContractCover[msg.sender][_coverId] = newCover;
             userCovers[msg.sender].push(newCover);
         } else if (_riskType == CoverLib.CoverType.Stablecoin) {
             if (!stablecoinCoverExist[_coverId]) {
                 revert CoverNotAvailable();
             }
+            uint256 coverBalance = stablecoinCovers[_coverId].currentBalance;
+            if (_coverValue > coverBalance) {
+                revert InsufficientPoolBalance();
+            }
+            stablecoinCovers[_coverId].currentBalance -= _coverValue;
             userToStablecoinCover[msg.sender][_coverId] = newCover;
             userCovers[msg.sender].push(newCover);
         } else if (_riskType == CoverLib.CoverType.Protocol) {
             if (!protocolCoverExist[_coverId]) {
                 revert CoverNotAvailable();
             }
+            uint256 coverBalance = protocolCovers[_coverId].currentBalance;
+            if (_coverValue > coverBalance) {
+                revert InsufficientPoolBalance();
+            }
+            protocolCovers[_coverId].currentBalance -= _coverValue;
             userToProtocolCover[msg.sender][_coverId] = newCover;
             userCovers[msg.sender].push(newCover);
         } else {
@@ -214,19 +255,9 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     function getAllAvailableCovers()
         external
         view
-        returns (
-            CoverLib.Cover[] memory,
-            CoverLib.Cover[] memory,
-            CoverLib.Cover[] memory,
-            CoverLib.Cover[] memory
-        )
+        returns (CoverLib.Cover[] memory)
     {
-        return (
-            slashingCovers,
-            smartContractCovers,
-            stablecoinCovers,
-            protocolCovers
-        );
+        return (allCovers);
     }
 
     function getUserCoverInfo(
