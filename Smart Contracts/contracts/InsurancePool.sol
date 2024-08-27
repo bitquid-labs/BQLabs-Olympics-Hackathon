@@ -27,6 +27,17 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         uint256 expiryDate;
     }
 
+    // Define PoolInfo struct
+    struct PoolInfo {
+        string poolName;
+        uint256 apy;
+        uint256 minPeriod;
+        address acceptedToken;
+        uint256 tvl;
+        uint256 tcp; // Total claim paid to users
+        bool isActive; // Pool status to handle soft deletion
+    }
+
     enum Status {
         Active,
         Withdrawn
@@ -100,9 +111,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         pools[_poolId].isActive = false;
     }
 
-    function getPool(
-        uint256 _poolId
-    )
+    function getPool(uint256 _poolId)
         public
         view
         returns (
@@ -123,6 +132,25 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             pool.tvl,
             pool.isActive
         );
+    }
+
+    // Function to get all pools
+    function getAllPools() public view returns (PoolInfo[] memory) {
+        PoolInfo[] memory result = new PoolInfo[](poolCount);
+
+        for (uint256 i = 1; i <= poolCount; i++) {
+            Pool storage pool = pools[i];
+            result[i - 1] = PoolInfo({
+                poolName: pool.poolName,
+                apy: pool.apy,
+                minPeriod: pool.minPeriod,
+                acceptedToken: pool.acceptedToken,
+                tvl: pool.tvl,
+                tcp: pool.tcp,
+                isActive: pool.isActive
+            });
+        }
+        return result;
     }
 
     function withdraw(uint256 _poolId) public nonReentrant {
@@ -221,10 +249,11 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         emit ClaimPaid(msg.sender, pool.poolName, claimAmount);
     }
 
-    function getUserDeposit(
-        uint256 _poolId,
-        address _user
-    ) public view returns (Deposits memory) {
+    function getUserDeposit(uint256 _poolId, address _user)
+        public
+        view
+        returns (Deposits memory)
+    {
         return pools[_poolId].deposits[_user];
     }
 
