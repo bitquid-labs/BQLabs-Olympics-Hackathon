@@ -30,7 +30,7 @@ export const Menus: MenuType[] = [
       },
       {
         label: 'My Stake',
-        href: '/stake/me',
+        href: '/stake',
       },
     ],
   },

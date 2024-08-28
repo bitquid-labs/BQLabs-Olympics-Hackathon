@@ -1,4 +1,4 @@
-import { CoverType, MyCoverType } from '@/screen/purchase/types';
+import { CoverType } from '@/screen/purchase/types';
 
 export const filters = [
   'all cover product',
@@ -92,62 +92,5 @@ export const covers: CoverType[] = [
       'security rating',
       'cover wording',
     ],
-  },
-];
-
-export const myCovers: MyCoverType[] = [
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
   },
 ];

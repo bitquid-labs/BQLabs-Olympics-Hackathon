@@ -1,0 +1,34 @@
+import { useEffect } from 'react';
+
+import INSURANCECOVER_ABI from '@/constant/abis/InsuranceCover.json';
+import { CONTRACT_ADDRESSES } from '@/constant/contracts';
+
+import { useBlockNumber, useReadContract } from 'wagmi';
+import { ICover } from "@/types/main";
+
+export const useAllAvailableCovers = () => {
+  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const { data: availableCovers, refetch } = useReadContract({
+    abi: INSURANCECOVER_ABI,
+    address: CONTRACT_ADDRESSES.INSURANCE_COVER as `0x${string}`,
+    functionName: 'getAllAvailableCovers',
+    args: [],
+  })
+
+  useEffect(() => {
+    refetch();
+  }, [blockNumber]);
+
+  if (!availableCovers) return [];
+
+  try {
+    const result = availableCovers as ICover[];
+    if (!result) return [];
+
+    return result;
+
+
+  } catch (error) {
+    return [];
+  }
+};
