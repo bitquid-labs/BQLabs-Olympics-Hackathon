@@ -89,14 +89,8 @@
 			{
 				"indexed": false,
 				"internalType": "string",
-				"name": "network",
+				"name": "chains",
 				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "chainId",
-				"type": "uint256"
 			},
 			{
 				"indexed": false,
@@ -235,13 +229,28 @@
 			},
 			{
 				"internalType": "string",
-				"name": "network",
+				"name": "chains",
 				"type": "string"
 			},
 			{
 				"internalType": "uint256",
-				"name": "chainId",
+				"name": "dailyCost",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "capacity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "securityRating",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "coverWording",
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -307,13 +316,28 @@
 			},
 			{
 				"internalType": "string",
-				"name": "_network",
+				"name": "_chains",
 				"type": "string"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_chainId",
+				"name": "_dailyCost",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_capacity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_securityRating",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_coverWording",
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -372,13 +396,28 @@
 					},
 					{
 						"internalType": "string",
-						"name": "network",
+						"name": "chains",
 						"type": "string"
 					},
 					{
 						"internalType": "uint256",
-						"name": "chainId",
+						"name": "dailyCost",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capacity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "securityRating",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "coverWording",
+						"type": "string"
 					},
 					{
 						"internalType": "uint256",
@@ -524,9 +563,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "isChainIdStored",
@@ -612,13 +651,28 @@
 			},
 			{
 				"internalType": "string",
-				"name": "network",
+				"name": "chains",
 				"type": "string"
 			},
 			{
 				"internalType": "uint256",
-				"name": "chainId",
+				"name": "dailyCost",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "capacity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "securityRating",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "coverWording",
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -735,13 +789,28 @@
 			},
 			{
 				"internalType": "string",
-				"name": "network",
+				"name": "chains",
 				"type": "string"
 			},
 			{
 				"internalType": "uint256",
-				"name": "chainId",
+				"name": "dailyCost",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "capacity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "securityRating",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "coverWording",
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -813,13 +882,28 @@
 			},
 			{
 				"internalType": "string",
-				"name": "network",
+				"name": "chains",
 				"type": "string"
 			},
 			{
 				"internalType": "uint256",
-				"name": "chainId",
+				"name": "dailyCost",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "capacity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "securityRating",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "coverWording",
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -891,13 +975,28 @@
 			},
 			{
 				"internalType": "string",
-				"name": "network",
+				"name": "chains",
 				"type": "string"
 			},
 			{
 				"internalType": "uint256",
-				"name": "chainId",
+				"name": "dailyCost",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "capacity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "securityRating",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "coverWording",
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",

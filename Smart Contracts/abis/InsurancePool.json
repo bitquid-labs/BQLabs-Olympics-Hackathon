@@ -230,6 +230,51 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getAllPools",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "poolName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "apy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minPeriod",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tvl",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tcp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isActive",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct InsurancePool.PoolInfo[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -282,6 +327,57 @@
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			}
+		],
+		"name": "getPoolsByAddress",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "poolName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "apy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minPeriod",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tvl",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tcp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isActive",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct InsurancePool.PoolInfo[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
