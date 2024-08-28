@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import React from 'react';
 
-import { ConnectButton } from '@/components/layout/header/components/connect';
 import { Menu } from '@/components/layout/header/components/menu';
+import { ConnectButton } from '@/components/layout/header/components/wagmiConnect';
 import NextImage from '@/components/NextImage';
 
 const Header = (): JSX.Element => {

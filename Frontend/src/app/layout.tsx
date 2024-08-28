@@ -50,13 +50,13 @@ export default function RootLayout({
   return (
     <html>
       <body className='bg-dark text-light flex min-h-screen flex-col'>
-        <ParticleConnectkit>
+        {/* <ParticleConnectkit> */}
           <Providers>
             <Header />
             {children}
             <Footer />
           </Providers>
-        </ParticleConnectkit>
+        {/* </ParticleConnectkit> */}
       </body>
     </html>
   );
