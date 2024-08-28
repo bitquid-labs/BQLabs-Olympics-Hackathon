@@ -10,7 +10,6 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         string poolName;
         uint256 apy;
         uint256 minPeriod;
-        address acceptedToken;
         uint256 tvl;
         uint256 tcp; // Total claim paid to users
         bool isActive; // Pool status to handle soft deletion
@@ -32,7 +31,6 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         string poolName;
         uint256 apy;
         uint256 minPeriod;
-        address acceptedToken;
         uint256 tvl;
         uint256 tcp; // Total claim paid to users
         bool isActive; // Pool status to handle soft deletion
@@ -42,6 +40,9 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         Active,
         Withdrawn
     }
+
+    event Deposited(address user, uint256 amount);
+    event Withdrawn(address user, uint256 amount);
 
     mapping(uint256 => Pool) public pools;
     uint256 public poolCount;
@@ -60,50 +61,40 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         string pool
     );
     event ClaimPaid(address indexed token, string pool, uint256 amount);
-    event PoolCreated(uint256 indexed id, address acceptedToken);
-    event PoolUpdated(
-        uint256 indexed poolId,
-        uint256 apy,
-        uint256 _minPeriod,
-        address _acceptedToken
-    );
+    event PoolCreated(uint256 indexed id);
+    event PoolUpdated(uint256 indexed poolId, uint256 apy, uint256 _minPeriod);
 
     constructor(address _initialOwner) Ownable(_initialOwner) {}
 
     function createPool(
         string memory _poolName,
         uint256 _apy,
-        uint256 _minPeriod,
-        address _acceptedToken
+        uint256 _minPeriod
     ) public onlyOwner {
         poolCount += 1;
         Pool storage newPool = pools[poolCount];
         newPool.poolName = _poolName;
         newPool.apy = _apy;
         newPool.minPeriod = _minPeriod;
-        newPool.acceptedToken = _acceptedToken;
         newPool.tvl = 0;
         newPool.isActive = true;
 
-        emit PoolCreated(poolCount, _acceptedToken);
+        emit PoolCreated(poolCount);
     }
 
     function updatePool(
         uint256 _poolId,
         uint256 _apy,
-        uint256 _minPeriod,
-        address _acceptedToken
+        uint256 _minPeriod
     ) public onlyOwner {
         require(pools[_poolId].isActive, "Pool does not exist or is inactive");
         require(_apy > 0, "Invalid APY");
         require(_minPeriod > 0, "Invalid minimum period");
-        require(_acceptedToken != address(0), "Invalid token address");
 
         pools[_poolId].apy = _apy;
         pools[_poolId].minPeriod = _minPeriod;
-        pools[_poolId].acceptedToken = _acceptedToken;
 
-        emit PoolUpdated(_poolId, _apy, _minPeriod, _acceptedToken);
+        emit PoolUpdated(_poolId, _apy, _minPeriod);
     }
 
     function deactivatePool(uint256 _poolId) public onlyOwner {
@@ -118,7 +109,6 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             string memory name,
             uint256 apy,
             uint256 minPeriod,
-            address acceptedToken,
             uint256 tvl,
             bool isActive
         )
@@ -128,7 +118,6 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             pool.poolName,
             pool.apy,
             pool.minPeriod,
-            pool.acceptedToken,
             pool.tvl,
             pool.isActive
         );
@@ -144,7 +133,6 @@ contract InsurancePool is ReentrancyGuard, Ownable {
                 poolName: pool.poolName,
                 apy: pool.apy,
                 minPeriod: pool.minPeriod,
-                acceptedToken: pool.acceptedToken,
                 tvl: pool.tvl,
                 tcp: pool.tcp,
                 isActive: pool.isActive
@@ -166,7 +154,6 @@ contract InsurancePool is ReentrancyGuard, Ownable {
                     poolName: pool.poolName,
                     apy: pool.apy,
                     minPeriod: pool.minPeriod,
-                    acceptedToken: pool.acceptedToken,
                     tvl: pool.tvl,
                     tcp: pool.tcp,
                     isActive: pool.isActive
@@ -190,27 +177,16 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         userDeposit.status = Status.Withdrawn;
         selectedPool.tvl -= userDeposit.amount;
 
-        require(
-            IERC20(selectedPool.acceptedToken).transfer(
-                msg.sender,
-                userDeposit.amount
-            ),
-            "Withdrawal error"
-        );
+        payable(msg.sender).transfer(userDeposit.amount);
 
-        emit Withdraw(
-            msg.sender,
-            selectedPool.acceptedToken,
-            userDeposit.amount,
-            selectedPool.poolName
-        );
+        emit Withdrawn(msg.sender, userDeposit.amount);
     }
 
-    function deposit(
-        uint256 _poolId,
-        uint256 _amount,
-        uint256 _period
-    ) public nonReentrant {
+    function deposit(uint256 _poolId, uint256 _period)
+        public
+        payable
+        nonReentrant
+    {
         Pool storage selectedPool = pools[_poolId];
 
         require(selectedPool.isActive, "Pool is inactive or does not exist");
@@ -218,26 +194,16 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             _period >= selectedPool.minPeriod,
             "Deposit period is less than the minimum required"
         );
-
-        require(
-            IERC20(selectedPool.acceptedToken).transferFrom(
-                msg.sender,
-                address(this),
-                _amount
-            ),
-            "Token transfer failed"
-        );
-
-        uint256 dailyPayout = (_amount * selectedPool.apy) / 365 / 100;
-
         require(
             selectedPool.deposits[msg.sender].amount == 0,
             "Existing deposit found for this address"
         );
 
+        uint256 dailyPayout = (msg.value * selectedPool.apy) / 365 / 100;
+
         selectedPool.deposits[msg.sender] = Deposits({
             lp: msg.sender,
-            amount: _amount,
+            amount: msg.value,
             poolId: _poolId,
             period: _period,
             dailyPayout: dailyPayout,
@@ -245,26 +211,22 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             expiryDate: block.timestamp + (_period * 1 days)
         });
 
-        selectedPool.tvl += _amount;
+        selectedPool.tvl += msg.value;
 
-        emit Deposited(
-            msg.sender,
-            selectedPool.acceptedToken,
-            _amount,
-            selectedPool.poolName
-        );
+        // Emit the Deposited event with the correct parameters
+        emit Deposited(msg.sender, msg.value);
     }
 
-    function payClaim(
-        uint256 poolId,
-        uint256 claimAmount,
-        address recipient
-    ) public onlyGovernance nonReentrant {
+    function payClaim(uint256 poolId, uint256 claimAmount)
+        public
+        onlyGovernance
+        nonReentrant
+    {
         Pool storage pool = pools[poolId];
         require(pool.isActive, "Pool is not active");
         require(pool.tvl >= claimAmount, "Not enough funds in the pool");
 
-        IERC20(pool.acceptedToken).transfer(recipient, claimAmount);
+        payable(msg.sender).transfer(claimAmount);
 
         pool.tcp += claimAmount;
         pool.tvl -= claimAmount;
