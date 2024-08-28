@@ -10,6 +10,11 @@
 				"internalType": "address",
 				"name": "_initialOwner",
 				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_governace",
+				"type": "address"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -248,11 +253,6 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "coverWording",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "maxAmount",
 				"type": "uint256"
@@ -335,11 +335,6 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "_coverWording",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_poolId",
 				"type": "uint256"
@@ -415,11 +410,6 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "string",
-						"name": "coverWording",
-						"type": "string"
-					},
-					{
 						"internalType": "uint256",
 						"name": "maxAmount",
 						"type": "uint256"
@@ -487,7 +477,7 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "coverFee",
+						"name": "claimPaid",
 						"type": "uint256"
 					},
 					{
@@ -561,19 +551,13 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"name": "isChainIdStored",
+		"inputs": [],
+		"name": "governance",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "address",
 				"name": "",
-				"type": "bool"
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -668,11 +652,6 @@
 				"internalType": "uint256",
 				"name": "securityRating",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "coverWording",
-				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -808,11 +787,6 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "coverWording",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "maxAmount",
 				"type": "uint256"
@@ -899,11 +873,6 @@
 				"internalType": "uint256",
 				"name": "securityRating",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "coverWording",
-				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -994,11 +963,6 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "string",
-				"name": "coverWording",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "maxAmount",
 				"type": "uint256"
@@ -1052,6 +1016,34 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_coverId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "enum CoverLib.CoverType",
+				"name": "coverType",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_claimPaid",
+				"type": "uint256"
+			}
+		],
+		"name": "updateUserCoverValue",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			},
@@ -1090,7 +1082,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "coverFee",
+				"name": "claimPaid",
 				"type": "uint256"
 			},
 			{
@@ -1159,7 +1151,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "coverFee",
+				"name": "claimPaid",
 				"type": "uint256"
 			},
 			{
@@ -1228,7 +1220,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "coverFee",
+				"name": "claimPaid",
 				"type": "uint256"
 			},
 			{
@@ -1297,7 +1289,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "coverFee",
+				"name": "claimPaid",
 				"type": "uint256"
 			},
 			{
@@ -1366,7 +1358,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "coverFee",
+				"name": "claimPaid",
 				"type": "uint256"
 			},
 			{

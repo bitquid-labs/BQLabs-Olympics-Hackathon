@@ -239,7 +239,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         return pool.isActive;
     }
 
-    function setGovernance(address _governance) external {
+    function setGovernance(address _governance) external onlyOwner {
         require(governance == address(0), "Governance already set");
         require(_governance != address(0), "Governance address cannot be zero");
         governance = _governance;

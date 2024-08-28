@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./CoverLib.sol";
 
 interface ILP {
     struct Deposits {
@@ -32,6 +33,15 @@ interface ILP {
     ) external view returns (bool);
 }
 
+interface ICover {
+    function updateUserCoverValue(
+        address user,
+        uint256 _coverId,
+        CoverLib.CoverType coverType,
+        uint256 _claimPaid
+    ) external;
+}
+
 contract Governance is ReentrancyGuard, Ownable {
     struct Proposal {
         uint256 id;
@@ -51,7 +61,8 @@ contract Governance is ReentrancyGuard, Ownable {
 
     struct ProposalParams {
         address user;
-        string riskType;
+        CoverLib.CoverType riskType;
+        uint256 coverId;
         string description;
         uint256 poolId;
         uint256 claimAmount;
@@ -67,7 +78,7 @@ contract Governance is ReentrancyGuard, Ownable {
         uint256 indexed proposalId,
         address indexed creator,
         string description,
-        string riskType,
+        CoverLib.CoverType riskType,
         uint256 claimAmount
     );
     event VoteCast(
@@ -80,6 +91,7 @@ contract Governance is ReentrancyGuard, Ownable {
 
     IERC20 public governanceToken;
     ILP public lpContract;
+    ICover public coverContract;
 
     constructor(
         address _governanceToken,
@@ -164,6 +176,14 @@ contract Governance is ReentrancyGuard, Ownable {
                 ),
                 "Error Claiming pay"
             );
+
+            coverContract.updateUserCoverValue(
+                proposal.proposalParam.user,
+                proposal.proposalParam.coverId,
+                proposal.proposalParam.riskType,
+                proposal.proposalParam.claimAmount
+            );
+
             emit ProposalExecuted(_proposalId, true);
         } else {
             emit ProposalExecuted(_proposalId, false);
@@ -187,5 +207,14 @@ contract Governance is ReentrancyGuard, Ownable {
             result[i] = proposals[proposalIds[i]];
         }
         return result;
+    }
+
+    function setCoverContract(address _coverContract) external onlyOwner {
+        require(_coverContract == address(0), "Governance already set");
+        require(
+            _coverContract != address(0),
+            "Governance address cannot be zero"
+        );
+        coverContract = ICover(_coverContract);
     }
 }

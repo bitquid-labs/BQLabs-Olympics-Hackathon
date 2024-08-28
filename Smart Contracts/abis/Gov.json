@@ -94,9 +94,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "string",
+				"internalType": "enum CoverLib.CoverType",
 				"name": "riskType",
-				"type": "string"
+				"type": "uint8"
 			},
 			{
 				"indexed": false,
@@ -159,6 +159,19 @@
 		"type": "event"
 	},
 	{
+		"inputs": [],
+		"name": "coverContract",
+		"outputs": [
+			{
+				"internalType": "contract ICover",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"components": [
@@ -168,9 +181,14 @@
 						"type": "address"
 					},
 					{
-						"internalType": "string",
+						"internalType": "enum CoverLib.CoverType",
 						"name": "riskType",
-						"type": "string"
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverId",
+						"type": "uint256"
 					},
 					{
 						"internalType": "string",
@@ -255,9 +273,14 @@
 								"type": "address"
 							},
 							{
-								"internalType": "string",
+								"internalType": "enum CoverLib.CoverType",
 								"name": "riskType",
-								"type": "string"
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "coverId",
+								"type": "uint256"
 							},
 							{
 								"internalType": "string",
@@ -338,9 +361,14 @@
 								"type": "address"
 							},
 							{
-								"internalType": "string",
+								"internalType": "enum CoverLib.CoverType",
 								"name": "riskType",
-								"type": "string"
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "coverId",
+								"type": "uint256"
 							},
 							{
 								"internalType": "string",
@@ -490,9 +518,14 @@
 						"type": "address"
 					},
 					{
-						"internalType": "string",
+						"internalType": "enum CoverLib.CoverType",
 						"name": "riskType",
-						"type": "string"
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverId",
+						"type": "uint256"
 					},
 					{
 						"internalType": "string",
@@ -521,6 +554,19 @@
 	{
 		"inputs": [],
 		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_coverContract",
+				"type": "address"
+			}
+		],
+		"name": "setCoverContract",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
