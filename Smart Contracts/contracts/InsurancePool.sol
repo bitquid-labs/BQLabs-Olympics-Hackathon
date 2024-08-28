@@ -153,6 +153,29 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         return result;
     }
 
+    function getPoolsByAddress(address _userAddress)
+        public
+        view
+        returns (PoolInfo[] memory)
+    {
+        PoolInfo[] memory result = new PoolInfo[](poolCount);
+        for (uint256 i = 1; i <= poolCount; i++) {
+            Pool storage pool = pools[i];
+            if (pool.deposits[_userAddress].amount > 0) {
+                result[i - 1] = PoolInfo({
+                    poolName: pool.poolName,
+                    apy: pool.apy,
+                    minPeriod: pool.minPeriod,
+                    acceptedToken: pool.acceptedToken,
+                    tvl: pool.tvl,
+                    tcp: pool.tcp,
+                    isActive: pool.isActive
+                });
+            }
+        }
+        return result;
+    }
+
     function withdraw(uint256 _poolId) public nonReentrant {
         Pool storage selectedPool = pools[_poolId];
         Deposits storage userDeposit = selectedPool.deposits[msg.sender];
