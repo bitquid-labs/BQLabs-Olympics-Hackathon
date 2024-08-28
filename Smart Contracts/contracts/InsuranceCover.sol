@@ -55,7 +55,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     uint public coverFeeBalance;
     ILP public lpContract;
 
-    mapping(uint256 => bool) public isChainIdStored;
+    mapping(string => bool) public isChainIdStored;
     mapping(uint256 => bool) public slashingCoverExist;
     mapping(uint256 => bool) public smartContractCoverExist;
     mapping(uint256 => bool) public stablecoinCoverExist;
@@ -87,8 +87,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     event CoverCreated(
         string name,
-        string network,
-        uint256 chainId,
+        string chains,
         CoverLib.CoverType coverType
     );
     event CoverPurchased(
@@ -114,8 +113,11 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     function createCover(
         CoverLib.CoverType _riskType,
         string memory _coverName,
-        string memory _network,
-        uint256 _chainId,
+        string memory _chains,
+        uint256 _dailyCost,
+        uint256 _capacity,
+        uint256 _securityRating,
+        string memory _coverWording,
         uint256 _poolId,
         string memory _description
     ) public onlyOwner {
@@ -124,8 +126,11 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             id: 0,
             coverName: _coverName,
             riskType: _riskType,
-            network: _network,
-            chainId: _chainId,
+            chains: _chains,
+            dailyCost: _dailyCost,
+            capacity: _capacity,
+            securityRating: _securityRating,
+            coverWording: _coverWording,
             maxAmount: _maxAmount,
             currentBalance: _maxAmount,
             poolId: _poolId,
@@ -152,12 +157,12 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             revert UnsupportedCoverType();
         }
 
-        if (!isChainIdStored[_chainId]) {
-            isChainIdStored[_chainId] = true;
+        if (!isChainIdStored[_chains]) {
+            isChainIdStored[_chains] = true;
         }
         allCovers.push(cover);
 
-        emit CoverCreated(_coverName, _network, _chainId, _riskType);
+        emit CoverCreated(_coverName, _chains, _riskType);
     }
 
     function purchaseCover(

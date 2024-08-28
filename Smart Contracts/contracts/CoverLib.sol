@@ -6,8 +6,11 @@ library CoverLib {
         uint256 id;
         string coverName;
         CoverType riskType;
-        string network;
-        uint256 chainId;
+        string chains;
+        uint256 dailyCost;
+        uint256 capacity;
+        uint256 securityRating;
+        string coverWording;
         uint256 maxAmount;
         uint256 currentBalance;
         uint256 poolId;

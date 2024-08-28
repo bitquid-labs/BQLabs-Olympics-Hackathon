@@ -26,6 +26,16 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         uint256 expiryDate;
     }
 
+    // Define PoolInfo struct
+    struct PoolInfo {
+        string poolName;
+        uint256 apy;
+        uint256 minPeriod;
+        uint256 tvl;
+        uint256 tcp; // Total claim paid to users
+        bool isActive; // Pool status to handle soft deletion
+    }
+
     enum Status {
         Active,
         Withdrawn
@@ -102,6 +112,44 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         );
     }
 
+    // Function to get all pools
+    function getAllPools() public view returns (PoolInfo[] memory) {
+        PoolInfo[] memory result = new PoolInfo[](poolCount);
+
+        for (uint256 i = 1; i <= poolCount; i++) {
+            Pool storage pool = pools[i];
+            result[i - 1] = PoolInfo({
+                poolName: pool.poolName,
+                apy: pool.apy,
+                minPeriod: pool.minPeriod,
+                tvl: pool.tvl,
+                tcp: pool.tcp,
+                isActive: pool.isActive
+            });
+        }
+        return result;
+    }
+
+    function getPoolsByAddress(
+        address _userAddress
+    ) public view returns (PoolInfo[] memory) {
+        PoolInfo[] memory result = new PoolInfo[](poolCount);
+        for (uint256 i = 1; i <= poolCount; i++) {
+            Pool storage pool = pools[i];
+            if (pool.deposits[_userAddress].amount > 0) {
+                result[i - 1] = PoolInfo({
+                    poolName: pool.poolName,
+                    apy: pool.apy,
+                    minPeriod: pool.minPeriod,
+                    tvl: pool.tvl,
+                    tcp: pool.tcp,
+                    isActive: pool.isActive
+                });
+            }
+        }
+        return result;
+    }
+
     function withdraw(uint256 _poolId) public nonReentrant {
         Pool storage selectedPool = pools[_poolId];
         Deposits storage userDeposit = selectedPool.deposits[msg.sender];
@@ -172,7 +220,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         pool.tcp += claimAmount;
         pool.tvl -= claimAmount;
 
-        emit ClaimPaid(recipient, pool.poolName, claimAmount);
+        emit ClaimPaid(msg.sender, pool.poolName, claimAmount);
     }
 
     function getUserDeposit(

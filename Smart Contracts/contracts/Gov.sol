@@ -89,7 +89,7 @@ contract Governance is ReentrancyGuard, Ownable {
     ) Ownable(_initialOwner) {
         governanceToken = IERC20(_governanceToken);
         lpContract = ILP(_insurancePool);
-        votingDuration = _votingDuration;
+        votingDuration = _votingDuration * 1 days;
     }
 
     function createProposal(ProposalParams memory params) external {
