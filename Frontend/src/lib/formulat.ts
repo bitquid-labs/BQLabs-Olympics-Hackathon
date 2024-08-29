@@ -20,3 +20,14 @@ export function bnToNumber(value: bigint, decimals: number = 18) {
 export function UNIXToDate(timestamp: bigint) {
   return new Date(Number(timestamp) * 1000); 
 }
+
+
+export function formatDate(date: Date): string {
+  // Custom formatting: MM/DD/YYYY
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+
+  return `${month}/${day}/${year}`;
+}
+

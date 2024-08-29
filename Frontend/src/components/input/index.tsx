@@ -14,6 +14,7 @@ type InputProps = {
   className?: string;
   label?: string;
   description?: string;
+  disabled?: boolean;
   variant?: (typeof InputVariant)[number];
   size?: (typeof InputSize)[number];
   rounded?: (typeof InputRound)[number];
@@ -32,6 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       className,
       label,
       description,
+      disabled = false,
       variant = 'primary',
       size = 'base',
       rounded = 'full',
@@ -90,6 +92,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
           <input
             ref={ref}
+            disabled={disabled}
             className={cn(
               'placeholder:text-light/50 min-w-0 flex-auto border-none bg-transparent p-0 focus:border-none focus:outline-none focus:outline-offset-0 focus:ring-0',
               classNames?.input
