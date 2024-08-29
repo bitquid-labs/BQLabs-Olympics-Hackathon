@@ -49,10 +49,10 @@ export default function ConnectScreen() {
   const connectionStatus = isConnecting
     ? 'Connecting...'
     : isConnected
-    ? 'Connected'
-    : isDisconnected
-    ? 'Disconnected'
-    : 'Unknown';
+      ? 'Connected'
+      : isDisconnected
+        ? 'Disconnected'
+        : 'Unknown';
 
   // Fetch user's balance and format it for display
   const fetchBalance = useCallback(async () => {

@@ -7,6 +7,7 @@ export type CoverType = {
   items: string[];
 };
 
+
 export type MyCoverType = {
   id: number;
   logo: string;
@@ -15,4 +16,4 @@ export type MyCoverType = {
   detail: string;
   value: string;
   expiry: string;
-};
+}

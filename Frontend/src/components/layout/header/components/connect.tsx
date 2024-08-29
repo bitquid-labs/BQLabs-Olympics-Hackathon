@@ -1,13 +1,22 @@
-import { useWeb3Modal } from '@web3modal/wagmi/react';
+import {
+  useAccount,
+  useDisconnect,
+  useModal,
+} from '@particle-network/connectkit';
 import React from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
 
 import Button from '@/components/button/button';
 
 export const ConnectButton = (): JSX.Element => {
-  const { open, close } = useWeb3Modal();
-  const { address, isConnecting, isConnected, isDisconnected } = useAccount();
+  const { setOpen } = useModal();
   const { disconnectAsync } = useDisconnect();
+
+  const { address, isConnected } = useAccount();
+
+  // Function to truncate Ethereum address
+  const truncateAddress = (address: string) => {
+    return address.slice(0, 6) + '...' + address.slice(-4);
+  };
 
   const handleDisconnect = async () => {
     try {
@@ -18,11 +27,6 @@ export const ConnectButton = (): JSX.Element => {
     }
   };
 
-  // Function to truncate Ethereum address
-  const truncateAddress = (address: string) => {
-    return address.slice(0, 6) + '...' + address.slice(-4);
-  };
-
   return (
     <div>
       {isConnected && address ? (
@@ -30,13 +34,12 @@ export const ConnectButton = (): JSX.Element => {
           variant='gradient-outline'
           size='xl'
           className='bg-background-100'
-          // onClick={close}
-          onClick={async () => handleDisconnect()}
+          onClick={handleDisconnect}
         >
           {truncateAddress(address)}
         </Button>
       ) : (
-        <Button variant='primary' size='xl' onClick={() => open()}>
+        <Button variant='primary' size='xl' onClick={() => setOpen(true)}>
           Connect Wallet
         </Button>
       )}

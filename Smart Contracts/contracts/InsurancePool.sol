@@ -41,14 +41,27 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         Withdrawn
     }
 
+    event Deposited(address user, uint256 amount);
+    event Withdrawn(address user, uint256 amount);
+
     mapping(uint256 => Pool) public pools;
     uint256 public poolCount;
     address public governance;
 
-    event Deposited(address indexed user, uint256 amount, string pool);
-    event Withdraw(address indexed user, uint256 amount, string pool);
-    event ClaimPaid(address indexed recipient, string pool, uint256 amount);
-    event PoolCreated(uint256 indexed id, string poolName);
+    event Deposited(
+        address indexed user,
+        address indexed token,
+        uint256 amount,
+        string pool
+    );
+    event Withdraw(
+        address indexed user,
+        address indexed token,
+        uint256 amount,
+        string pool
+    );
+    event ClaimPaid(address indexed token, string pool, uint256 amount);
+    event PoolCreated(uint256 indexed id);
     event PoolUpdated(uint256 indexed poolId, uint256 apy, uint256 _minPeriod);
 
     constructor(address _initialOwner) Ownable(_initialOwner) {}
@@ -66,7 +79,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         newPool.tvl = 0;
         newPool.isActive = true;
 
-        emit PoolCreated(poolCount, _poolName);
+        emit PoolCreated(poolCount);
     }
 
     function updatePool(
@@ -89,9 +102,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         pools[_poolId].isActive = false;
     }
 
-    function getPool(
-        uint256 _poolId
-    )
+    function getPool(uint256 _poolId)
         public
         view
         returns (
@@ -130,14 +141,27 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         return result;
     }
 
-    function getPoolsByAddress(
-        address _userAddress
-    ) public view returns (PoolInfo[] memory) {
-        PoolInfo[] memory result = new PoolInfo[](poolCount);
+    function getPoolsByAddress(address _userAddress)
+        public
+        view
+        returns (PoolInfo[] memory)
+    {
+        uint256 resultCount = 0;
         for (uint256 i = 1; i <= poolCount; i++) {
             Pool storage pool = pools[i];
             if (pool.deposits[_userAddress].amount > 0) {
-                result[i - 1] = PoolInfo({
+                resultCount++;
+            }
+        }
+
+        PoolInfo[] memory result = new PoolInfo[](resultCount);
+
+        uint256 resultIndex = 0;
+
+        for (uint256 i = 1; i <= poolCount; i++) {
+            Pool storage pool = pools[i];
+            if (pool.deposits[_userAddress].amount > 0) {
+                result[resultIndex++] = PoolInfo({
                     poolName: pool.poolName,
                     apy: pool.apy,
                     minPeriod: pool.minPeriod,
@@ -163,32 +187,32 @@ contract InsurancePool is ReentrancyGuard, Ownable {
 
         userDeposit.status = Status.Withdrawn;
         selectedPool.tvl -= userDeposit.amount;
+        
+        payable(msg.sender).transfer(userDeposit.amount);
 
-        (bool success, ) = msg.sender.call{value: userDeposit.amount}("");
-        require(success, "Withdrawal failed");
-
-        emit Withdraw(msg.sender, userDeposit.amount, selectedPool.poolName);
+        emit Withdrawn(msg.sender, userDeposit.amount);
     }
 
-    function deposit(
-        uint256 _poolId,
-        uint256 _period
-    ) public payable nonReentrant {
+    function deposit(uint256 _poolId, uint256 _period)
+        public
+        payable
+        nonReentrant
+    {
         Pool storage selectedPool = pools[_poolId];
 
         require(msg.value > 0, "Amount must be greater than 0");
         require(selectedPool.isActive, "Pool is inactive or does not exist");
+        require(msg.value > 0, "Not enough value");
         require(
             _period >= selectedPool.minPeriod,
             "Deposit period is less than the minimum required"
         );
-
-        uint256 dailyPayout = (msg.value * selectedPool.apy) / 365 / 100;
-
         require(
             selectedPool.deposits[msg.sender].amount == 0,
             "Existing deposit found for this address"
         );
+
+        uint256 dailyPayout = (msg.value * selectedPool.apy) / 365 / 100;
 
         selectedPool.deposits[msg.sender] = Deposits({
             lp: msg.sender,
@@ -202,20 +226,20 @@ contract InsurancePool is ReentrancyGuard, Ownable {
 
         selectedPool.tvl += msg.value;
 
-        emit Deposited(msg.sender, msg.value, selectedPool.poolName);
+        // Emit the Deposited event with the correct parameters
+        emit Deposited(msg.sender, msg.value);
     }
 
-    function payClaim(
-        uint256 poolId,
-        uint256 claimAmount,
-        address recipient
-    ) public onlyGovernance nonReentrant {
+    function payClaim(uint256 poolId, uint256 claimAmount)
+        public
+        onlyGovernance
+        nonReentrant
+    {
         Pool storage pool = pools[poolId];
         require(pool.isActive, "Pool is not active");
         require(pool.tvl >= claimAmount, "Not enough funds in the pool");
 
-        (bool success, ) = recipient.call{value: claimAmount}("");
-        require(success, "Claim payment failed");
+        payable(msg.sender).transfer(claimAmount);
 
         pool.tcp += claimAmount;
         pool.tvl -= claimAmount;
@@ -223,10 +247,11 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         emit ClaimPaid(msg.sender, pool.poolName, claimAmount);
     }
 
-    function getUserDeposit(
-        uint256 _poolId,
-        address _user
-    ) public view returns (Deposits memory) {
+    function getUserDeposit(uint256 _poolId, address _user)
+        public
+        view
+        returns (Deposits memory)
+    {
         return pools[_poolId].deposits[_user];
     }
 
