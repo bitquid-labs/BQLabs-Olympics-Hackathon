@@ -187,7 +187,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
 
         userDeposit.status = Status.Withdrawn;
         selectedPool.tvl -= userDeposit.amount;
-
+        
         payable(msg.sender).transfer(userDeposit.amount);
 
         emit Withdrawn(msg.sender, userDeposit.amount);
@@ -200,6 +200,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     {
         Pool storage selectedPool = pools[_poolId];
 
+        require(msg.value > 0, "Amount must be greater than 0");
         require(selectedPool.isActive, "Pool is inactive or does not exist");
         require(msg.value > 0, "Not enough value");
         require(
@@ -263,7 +264,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         return pool.isActive;
     }
 
-    function setGovernance(address _governance) external {
+    function setGovernance(address _governance) external onlyOwner {
         require(governance == address(0), "Governance already set");
         require(_governance != address(0), "Governance address cannot be zero");
         governance = _governance;
