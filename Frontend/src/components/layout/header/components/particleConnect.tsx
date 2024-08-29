@@ -34,7 +34,7 @@ export const ConnectButton = (): JSX.Element => {
           variant='gradient-outline'
           size='xl'
           className='bg-background-100'
-          onClick={handleDisconnect}
+          onClick={async () => handleDisconnect()}
         >
           {truncateAddress(address)}
         </Button>

@@ -6,8 +6,10 @@ library CoverLib {
         uint256 id;
         string coverName;
         CoverType riskType;
-        string network;
-        uint256 chainId;
+        string chains;
+        uint256 dailyCost;
+        uint256 capacity;
+        uint256 securityRating;
         uint256 maxAmount;
         uint256 currentBalance;
         uint256 poolId;
@@ -20,7 +22,7 @@ library CoverLib {
         string coverName;
         uint256 chainId;
         uint256 coverValue; // This is the value of the cover purchased
-        uint256 coverFee; // This is the fee of the cover purchased, it would be dynamic and passed in on the frontend based on the value purchased.
+        uint256 claimPaid;
         uint256 coverPeriod; // This is the period the cover is purchased for in days
         uint256 startDay; // When the cover starts
         uint256 endDay; // When the cover expires

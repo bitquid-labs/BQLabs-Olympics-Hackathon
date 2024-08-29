@@ -1,15 +1,100 @@
 import Link from 'next/link';
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-
 import Button from '@/components/button/button';
-
-import { StackDetail, tempStacks } from '@/screen/stake/constants';
-
+// import { StackDetail, tempStacks } from '@/screen/stake/constants';
 import LeftArrowIcon from '~/svg/left-arrow.svg';
 
+import { useReadContracts, useChainId, useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { MyStackDetail, tempMyStacks, StakeType } from '@/screen/stake/constants';
+import { useInsurancePool } from '@/screen/governance/hooks/useInsurancePool';
+import { InsurancePoolContract } from '@/constant/contracts';
+import { MockERC20Contract } from '@/constant/contracts';
+
+export type InsurancePoolType = {
+  poolName: string;
+  apy: number;
+  minPeriod: number;
+  acceptedToken: string;
+  tvl: number;
+  tcp: number;
+  isActive: boolean;
+};
+
+
 export const StakeScreen = (): JSX.Element => {
+
+  const chainId = useChainId()
+
+  const { address, isConnected } = useAccount()
+
+  const [myStacks, setMyStacks] = useState<StakeType[]>([]);
+
+  const { data: contractData } = useReadContracts({
+    contracts: [
+      {
+        ...InsurancePoolContract,
+        functionName: 'getAllPools',
+        args: [],
+      },
+    ],
+  });
+
+  const {
+    data: hash,
+    isPending,
+    writeContract
+  } = useWriteContract();
+
+  const handleWriteContract = (poolId: number, amount: string, day: number): void => {
+    console.log('wallet address is: ', `${address}`);
+
+    writeContract({
+      ...MockERC20Contract,
+      functionName: 'approve',
+      args: [`${address}`, BigInt(amount)],
+    });
+
+    writeContract({
+      ...InsurancePoolContract,
+      functionName: 'deposit',
+      args: [BigInt(poolId.toString()), BigInt(amount), BigInt(day.toString())],
+    });
+    // console.log("poolId is ", poolId);
+  }
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  })
+
+  const convertData = (data: InsurancePoolType[]): StakeType[] => {
+    const result: StakeType[] = [];
+    for (let i = 0; i < data.length; i++) {
+      const tvl = convertTvl(Number(data[i].tvl));
+      result.push({
+        rating: data[i].poolName,
+        apy: `${data[i].apy}%`,
+        currency: 'BTCP',
+        tenure: `${data[i].minPeriod} days`,
+        poolId: (i + 1).toString(),
+        tvl: tvl.toString()
+      });
+    }
+    return result;
+  }
+
+  const convertTvl = (amount: number) => {
+    return amount / 10 ** 18;
+  }
+
+  useEffect(() => {
+    if (contractData && contractData[0].result) {
+      setMyStacks(convertData(contractData[0].result as InsurancePoolType[]));
+      // console.log("111", contractData[0].result, isConnected, chainId, address);
+    }
+
+  }, [contractData]);
+
   return (
     <section className='flex h-full flex-auto flex-col'>
       <div className='layout flex flex-auto flex-col items-center gap-10 p-10 pt-12'>
@@ -17,7 +102,7 @@ export const StakeScreen = (): JSX.Element => {
           Stake Idle Assets To Secure And Earn
         </div>
         <div className='flex w-full flex-col gap-6'>
-          {tempStacks.map((stack, index) => (
+          {myStacks.map((stack, index) => (
             <div
               key={index}
               className='bg-background-100 flex w-full gap-5 rounded-[15px] p-4'
@@ -25,7 +110,10 @@ export const StakeScreen = (): JSX.Element => {
               {Object.keys(stack).map((key, i) => (
                 <div
                   key={i}
-                  className='flex w-full flex-col items-center gap-6'
+                  className={cn(
+                    'flex w-full flex-col items-center gap-6',
+                    (key === 'poolId' || key === 'tvl') && 'hidden'
+                  )}
                 >
                   <div
                     className={cn(
@@ -36,7 +124,7 @@ export const StakeScreen = (): JSX.Element => {
                       key === 'tenure' && 'bg-[#E915C7]'
                     )}
                   >
-                    {StackDetail[key as keyof typeof StackDetail]}
+                    {MyStackDetail[key as keyof typeof MyStackDetail]}
                   </div>
                   <div className='font-semibold'>
                     {stack[key as keyof typeof stack]}
@@ -48,7 +136,7 @@ export const StakeScreen = (): JSX.Element => {
                   Stack
                 </div>
                 <Link
-                  href={`/pool/${stack.currency}`}
+                  href={`/pool/${stack.currency}/${index + 1}`}
                   className='font-semibold underline underline-offset-4'
                 >
                   Details

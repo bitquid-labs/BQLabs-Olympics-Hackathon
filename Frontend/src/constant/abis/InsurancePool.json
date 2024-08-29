@@ -66,6 +66,25 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Deposited",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "user",
@@ -120,12 +139,6 @@
 				"internalType": "uint256",
 				"name": "id",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "PoolCreated",
@@ -151,12 +164,6 @@
 				"internalType": "uint256",
 				"name": "_minPeriod",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "PoolUpdated",
@@ -194,6 +201,25 @@
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Withdrawn",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "string",
@@ -209,11 +235,6 @@
 				"internalType": "uint256",
 				"name": "_minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "createPool",
@@ -243,11 +264,6 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "_period",
 				"type": "uint256"
 			}
@@ -255,6 +271,51 @@
 		"name": "deposit",
 		"outputs": [],
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getAllPools",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "poolName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "apy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minPeriod",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tvl",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tcp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isActive",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct InsurancePool.PoolInfo[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -281,11 +342,6 @@
 				"internalType": "uint256",
 				"name": "minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "acceptedToken",
-				"type": "address"
 			},
 			{
 				"internalType": "uint256",
@@ -315,6 +371,57 @@
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_userAddress",
+				"type": "address"
+			}
+		],
+		"name": "getPoolsByAddress",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "poolName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "apy",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minPeriod",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tvl",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tcp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isActive",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct InsurancePool.PoolInfo[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
@@ -418,11 +525,6 @@
 				"internalType": "uint256",
 				"name": "claimAmount",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "recipient",
-				"type": "address"
 			}
 		],
 		"name": "payClaim",
@@ -486,11 +588,6 @@
 				"internalType": "uint256",
 				"name": "minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "acceptedToken",
-				"type": "address"
 			},
 			{
 				"internalType": "uint256",
@@ -560,11 +657,6 @@
 				"internalType": "uint256",
 				"name": "_minPeriod",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_acceptedToken",
-				"type": "address"
 			}
 		],
 		"name": "updatePool",

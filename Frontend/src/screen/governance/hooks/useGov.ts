@@ -38,7 +38,7 @@ export const useGov = () => {
   });
 
   useEffect(() => {
-    console.log(contractData);
+    console.log('2222', contractData);
     if (contractData && contractData[0].result) {
       setProposals(contractData[0].result as ProposalType[]);
     }
