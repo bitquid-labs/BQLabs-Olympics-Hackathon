@@ -5,7 +5,8 @@ import Input from '@/components/input';
 
 import { StakeType } from '@/screen/stake/constants';
 
-import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt } from 'wagmi';
+import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
+import { writeContract } from '@wagmi/core';
 import { InsurancePoolContract, MockERC20Contract } from '@/constant/contracts';
 import { InsurancePoolType } from '@/screen/stake/components/myStake';
 import { parseUnits } from 'ethers';
@@ -28,8 +29,7 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
 
   const {
     data: hash,
-    isPending,
-    writeContract
+    isPending
   } = useWriteContract();
 
   const handleDepositContract = async (poolId: string, day: number) => {
@@ -37,20 +37,20 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
     const realAmount = convertAmount(amount);
     const params = [
       Number(poolId),
-      Number(day),
-      BigInt(realAmount)
+      Number(day)
     ];
 
+    console.log("params ", params)
+
     try {
-      await writeContract(config, {
-        ...InsurancePoolContract,
-        // address: InsurancePoolContract.address as `0x${string}`,
-        // abi: InsurancePoolContract.abi,
+      const tx = await writeContract(config, {
+        abi: InsurancePoolContract.abi,
+        address: InsurancePoolContract.address as `0x${string}`,
         functionName: 'deposit',
         args: params,
-        // args: [BigInt(poolId), BigInt(day.toString())],
-        // value: parseUnits((coverFee).toString(), 18)
+        value: parseUnits((realAmount).toString(), 18)
       });
+      console.log(InsurancePoolContract.address as `0x${string}`, tx)
     } catch (e) {
       console.log('error:', e);
     }

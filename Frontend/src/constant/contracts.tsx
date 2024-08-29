@@ -1,7 +1,6 @@
 import { JsonFragment } from '@ethersproject/abi';
 import Gov from './abis/Gov.json';
 import ICoverABI from './abis/InsuranceCover.json';
-
 import InsurancePool from './abis/InsurancePool.json';
 import MockERC20 from './abis/MockERC20.json';
 
@@ -11,7 +10,7 @@ export type ContractType = {
 };
 
 export const GovContract: ContractType = {
-  abi: Gov as JsonFragment[],
+  abi: Gov,
   address: '0x7cBDCa7f78B3A43Da33892bdF7D10c80351b799c',
 };
 
@@ -22,7 +21,7 @@ export const ICoverContract: ContractType = {
 
 export const InsurancePoolContract: ContractType = {
   abi: InsurancePool,
-  address: '0x08c835Fe23989cb85d40018114c7e3d064a2AE48',
+  address: '0xd12e397A207f68E8cD53F7740c70D8828bBd0C18',
 };
 
 export const MockERC20Contract: ContractType = {
