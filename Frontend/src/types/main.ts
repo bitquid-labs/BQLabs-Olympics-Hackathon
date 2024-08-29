@@ -38,3 +38,30 @@ export interface IUserCover {
 export const enum CoverToken {
   
 }
+
+export type InsurancePoolType = {
+  poolName: string;
+  apy: number;
+  minPeriod: number;
+  acceptedToken: string;
+  tvl: number;
+  tcp: number;
+  isActive: boolean;
+};
+
+export type ProposalType = {
+  id: number;
+  votesFor: number;
+  votesAgainst: number;
+  createdAt: number;
+  deadline: number;
+  executed: boolean;
+  proposalParam: {
+    user: string;
+    coverId: number;
+    description: string;
+    poolId: number;
+    claimAmount: number;
+    riskType?: RiskType | undefined;
+  };
+};

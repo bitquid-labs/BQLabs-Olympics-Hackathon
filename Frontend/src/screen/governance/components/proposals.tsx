@@ -1,14 +1,20 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Button from '@/components/button/button';
 
-import { ProposalDetail, tempProposlas } from '@/screen/governance/constants';
+import { ProposalDetail, TempProposalType } from '@/screen/governance/constants';
+import { ProposalType } from '@/types/main';
+import { convertTempProposalTypeData, convertTvl } from '@/lib/utils';
 
-export const Proposals = (): JSX.Element => {
+type CurrencyProps = {
+  proposals: ProposalType[] | undefined;
+};
+
+export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {  
   return (
     <div className='flex w-full flex-col gap-6'>
-      {tempProposlas.map((proposal, index) => (
+      {convertTempProposalTypeData(proposals ? proposals : []).map((proposal, index) => (
         <div
           key={index}
           className='bg-background-100 flex w-full gap-5 rounded-[15px] p-4'
