@@ -5,8 +5,9 @@ import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CoverProvider } from "@/contexts/CoverContext"
 import { createWeb3Modal } from '@web3modal/wagmi/react';
-
-import { config, metadata, projectId } from '@/lib/wagmi';
+import { ClaimProvider } from "@/contexts/ClaimContext"
+import { metadata, projectId } from '@/lib/wagmi';
+import { config } from "@/lib/config"
 
 const queryClient = new QueryClient()
 
@@ -26,9 +27,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <CoverProvider>
-        <QueryClientProvider client={queryClient}>
-          {mounted && children}
-        </QueryClientProvider>
+        <ClaimProvider>
+          <QueryClientProvider client={queryClient}>
+            {mounted && children}
+          </QueryClientProvider>
+        </ClaimProvider>
       </CoverProvider>
     </WagmiProvider>
   )

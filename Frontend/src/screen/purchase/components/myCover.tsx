@@ -1,11 +1,12 @@
-import { useRouter } from 'next/navigation';
-import React, { useCallback } from 'react';
+import { useRouter } from 'next/navigation'
+import React, { useCallback, useContext } from 'react';
 
 import Button from '@/components/button/button';
 
 import { MyCoverType } from '@/screen/purchase/types';
 import { IUserCover } from "@/types/main";
 import { bnToNumber, UNIXToDate } from "@/lib/formulat";
+import { ClaimContext } from "@/contexts/ClaimContext";
 
 export type CoverProps = {
   onSubmit?: () => void;
@@ -19,7 +20,7 @@ export const MyCover = (props: CoverProps): JSX.Element => {
   const coverValue = bnToNumber(coverValueBN || 0n);
 
   const handleLinkDetail = useCallback(() => {
-    router.push(`/cover/${coverId}`);
+    router.push(`/claim/?coverId=${coverId}`);
   }, [coverId, router]);
 
   return (
