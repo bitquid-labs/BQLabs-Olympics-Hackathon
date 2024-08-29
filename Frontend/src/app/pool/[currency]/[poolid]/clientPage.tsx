@@ -9,9 +9,9 @@ import { InsurancePoolContract } from '@/constant/contracts';
 import { InsurancePoolType } from '@/screen/stake/components/myStake';
 
 export const DefaultClientPage = ({
-  params: { currency },
+  params: { currency, poolid },
 }: {
-  params: { currency: string };
+  params: { currency: string, poolid: string };
 }): JSX.Element => {
 
   const [pools, setPools] = useState<StakeType[]>([]);
@@ -34,7 +34,8 @@ export const DefaultClientPage = ({
         apy: `${data[i].apy}%`,
         currency: 'BQ',
         tenure: `${data[i].minPeriod} days`,
-        // claim: `${tvl} BTC`
+        poolId: (i + 1).toString(),
+        tvl: tvl.toString()
       });
     }
     return result;
@@ -51,5 +52,5 @@ export const DefaultClientPage = ({
 
   }, [contractData]);
 
-  return <PoolScreen currency={currency} pools={pools} />;
+  return <PoolScreen currency={currency} pools={pools} poolId={poolid} />;
 };
