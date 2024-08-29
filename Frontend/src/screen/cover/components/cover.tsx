@@ -12,7 +12,7 @@ import { CoverContext } from "@/contexts/CoverContext";
 import { writeContract } from '@wagmi/core'
 import { config } from "@/lib/config";
 import INSURANCECOVER_ABI from '@/constant/abis/InsuranceCover.json';
-import { CONTRACT_ADDRESSES } from "@/constant/contracts";
+import { ICoverContract } from "@/constant/contracts";
 import { MAX_COVER_PERIOD, MIN_COVER_PERIOD } from "@/constant/config";
 import { CoverDueTo } from "@/types/main";
 import { useAccount } from "wagmi";
@@ -54,8 +54,8 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
 
     try {
       await writeContract(config, {
-        abi: INSURANCECOVER_ABI,
-        address: CONTRACT_ADDRESSES.INSURANCE_COVER as `0x${string}`,
+        abi: ICoverContract.abi,
+        address: ICoverContract.address as `0x${string}`,
         functionName: 'purchaseCover',
         args: params,
         value: parseUnits((coverFee).toString(), 18)

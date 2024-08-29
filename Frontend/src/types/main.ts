@@ -26,7 +26,7 @@ export interface IUserCover {
   chainId?: number | undefined,
   coverFee?: bigint | undefined,
   coverId?: bigint | undefined,
-  covername?: string | undefined,
+  coverName?: string | undefined,
   coverPeriod?: bigint | undefined,
   coverValue?: bigint | undefined,
   endDay?: bigint | undefined,

@@ -51,9 +51,6 @@ export const Cover = (cover: ICover): JSX.Element => {
         <div className='text-base capitalize leading-[20px]'>
           security rating
         </div>
-        <div className='text-base capitalize leading-[20px]'>
-          cover wording
-        </div>
       </div>
       <div className='flex justify-center'>
         <Button

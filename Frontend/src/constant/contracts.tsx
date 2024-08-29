@@ -1,13 +1,14 @@
+import { JsonFragment } from '@ethersproject/abi';
 import Gov from './abis/Gov.json';
 import ICoverABI from './abis/InsuranceCover.json';
 
 export type ContractType = {
-  abi: any;
+  abi: JsonFragment[];
   address: `0x${string}`;
 };
 
 export const GovContract: ContractType = {
-  abi: Gov,
+  abi: Gov as JsonFragment[],
   address: '0x7cBDCa7f78B3A43Da33892bdF7D10c80351b799c',
 };
 

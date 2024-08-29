@@ -18,6 +18,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@ethersproject/abi": "^5.7.0",
     "@particle-network/chains": "^1.6.7",
     "@particle-network/connectkit": "^2.0.1",
     "@radix-ui/react-slider": "^1.2.0",
