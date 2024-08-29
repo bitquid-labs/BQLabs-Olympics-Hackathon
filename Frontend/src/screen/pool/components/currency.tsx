@@ -6,7 +6,6 @@ import Input from '@/components/input';
 import { StakeType } from '@/screen/stake/constants';
 
 import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
-import { writeContract } from '@wagmi/core';
 import { InsurancePoolContract, MockERC20Contract } from '@/constant/contracts';
 import { InsurancePoolType } from '@/types/main';
 import { parseUnits } from 'ethers';
