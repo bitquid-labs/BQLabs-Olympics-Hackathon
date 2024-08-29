@@ -157,7 +157,7 @@ contract Governance is ReentrancyGuard, Ownable {
         emit VoteCast(msg.sender, _proposalId, _vote, voterWeight);
     }
 
-    function executeProposal(uint256 _proposalId) external nonReentrant {
+    function executeProposal(uint256 _proposalId) external onlyOwner nonReentrant {
         Proposal storage proposal = proposals[_proposalId];
         require(
             block.timestamp > proposal.deadline,

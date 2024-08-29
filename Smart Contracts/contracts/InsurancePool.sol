@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract InsurancePool is ReentrancyGuard, Ownable {
+    error LpNotActive();
+
     struct Pool {
         string poolName;
         uint256 apy;
@@ -44,14 +46,18 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     mapping(uint256 => Pool) public pools;
     uint256 public poolCount;
     address public governance;
+    address public initialOwner;
 
     event Deposited(address indexed user, uint256 amount, string pool);
     event Withdraw(address indexed user, uint256 amount, string pool);
     event ClaimPaid(address indexed recipient, string pool, uint256 amount);
     event PoolCreated(uint256 indexed id, string poolName);
     event PoolUpdated(uint256 indexed poolId, uint256 apy, uint256 _minPeriod);
+    event ClaimAttempt(uint256, uint256, address);
 
-    constructor(address _initialOwner) Ownable(_initialOwner) {}
+    constructor(address _initialOwner) Ownable(_initialOwner) {
+        initialOwner = _initialOwner;
+    }
 
     function createPool(
         string memory _poolName,
@@ -85,7 +91,9 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     }
 
     function deactivatePool(uint256 _poolId) public onlyOwner {
-        require(pools[_poolId].isActive, "Pool is already inactive");
+        if (!pools[_poolId].isActive) {
+            revert LpNotActive();
+        }
         pools[_poolId].isActive = false;
     }
 
@@ -183,7 +191,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             "Deposit period is less than the minimum required"
         );
 
-        uint256 dailyPayout = (msg.value * selectedPool.apy) / 365 / 100;
+        uint256 dailyPayout = (msg.value * selectedPool.apy) / 100 / 365;
 
         require(
             selectedPool.deposits[msg.sender].amount == 0,
@@ -208,14 +216,15 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     function payClaim(
         uint256 poolId,
         uint256 claimAmount,
-        address recipient
+        address payable recipient
     ) public onlyGovernance nonReentrant {
         Pool storage pool = pools[poolId];
         require(pool.isActive, "Pool is not active");
         require(pool.tvl >= claimAmount, "Not enough funds in the pool");
 
-        (bool success, ) = recipient.call{value: claimAmount}("");
-        require(success, "Claim payment failed");
+        emit ClaimAttempt(poolId, claimAmount, recipient); // Add this line to debug
+
+        recipient.transfer(claimAmount);
 
         pool.tcp += claimAmount;
         pool.tvl -= claimAmount;
@@ -247,7 +256,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
 
     modifier onlyGovernance() {
         require(
-            msg.sender == governance,
+            msg.sender == governance || msg.sender == initialOwner,
             "Caller is not the governance contract"
         );
         _;

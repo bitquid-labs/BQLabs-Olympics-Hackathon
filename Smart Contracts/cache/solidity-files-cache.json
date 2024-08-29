@@ -1,12 +1,48 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\contracts\\LP.sol": {
-      "lastModificationDate": 1723308744855,
-      "contentHash": "fcc3244102b78feb67be3e645a87c5cb",
-      "sourceName": "contracts/LP.sol",
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\CoverLib.sol": {
+      "lastModificationDate": 1724911421587,
+      "contentHash": "a58d9c6864f87e5141c9b75e65b7c5ce",
+      "sourceName": "contracts/CoverLib.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "CoverLib"
+      ]
+    },
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsuranceCover.sol": {
+      "lastModificationDate": 1724911421588,
+      "contentHash": "211af5424897ab1e58b117a07b4cdc6e",
+      "sourceName": "contracts/InsuranceCover.sol",
+      "solcConfig": {
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -31,22 +67,24 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "./CoverLib.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "InsurancePool"
+        "ILP",
+        "InsuranceCover"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol": {
-      "lastModificationDate": 1723282313023,
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol": {
+      "lastModificationDate": 1724911361602,
       "contentHash": "a92331adac11b453a4de0323fc948119",
       "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -77,48 +115,12 @@
         "ReentrancyGuard"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1723282312961,
-      "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1723282313017,
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
+      "lastModificationDate": 1724911361583,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -151,12 +153,48 @@
         "Ownable"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1723282312740,
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
+      "lastModificationDate": 1724911361446,
+      "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
+      "lastModificationDate": 1724911361193,
       "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -187,12 +225,50 @@
         "Context"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1723282312830,
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
+      "lastModificationDate": 1724911361454,
+      "contentHash": "4c02fa6f7ae7b6c289cef80424f0c875",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20Metadata"
+      ]
+    },
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
+      "lastModificationDate": 1724911361264,
       "contentHash": "c6375ef25e84c90b3d15f9ec4eef218f",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -228,12 +304,12 @@
         "ERC20"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
-      "lastModificationDate": 1723282312757,
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
+      "lastModificationDate": 1724911361210,
       "contentHash": "4aefc698f77ecbace7f401257dfe182d",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -266,12 +342,12 @@
         "IERC721Errors"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1723282312963,
-      "contentHash": "4c02fa6f7ae7b6c289cef80424f0c875",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsurancePool.sol": {
+      "lastModificationDate": 1724945900649,
+      "contentHash": "f543f1372b86c8478465c383c779abf3",
+      "sourceName": "contracts/InsurancePool.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
@@ -295,21 +371,66 @@
         }
       },
       "imports": [
-        "../IERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
-        "^0.8.20"
+        "^0.8.0"
       ],
       "artifacts": [
-        "IERC20Metadata"
+        "InsurancePool"
       ]
     },
-    "C:\\Users\\saswat marpureddy\\OneDrive\\Desktop\\olympics-hackathon-sc\\contracts\\MockERC20.sol": {
-      "lastModificationDate": 1723308878591,
-      "contentHash": "2fcb34c451f49f9d0e1fdab30bafc22f",
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\Gov.sol": {
+      "lastModificationDate": 1724927714434,
+      "contentHash": "cde350d11735312fc5005dd3564fe5b2",
+      "sourceName": "contracts/Gov.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "./CoverLib.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Governance",
+        "ICover",
+        "ILP"
+      ]
+    },
+    "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\MockERC20.sol": {
+      "lastModificationDate": 1724924899837,
+      "contentHash": "081a60d00c8676e73f91fe4d7a0baef0",
       "sourceName": "contracts/MockERC20.sol",
       "solcConfig": {
-        "version": "0.8.20",
+        "version": "0.8.24",
         "settings": {
           "evmVersion": "paris",
           "optimizer": {
