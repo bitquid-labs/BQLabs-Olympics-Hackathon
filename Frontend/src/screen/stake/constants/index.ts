@@ -20,10 +20,6 @@ export type StakeType = {
   [key in keyof typeof StackDetail]: string;
 };
 
-export type MyStakeType = {
-  [key in keyof typeof MyStackDetail]: string;
-};
-
 export const tempStacks: StakeType[] = [
   {
     rating: 'AAA',
@@ -50,7 +46,6 @@ export const tempStacks: StakeType[] = [
     tvl: '10000'
   },
 ];
-
 export const tempMyStacks: MyStakeType[] = [
   {
     rating: 'AAA',
