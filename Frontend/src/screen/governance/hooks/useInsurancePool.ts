@@ -2,16 +2,7 @@ import { useEffect, useState } from 'react';
 import { useReadContracts } from 'wagmi';
 
 import { InsurancePoolContract } from '@/constant/contracts';
-
-export type InsurancePoolType = {
-  poolName: string;
-  apy: number;
-  minPeriod: number;
-  acceptedToken: string;
-  tvl: number;
-  tcp: number;
-  isActive: boolean;
-};
+import { InsurancePoolType } from '@/types/main';
 
 export const useInsurancePool = () => {
   const [pools, setPools] = useState<InsurancePoolType[]>([]);

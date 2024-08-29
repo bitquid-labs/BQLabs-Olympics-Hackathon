@@ -1,15 +1,13 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, convertStakeTypeData, convertTvl } from '@/lib/utils';
 import Button from '@/components/button/button';
-// import { StackDetail, tempStacks } from '@/screen/stake/constants';
 import LeftArrowIcon from '~/svg/left-arrow.svg';
 
 import { useReadContracts, useChainId, useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { MyStackDetail, tempMyStacks, StakeType } from '@/screen/stake/constants';
-import { useInsurancePool } from '@/screen/governance/hooks/useInsurancePool';
-import { InsurancePoolContract } from '@/constant/contracts';
 import { MockERC20Contract } from '@/constant/contracts';
+import { useAllInsurancePools } from '@/hooks/contracts/pool/useAllInsurancePools';
 
 export type InsurancePoolType = {
   poolName: string;
@@ -30,16 +28,7 @@ export const StakeScreen = (): JSX.Element => {
 
   const [myStacks, setMyStacks] = useState<StakeType[]>([]);
 
-  const { data: contractData } = useReadContracts({
-    contracts: [
-      {
-        ...InsurancePoolContract,
-        functionName: 'getAllPools',
-        args: [],
-      },
-    ],
-  });
-
+  const insurancePools = useAllInsurancePools();
   const {
     data: hash,
     isPending,
@@ -55,45 +44,18 @@ export const StakeScreen = (): JSX.Element => {
       args: [`${address}`, BigInt(amount)],
     });
 
-    writeContract({
-      ...InsurancePoolContract,
-      functionName: 'deposit',
-      args: [BigInt(poolId.toString()), BigInt(amount), BigInt(day.toString())],
-    });
-    // console.log("poolId is ", poolId);
   }
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   })
 
-  const convertData = (data: InsurancePoolType[]): StakeType[] => {
-    const result: StakeType[] = [];
-    for (let i = 0; i < data.length; i++) {
-      const tvl = convertTvl(Number(data[i].tvl));
-      result.push({
-        rating: data[i].poolName,
-        apy: `${data[i].apy}%`,
-        currency: 'BTCP',
-        tenure: `${data[i].minPeriod} days`,
-        poolId: (i + 1).toString(),
-        tvl: tvl.toString()
-      });
-    }
-    return result;
-  }
-
-  const convertTvl = (amount: number) => {
-    return amount / 10 ** 18;
-  }
-
   useEffect(() => {
-    if (contractData && contractData[0].result) {
-      setMyStacks(convertData(contractData[0].result as InsurancePoolType[]));
-      // console.log("111", contractData[0].result, isConnected, chainId, address);
+    if (insurancePools) {
+      setMyStacks(convertStakeTypeData(insurancePools as InsurancePoolType[]));
     }
 
-  }, [contractData]);
+  }, [insurancePools]);
 
   return (
     <section className='flex h-full flex-auto flex-col'>

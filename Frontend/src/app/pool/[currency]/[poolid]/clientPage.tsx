@@ -3,54 +3,14 @@
 import React, { useEffect, useState } from 'react';
 
 import { PoolScreen } from '@/screen/pool';
-import { useReadContracts } from 'wagmi';
-import { StakeType } from '@/screen/stake/constants';
-import { InsurancePoolContract } from '@/constant/contracts';
-import { InsurancePoolType } from '@/screen/stake/components/myStake';
+import { convertStakeTypeData, convertTvl } from '@/lib/utils';
+import { useAllInsurancePools } from '@/hooks/contracts/pool/useAllInsurancePools';
 
 export const DefaultClientPage = ({
   params: { currency, poolid },
 }: {
   params: { currency: string, poolid: string };
 }): JSX.Element => {
-
-  const [pools, setPools] = useState<StakeType[]>([]);
-  const { data: contractData } = useReadContracts({
-    contracts: [
-      {
-        ...InsurancePoolContract,
-        functionName: 'getAllPools',
-        args: [],
-      },
-    ],
-  });
-
-  const convertData = (data: InsurancePoolType[]): StakeType[] => {
-    const result: StakeType[] = [];
-    for (let i = 0; i < data.length; i++) {
-      const tvl = convertTvl(Number(data[i].tvl));
-      result.push({
-        rating: data[i].poolName,
-        apy: `${data[i].apy}%`,
-        currency: 'BQ',
-        tenure: `${data[i].minPeriod} days`,
-        poolId: (i + 1).toString(),
-        tvl: tvl.toString()
-      });
-    }
-    return result;
-  }
-
-  const convertTvl = (amount: number) => {
-    return amount / 10 ** 18;
-  }
-
-  useEffect(() => {
-    if (contractData && contractData[0].result) {
-      setPools(convertData(contractData[0].result as InsurancePoolType[]));
-    }
-
-  }, [contractData]);
-
-  return <PoolScreen currency={currency} pools={pools} poolId={poolid} />;
+  const pools = useAllInsurancePools();
+  return <PoolScreen currency={currency} pools={convertStakeTypeData(pools)} poolId={poolid} />;
 };

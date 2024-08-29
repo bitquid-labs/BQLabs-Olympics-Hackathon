@@ -21,10 +21,11 @@ export const ICoverContract: ContractType = {
 
 export const InsurancePoolContract: ContractType = {
   abi: InsurancePool,
-  address: '0xd12e397A207f68E8cD53F7740c70D8828bBd0C18',
+  address: '0x6A287a4e08D0A8f104B04313c267D547C3654587',
 };
 
 export const MockERC20Contract: ContractType = {
   abi: MockERC20,
-  address: '0x119d0D5b257E4855fC5bA4e79538A2B7F589F6b0',
+  address: '0xfFeb0054Ca640F8cfd3F4D2eB88DFb28F5198E49',
 };
+

@@ -8,11 +8,10 @@ import { StakeType } from '@/screen/stake/constants';
 import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
 import { writeContract } from '@wagmi/core';
 import { InsurancePoolContract, MockERC20Contract } from '@/constant/contracts';
-import { InsurancePoolType } from '@/screen/stake/components/myStake';
+import { InsurancePoolType } from '@/types/main';
 import { parseUnits } from 'ethers';
-import { config } from '@/lib/config';
-
 import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { convertAmount, convertTvl } from '@/lib/utils';
 
 type CurrencyProps = {
   pool: StakeType | undefined;
@@ -67,15 +66,6 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
     }
   }
 
-  const convertAmount = (amount: string): string => {
-    const num = Number(amount) * (10 ** 8);
-    return num.toString() + '0000000000';
-  }
-
-  const convertTvl = (amount: number) => {
-    return amount / 10 ** 18;
-  }
-
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   })
@@ -103,13 +93,13 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
             </button>
           </div>
           <div className='grid grid-cols-3 gap-11'>
-            <Button variant='outline' size='lg' className='w-full' onClick={() => setPeriod(90)}>
+            <Button variant={ period === 90 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(90)}>
               3 months
             </Button>
-            <Button variant='outline' size='lg' className='w-full' onClick={() => setPeriod(180)}>
+            <Button variant={ period === 180 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(180)}>
               6 months
             </Button>
-            <Button variant='outline' size='lg' className='w-full' onClick={() => setPeriod(365)}>
+            <Button variant={ period === 365 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(365)}>
               1 year
             </Button>
           </div>
@@ -121,7 +111,7 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
               // disabled={!isConfirmed}
               onClick={async () => isConnected ? await handleDepositContract(pool?.poolId ? pool?.poolId : '1', period) : open()}
             >
-              {isConnected ? 'Deposit Token' : 'Connect Wallet'}
+              {isConnected ? 'Deposit BTCP' : 'Connect Wallet'}
             </Button>
           </div>
         </div>

@@ -11,7 +11,7 @@ export type ProposalType = {
   deadline: number;
   executed: boolean;
   proposalParams: {
-    uesr: string;
+    user: string;
     validatorAddress: string;
     validator_score: number;
     riskType: string;
