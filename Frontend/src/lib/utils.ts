@@ -1,4 +1,5 @@
 import { TempProposalType } from '@/screen/governance/constants';
+import { covers, filters } from '@/screen/purchase/constants';
 import { MyStakeType, StakeType } from '@/screen/stake/constants';
 import { InsurancePoolType, ProposalType } from '@/types/main';
 import clsx, { ClassValue } from 'clsx';
@@ -39,8 +40,8 @@ export const convertTempProposalTypeData = (data: ProposalType[]): TempProposalT
   for (let i = 0; i < data.length; i++) {
     const tvl = convertTvl(Number(data[i].proposalParam.claimAmount));
     result.push({
-      type: `${data[i].proposalParam.riskType?.toString()}`,
-      incentive: `${tvl} BTCP`,
+      type: `${filters[Number(data[i].proposalParam.riskType)]?.toString()}`,
+      incentive: `${tvl} BQ`,
       value: `${tvl} BTCP`
     });
   }

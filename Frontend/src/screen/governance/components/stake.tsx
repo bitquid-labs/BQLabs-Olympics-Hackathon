@@ -31,7 +31,7 @@ export const Stake = (): JSX.Element => {
     }
   });
 
-  const handleWriteContract = async (amount: string) => {
+  const handleWriteContract = async (amount: number) => {
     const params = [
       `${address}`,
       parseUnits((amount).toString(), 18)
@@ -80,9 +80,9 @@ export const Stake = (): JSX.Element => {
 
   return (
     <div className='bg-background-100 flex max-w-[570px] flex-auto flex-col gap-4 rounded-[15px] p-5'>
-      <div className='text-2xl font-bold'>Mint BQ:</div>
       <div className='flex flex-col gap-6'>
-        <div className='flex items-center gap-6'>
+      <div className='text-2xl font-bold'>BQ Token Faucet:</div>
+        {/* <div className='flex items-center gap-6'>
           <Input className='border-border-200 border px-6' 
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -90,7 +90,7 @@ export const Stake = (): JSX.Element => {
           <button className='min-w-[100px]'
               onClick={() => setAmount(convertTvl(Number(balance?.value)).toString())}
           >Max</button>
-        </div>
+        </div> */}
         <div className='mb-2 mt-4 flex justify-center'>
           <Button variant='primary' size='lg' className='min-w-[216px]'
             onClick={async () => isConnected ? await handleWriteContract(10) : open()}

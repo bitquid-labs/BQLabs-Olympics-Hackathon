@@ -6,12 +6,70 @@ import Button from '@/components/button/button';
 import { ProposalDetail, TempProposalType } from '@/screen/governance/constants';
 import { ProposalType } from '@/types/main';
 import { convertTempProposalTypeData, convertTvl } from '@/lib/utils';
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
+import { GovContract } from '@/constant/contracts';
+
 
 type CurrencyProps = {
   proposals: ProposalType[] | undefined;
 };
 
 export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {  
+  const { address, isConnected } = useAccount();
+  const { data: balance } = useBalance({ address });
+
+  const {
+    data: hash,
+    isPending,
+    writeContractAsync
+  } = useWriteContract({
+    mutation: {
+      async onSuccess(data) {
+        console.log(1)        
+      },
+      onError(error) {
+        console.log(1, error)   
+      }
+    }
+  });
+
+  const handleAcceptWriteContract = async (proposalId: number) => {
+    const params = [
+      proposalId,
+      true
+    ];
+
+    console.log('ProposalId: ', proposalId);
+    try {
+      const tx = await writeContractAsync({
+        ...GovContract,
+        functionName: 'vote',
+        args: params,
+      });  
+    } catch (e) {
+      console.log('error:', e);
+    }
+  }
+
+  const handleDeclineWriteContract = async (proposalId: number) => {
+    const params = [
+      proposalId,
+      false
+    ];
+
+    console.log('ProposalId: ', proposalId);
+    try {
+      const tx = await writeContractAsync({
+        ...GovContract,
+        functionName: 'vote',
+        args: params,
+      });  
+    } catch (e) {
+      console.log('error:', e);
+    }
+  }
+
   return (
     <div className='flex w-full flex-col gap-6'>
       {convertTempProposalTypeData(proposals ? proposals : []).map((proposal, index) => (
@@ -30,13 +88,14 @@ export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {
             </div>
           ))}
           <div className='flex w-full flex-col gap-[13px]'>
-            <Button variant='primary' size='lg' className='w-full'>
+            <Button variant='primary' size='lg' className='w-full' onClick={() => handleAcceptWriteContract(index+1)}>
               Accept
             </Button>
             <Button
               variant='gradient-outline'
               size='lg'
               className='bg-background-100 w-full'
+              onClick={() => handleDeclineWriteContract(index+1)}
             >
               Decline
             </Button>

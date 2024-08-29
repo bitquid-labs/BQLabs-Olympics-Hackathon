@@ -65,3 +65,9 @@ export type ProposalType = {
     riskType?: RiskType | undefined;
   };
 };
+
+export type VoterType = {
+  voted: boolean,
+  vote: boolean, 
+  weight: number
+};

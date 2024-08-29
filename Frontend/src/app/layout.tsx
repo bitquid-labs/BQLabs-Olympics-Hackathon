@@ -8,7 +8,6 @@ import Footer from '@/components/layout/footer/components';
 import Header from '@/components/layout/header/components';
 
 import { siteConfig } from '@/constant/config';
-import { ParticleConnectkit } from '@/contexts/connectkit';
 import { Providers } from "@/app/provider";
 
 export const metadata: Metadata = {

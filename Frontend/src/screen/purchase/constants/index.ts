@@ -2,10 +2,10 @@ import { CoverType } from '@/screen/purchase/types';
 
 export const filters = [
   'all cover product',
-  'slashing',
-  'smart contract risks',
-  'protocol risks',
-  'stable coin',
+  'Slashing',
+  'Smart contract risks',
+  'Protocol risks',
+  'Stable coin',
 ];
 
 export const covers: CoverType[] = [
