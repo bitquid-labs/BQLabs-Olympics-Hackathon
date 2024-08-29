@@ -15,10 +15,11 @@ type DetailProps = {
   coverPeriod: number;
   handleCoverPeriodChange: (val: number) => void;
   dueTo: CoverDueTo;
+  maxCoverAmount: number;
 }
 
 export const Detail = (props: DetailProps): JSX.Element => {
-  const { id, coverAmount, coverPeriod, dueTo, handleCoverAmountChange, handleCoverPeriodChange } = props;
+  const { id, coverAmount, coverPeriod, dueTo, maxCoverAmount, handleCoverAmountChange, handleCoverPeriodChange } = props;
 
   const [period, setPeriod] = useState<number>(30);
   const [selectedToken, setSelectedToken] = useState<number>(0);
@@ -36,7 +37,7 @@ export const Detail = (props: DetailProps): JSX.Element => {
               <div className='bg-background-200 h-5 w-5 rounded-full' />
             </div>
             <div className='flex gap-[10px]'>
-              <div className='font-semibold'>Max: 474.81 ETH</div>
+              <div className='font-semibold'>Max: {(maxCoverAmount).toFixed(2)} BTCP</div>
               <div className='bg-background-200 h-5 w-5 rounded-full' />
             </div>
           </div>
@@ -48,11 +49,12 @@ export const Detail = (props: DetailProps): JSX.Element => {
               onChange={(e) => handleCoverAmountChange(e)}
               classNames={{ input: '!text-xl !font-semibold' }}
             />
-            <Dropdown
+            {/* <Dropdown
               value={selectedToken}
               setValue={setSelectedToken}
               options={['WBTC', 'WETH', 'USDC']}
-            />
+            /> */}
+            <div className='py-[5px] px-[25px] rounded-full bg-[#d9d9d933]'>BTCP</div>
           </div>
         </div>
         <div className='border-border-300 flex flex-col gap-[13px] rounded-[15px] border p-3'>

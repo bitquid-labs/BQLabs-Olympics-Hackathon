@@ -12,19 +12,26 @@ export const enum CoverDueTo {
 }
 
 export interface ICover {
-  chainId?: number | undefined,
-  covername?: string | undefined,
-  currentBalance?: bigint | undefined,
-  description?: bigint | undefined,
   id?: bigint | undefined,
-  maxAmount?: bigint | undefined,
-  network?: string | undefined,
   riskType?: RiskType | undefined,
+  capacity?: bigint | undefined,
+  chains?: string | string,
+  coverName?: string | undefined,
+  currentBalance?: bigint | undefined,
+  dailyCost?: bigint | undefined,
+  maxAmount?: bigint | undefined,
+  poolId?: bigint | undefined,
+  securityRating?: bigint | undefined,
+}
+
+export interface IClaim {
+  claimId?: number | undefined,
 }
 
 export interface IUserCover {
-  chainId?: number | undefined,
-  coverFee?: bigint | undefined,
+  chainId?: bigint | undefined,
+  claimPaid?: bigint | undefined,
+  // coverFee?: bigint | undefined,
   coverId?: bigint | undefined,
   coverName?: string | undefined,
   coverPeriod?: bigint | undefined,

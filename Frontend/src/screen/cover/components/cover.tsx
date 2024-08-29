@@ -16,10 +16,9 @@ import { ICoverContract } from "@/constant/contracts";
 import { MAX_COVER_PERIOD, MIN_COVER_PERIOD } from "@/constant/config";
 import { CoverDueTo } from "@/types/main";
 import { useAccount } from "wagmi";
-import { calculateCoverFee, numberToBN } from "@/lib/formulat";
+import { bnToNumber, calculateCoverFee, numberToBN } from "@/lib/formulat";
 import { parseEther, parseUnits } from "viem";
-
-
+import { useBalance } from 'wagmi'
 export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
   const router = useRouter();
 
@@ -30,6 +29,18 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
   const [coverPeriod, setCoverPeriod] = useState<number>(MIN_COVER_PERIOD);
   const [coverDueTo, setCoverDueTo] = useState<CoverDueTo>(CoverDueTo.NoneSelected);
   const coverFee = useMemo(() => calculateCoverFee(parseFloat(coverAmount), coverPeriod), [coverAmount, coverPeriod]);
+  const { data: balanceData } = useBalance({
+    address: address as `0x${string}`,
+    unit: 'ether',
+  })
+
+
+  console.log('cover fee:', coverFee, coverAmount, coverPeriod)
+
+  const maxCoverAmount = useMemo(() => {
+    if (!balanceData) return 0;
+    return parseFloat(bnToNumber(balanceData.value));
+  }, [balanceData]);
 
   // useEffect(() => {
   //   if (!selectedCover) {
@@ -44,8 +55,8 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
     const params = [
       selectedCover?.riskType,
       Number(selectedCover?.id),
-      'Cover',
-      Number(selectedCover?.chainId),
+      selectedCover.coverName,
+      0,
       numberToBN(coverAmount),
       coverPeriod
     ];
@@ -58,7 +69,8 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
         address: ICoverContract.address as `0x${string}`,
         functionName: 'purchaseCover',
         args: params,
-        value: parseUnits((coverFee).toString(), 18)
+        value: parseUnits((coverFee).toString(), 18),
+        chainId: 21000001
       })
     } catch (e) {
       console.log('error:', e);
@@ -104,8 +116,17 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
             handleCoverAmountChange={handleCoverAmountChange}
             handleCoverPeriodChange={handleCoverPeriodChange}
             dueTo={coverDueTo}
+            maxCoverAmount={maxCoverAmount}
           />
-          <Overview handleBuyCover={handleBuyCover} error={error} />
+          <Overview
+            productName="Insurance Cover"
+            coverAmount={coverAmount}
+            annualCost={Number(selectedCover?.dailyCost)}
+            coverFee={coverFee}
+            handleBuyCover={handleBuyCover}
+            error={error}
+            coverPeriod={coverPeriod}
+          />
         </div>
       </div>
     </section>
