@@ -1,17 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { Cover } from '@/screen/purchase/components/cover';
-import { useAllAvailableCovers } from "@/hooks/contracts/useAllAvailableCovers";
-import { useAccount } from "wagmi";
-import { ICover } from "@/types/main";
+import { covers } from '@/screen/purchase/constants';
 
 export const List = (): JSX.Element => {
-  const { address } = useAccount();
-  const availableCovers = useAllAvailableCovers();
-
   return (
     <div className='grid w-full grid-cols-3 gap-[38px]'>
-      {availableCovers.map((cover: ICover, index) => (
+      {covers.map((cover, index) => (
         <Cover key={index} {...cover} />
       ))}
     </div>

@@ -1,27 +1,15 @@
-import React, { ChangeEvent, ChangeEventHandler, useState } from 'react';
+import React, { useState } from 'react';
 
 import Dropdown from '@/components/dropdown';
 import Input from '@/components/input';
 import { Slider } from '@/components/slider';
 
 import BeLineIcon from '~/svg/be-line.svg';
-import { CoverDueTo } from "@/types/main";
-import { MAX_COVER_PERIOD, MIN_COVER_PERIOD } from "@/constant/config";
 
-type DetailProps = {
-  id: number;
-  coverAmount: string;
-  handleCoverAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  coverPeriod: number;
-  handleCoverPeriodChange: (val: number) => void;
-  dueTo: CoverDueTo;
-}
-
-export const Detail = (props: DetailProps): JSX.Element => {
-  const { id, coverAmount, coverPeriod, dueTo, handleCoverAmountChange, handleCoverPeriodChange } = props;
-
+export const Detail = ({ id }: { id: number }): JSX.Element => {
   const [period, setPeriod] = useState<number>(30);
   const [selectedToken, setSelectedToken] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
 
   return (
     <div className='bg-background-100 flex min-w-[630px] flex-col gap-4 rounded-[15px] p-6'>
@@ -44,8 +32,8 @@ export const Detail = (props: DetailProps): JSX.Element => {
             <Input
               type='number'
               className='p-0'
-              value={coverAmount}
-              onChange={(e) => handleCoverAmountChange(e)}
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
               classNames={{ input: '!text-xl !font-semibold' }}
             />
             <Dropdown
@@ -72,10 +60,10 @@ export const Detail = (props: DetailProps): JSX.Element => {
               <Input
                 type='number'
                 className='w-[40px] p-0'
-                value={coverPeriod}
-                onChange={(e) => {
-                  handleCoverPeriodChange(Math.max(MIN_COVER_PERIOD, Math.min(MAX_COVER_PERIOD, Number(e.target.value))));
-                }}
+                value={period}
+                onChange={(e) =>
+                  setPeriod(Math.max(28, Math.min(365, Number(e.target.value))))
+                }
                 classNames={{ input: '!text-xl !font-semibold' }}
               />
               <div className='bg-background-200/20 rounded-full px-4 py-1'>
@@ -85,13 +73,11 @@ export const Detail = (props: DetailProps): JSX.Element => {
             <div className='w-[300px]'>
               <Slider
                 thumbClassName='h-[14px] w-[14px]'
-                defaultValue={[MIN_COVER_PERIOD]}
-                value={[coverPeriod]}
-                onValueChange={(val) => {
-                  handleCoverPeriodChange(val[0]);
-                }}
-                min={MIN_COVER_PERIOD}
-                max={MAX_COVER_PERIOD}
+                defaultValue={[30]}
+                value={[period]}
+                onValueChange={(val) => setPeriod(val[0])}
+                min={28}
+                max={365}
                 step={1}
               />
             </div>

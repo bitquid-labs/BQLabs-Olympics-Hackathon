@@ -1,15 +1,18 @@
 import { Metadata } from 'next';
+import { headers } from 'next/headers';
 import * as React from 'react';
+import { cookieToInitialState } from 'wagmi';
 
 import '@/styles/globals.css';
 import '@/styles/colors.css';
+
+import { config } from '@/lib/wagmi';
 
 import Footer from '@/components/layout/footer/components';
 import Header from '@/components/layout/header/components';
 
 import { siteConfig } from '@/constant/config';
-import { ParticleConnectkit } from '@/contexts/connectkit';
-import { Providers } from "@/app/provider";
+import AppKitProvider from '@/contexts/wagmiProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -47,16 +50,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const initialState = cookieToInitialState(config, headers().get('cookie'));
+
   return (
     <html>
       <body className='bg-dark text-light flex min-h-screen flex-col'>
-        {/* <ParticleConnectkit> */}
-          <Providers>
-            <Header />
-            {children}
-            <Footer />
-          </Providers>
-        {/* </ParticleConnectkit> */}
+        <AppKitProvider initialState={initialState}>
+          <Header />
+          {children}
+          <Footer />
+        </AppKitProvider>
       </body>
     </html>
   );

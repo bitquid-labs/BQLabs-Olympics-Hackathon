@@ -4,8 +4,14 @@ import React from 'react';
 import Button from '@/components/button/button';
 
 import { ProposalDetail, tempProposlas } from '@/screen/governance/constants';
+import { ProposalType } from '@/screen/governance/hooks/useGov';
 
-export const Proposals = (): JSX.Element => {
+export const Proposals = ({
+  proposals,
+}: {
+  proposals: ProposalType[];
+}): JSX.Element => {
+  console.log(proposals);
   return (
     <div className='flex w-full flex-col gap-6'>
       {tempProposlas.map((proposal, index) => (
