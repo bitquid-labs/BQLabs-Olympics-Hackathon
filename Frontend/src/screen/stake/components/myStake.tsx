@@ -28,15 +28,6 @@ export const MyStakeScreen = (): JSX.Element => {
 
   const [myStacks, setMyStacks] = useState<MyStakeType[]>([]);
 
-
-  // const { pools } = useInsurancePool();
-  // writeContract({
-  //   ...MockERC20Contract,
-  //   functionName: 'mint',
-  //   // args: [BigInt(poolId.toString())],
-  //   args: ['0x2F35A475Ac8633a10E88917e59e3c8B9aD1A9660', BigInt('1000000000000000000000')],
-  // });
-
   const { data: contractData } = useReadContracts({
     contracts: [
       {

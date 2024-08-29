@@ -34,7 +34,8 @@ export const DefaultClientPage = ({
         apy: `${data[i].apy}%`,
         currency: 'BQ',
         tenure: `${data[i].minPeriod} days`,
-        // claim: `${tvl} BTC`
+        poolId: '',
+        tvl: ''
       });
     }
     return result;
@@ -51,5 +52,5 @@ export const DefaultClientPage = ({
 
   }, [contractData]);
 
-  return <PoolScreen currency={currency} pools={pools} />;
+  return <PoolScreen currency={currency} pools={pools} poolId={''} />;
 };

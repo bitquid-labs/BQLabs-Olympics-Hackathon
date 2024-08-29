@@ -29,8 +29,18 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
 
   const {
     data: hash,
-    isPending
-  } = useWriteContract();
+    isPending,
+    writeContractAsync
+  } = useWriteContract({
+    mutation: {
+      async onSuccess(data) {
+        console.log(1)        
+      },
+      onError(error) {
+        console.log(1, error)   
+      }
+    }
+  });
 
   const handleDepositContract = async (poolId: string, day: number) => {
     console.log("Deposit is ", InsurancePoolContract, BigInt(poolId), BigInt(day.toString()));
@@ -41,14 +51,15 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
     ];
 
     console.log("params ", params)
+    console.log("Balance: ", balance, "AMOUNT: ", realAmount);
 
     try {
-      const tx = await writeContract(config, {
+      const tx = await writeContractAsync({
         abi: InsurancePoolContract.abi,
         address: InsurancePoolContract.address as `0x${string}`,
         functionName: 'deposit',
         args: params,
-        value: parseUnits((realAmount).toString(), 18)
+        value: parseUnits((amount).toString(), 18)
       });
       console.log(InsurancePoolContract.address as `0x${string}`, tx)
     } catch (e) {
@@ -60,14 +71,7 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
     const num = Number(amount) * (10 ** 8);
     return num.toString() + '0000000000';
   }
-  // const handleApproveTokenContract = (amount: string): void => {
-  //   const realAmount = convertAmount(amount);
-  //   writeContract({
-  //     ...MockERC20Contract,
-  //     functionName: 'approve',
-  //     args: [InsurancePoolContract.address, BigInt(realAmount)],
-  //   });
-  // }
+
   const convertTvl = (amount: number) => {
     return amount / 10 ** 18;
   }
