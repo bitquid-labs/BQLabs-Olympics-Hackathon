@@ -2,12 +2,12 @@
 
 import React from 'react';
 
-import { CoverScreen } from '@/screen/cover';
+import { ClaimScreen } from '@/screen/claim';
 
 export const DefaultClientPage = ({
   params: { id },
 }: {
   params: { id: number };
 }): JSX.Element => {
-  return <div>hello</div>
+  return <ClaimScreen id={id} />;
 };

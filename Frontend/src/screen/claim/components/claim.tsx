@@ -6,7 +6,7 @@ import { Status } from '@/screen/claim/components/status';
 
 import LeftArrowIcon from '~/svg/left-arrow.svg';
 
-export const ClaimScreen = (): JSX.Element => {
+export const ClaimScreen = ({ id } : { id: number }): JSX.Element => {
   return (
     <section className='flex h-full flex-auto flex-col'>
       <div className='layout flex flex-auto flex-col items-center gap-10 p-10 pt-12'>

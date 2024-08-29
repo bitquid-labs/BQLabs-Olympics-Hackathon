@@ -19,7 +19,7 @@ export const MyCover = (props: CoverProps): JSX.Element => {
   const coverValue = bnToNumber(coverValueBN || 0n);
 
   const handleLinkDetail = useCallback(() => {
-    router.push(`/cover/${coverId}`);
+    router.push(`/claim/${coverId}`);
   }, [coverId, router]);
 
   return (
