@@ -146,11 +146,22 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         view
         returns (PoolInfo[] memory)
     {
-        PoolInfo[] memory result = new PoolInfo[](poolCount);
+        uint256 resultCount = 0;
         for (uint256 i = 1; i <= poolCount; i++) {
             Pool storage pool = pools[i];
             if (pool.deposits[_userAddress].amount > 0) {
-                result[i - 1] = PoolInfo({
+                resultCount++;
+            }
+        }
+
+        PoolInfo[] memory result = new PoolInfo[](resultCount);
+
+        uint256 resultIndex = 0;
+
+        for (uint256 i = 1; i <= poolCount; i++) {
+            Pool storage pool = pools[i];
+            if (pool.deposits[_userAddress].amount > 0) {
+                result[resultIndex++] = PoolInfo({
                     poolName: pool.poolName,
                     apy: pool.apy,
                     minPeriod: pool.minPeriod,
@@ -190,6 +201,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         Pool storage selectedPool = pools[_poolId];
 
         require(selectedPool.isActive, "Pool is inactive or does not exist");
+        require(msg.value > 0, "Not enough value");
         require(
             _period >= selectedPool.minPeriod,
             "Deposit period is less than the minimum required"
