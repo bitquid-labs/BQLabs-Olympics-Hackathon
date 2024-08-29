@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { ClaimScreen } from '@/screen/claim';
+import { ClaimsScreen } from '@/screen/claims';
 
 export const DefaultClientPage = (): JSX.Element => {
-  return <ClaimScreen />;
+  return <ClaimsScreen />;
 };

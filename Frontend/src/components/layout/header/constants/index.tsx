@@ -36,7 +36,7 @@ export const Menus: MenuType[] = [
   },
   {
     label: 'Claim',
-    href: '/claim',
+    href: '/claims',
   },
   { label: 'Governance', href: '/governance' },
 ];

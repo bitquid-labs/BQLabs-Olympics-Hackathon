@@ -1,3 +1,3 @@
-import { DefaultClientPage } from '@/app/claim/clientPage';
+import { DefaultClientPage } from '@/app/claims/clientPage';
 
 export default DefaultClientPage;

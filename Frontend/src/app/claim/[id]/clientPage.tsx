@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { ClaimScreen } from '@/screen/claim';
+import { ClaimScreen } from "@/screen/claim/components/claim";
 
 export const DefaultClientPage = ({
   params: { id },
