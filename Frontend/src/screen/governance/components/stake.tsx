@@ -7,6 +7,7 @@ import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
 import { convertAmount, convertTvl } from '@/lib/utils';
 import { GovContract, MockERC20Contract } from '@/constant/contracts';
+import Grid from '~/svg/grid.svg';
 
 export const Stake = (): JSX.Element => {
 
@@ -23,10 +24,10 @@ export const Stake = (): JSX.Element => {
   } = useWriteContract({
     mutation: {
       async onSuccess(data) {
-        console.log(1)        
+        console.log(1)
       },
       onError(error) {
-        console.log(1, error)   
+        console.log(1, error)
       }
     }
   });
@@ -43,7 +44,7 @@ export const Stake = (): JSX.Element => {
         ...MockERC20Contract,
         functionName: 'mint',
         args: params,
-      });  
+      });
     } catch (e) {
       console.log('error:', e);
     }
@@ -79,9 +80,10 @@ export const Stake = (): JSX.Element => {
   })
 
   return (
-    <div className='bg-background-100 flex max-w-[570px] flex-auto flex-col gap-4 rounded-[15px] p-5'>
-      <div className='flex flex-col gap-6'>
-      <div className='text-2xl font-bold'>BQ Token Faucet:</div>
+    <div className='bg-background-100 relative flex max-w-[570px] flex-auto flex-col gap-4 rounded-[15px] p-5 to-[#FFDC5EA1]/45 bg-gradient-to-br from-[#FCC608]'>
+      <Grid className='absolute inset-0 w-[500px] h-[100px] ' />
+      <div className='flex items-center justify-around gap-6'>
+        <div className='text-3xl font-bold text-black'>BQ Token Faucet</div>
         {/* <div className='flex items-center gap-6'>
           <Input className='border-border-200 border px-6' 
               value={amount}
@@ -95,7 +97,7 @@ export const Stake = (): JSX.Element => {
           <Button variant='primary' size='lg' className='min-w-[216px]'
             onClick={async () => isConnected ? await handleWriteContract(10) : open()}
           >
-          {isConnected ? 'Claim Now' : 'Connect Wallet'}
+            {isConnected ? 'Claim Now' : 'Connect Wallet'}
           </Button>
         </div>
       </div>

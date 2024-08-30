@@ -10,12 +10,8 @@ type CurrencyProps = {
 export const VotingPower = ( { onSelectProposalType, isLive }: CurrencyProps ): JSX.Element => {
   
   return (
-    <div className='flex flex-col items-start justify-between'>
-      <div className='flex flex-col items-start text-[40px] font-bold leading-[50px]'>
-        <div>Become a Governance</div>
-        <div>Member By BQ</div>
-      </div>
-      <div className='mt-5 flex items-center gap-8'>
+    <div className='flex items-center'>
+      <div className='mt-5 flex items-end gap-8'>
         <Button variant={ isLive ? 'primary' : 'gradient-outline'} size='lg'
           onClick={() => onSelectProposalType(true)}
         >
