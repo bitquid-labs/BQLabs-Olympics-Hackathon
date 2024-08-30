@@ -15,6 +15,8 @@ type CoverType = [
   bigint,
   bigint,
   bigint,
+  bigint,
+  bigint,
   string,
 ]
 
@@ -46,9 +48,11 @@ export const useCoverInfo = (coverId: number) => {
       chains: result[3],
       capacity: Number(result[4]),
       cost: Number(result[5]),
-      maxAmount: bnToNumber(result[6]),
-      poolId: Number(result[7]),
-      CID: result[8],
+      capacityAmount: bnToNumber(result[6]),
+      coverValues: bnToNumber(result[7]),
+      maxAmount: bnToNumber(result[8]),
+      poolId: Number(result[9]),
+      CID: result[10],
     };
 
 

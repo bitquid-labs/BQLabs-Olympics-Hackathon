@@ -14,11 +14,12 @@ import { writeContract } from "@wagmi/core";
 import { config } from "@/lib/config";
 import { GovContract, ICoverContract } from "@/constant/contracts";
 import { useAllProposals } from "@/hooks/contracts/useAllProposals";
-import { numberToBN } from "@/lib/formulat";
+import { bnToNumber, numberToBN } from "@/lib/formulat";
 import { toast } from 'react-toastify';
+import { useProposalByCoverId } from "#/src/hooks/contracts/useProposalByCover";
 
 type ClaimScreenType = {
-  coverId?: string | null
+  coverId?: string | undefined
 }
 
 export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
@@ -26,6 +27,14 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   const { address } = useAccount();
   const router = useRouter();
   const [currentCover, setCurrentCover] = useState<IUserCover>();
+
+  const currentCoverId = useMemo(() => {
+    return currentCover?.coverId ? Number(currentCover?.coverId) : 0;
+  }, [currentCover?.coverId])
+
+  const proposal = useProposalByCoverId(currentCoverId.toString());
+
+  console.log('current proposal', proposal);
 
   const userCovers = useAllUserCovers(address as string);
 
@@ -63,16 +72,20 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   const [description, setDescription] = useState<string>('');
 
   const [isSlashing, setIsSlashing] = useState<boolean>(false);
+  const maxClaimableNum = useMemo(() => {
+    return parseFloat(bnToNumber(currentCover?.coverValue));    
+  }, [currentCover?.coverValue])
 
   // useAllProposals();
 
 
   const error = useMemo(() => {
     // if (lossEventDate === '') return 'Input Loss Event Date'
+    if (!address) return 'Connect Wallet'
     if (claimValueStr === '') return 'Input Claim Amount';
     if (isSlashing && slashingTx === '') return 'Enter Slashing Tx'
+    if (parseFloat(claimValueStr) > maxClaimableNum) return 'Over Claimable Amount'
     // if (description === '') return ''
-    if (!address) return 'Connect Wallet'
     return ''
   }, [
     address,
@@ -155,6 +168,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
             claimValueStr={claimValueStr}
             slashingTx={slashingTx}
             description={description}
+            maxClaimable={maxClaimableNum}
             error={error}
             isSlashing={isSlashing}
             handleLossEventDateChange={handleLossEventDateChange}
@@ -163,7 +177,9 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
             handleDescriptionChange={handleDescriptionChange}
             handleSubmitClaim={handleSubmitClaim}
           />
-          <Status />
+          <Status
+            status={proposal?.status}
+          />
         </div>
       </div>
     </section>

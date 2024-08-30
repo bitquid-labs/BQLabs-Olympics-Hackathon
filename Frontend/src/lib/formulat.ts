@@ -12,7 +12,7 @@ export function numberToBN(value: number | string, unit: number = 18) {
   return value ? parseUnits(value.toString(), unit) : BigInt('0');
 }
 
-export function bnToNumber(value: bigint, decimals: number = 18) {
+export function bnToNumber(value: bigint | undefined, decimals: number = 18) {
   if (!value) return '0';
   return formatUnits(value, decimals);
 }
