@@ -11,12 +11,12 @@ export type ContractType = {
 
 export const GovContract: ContractType = {
   abi: Gov,
-  address: '0xC3C993E1C3e4B93111de4067c297F74D58253486',
+  address: '0xF8f8E3ff88e3BA9A3cA035b0034776D0286583b1',
 };
 
 export const ICoverContract: ContractType = {
   abi: ICoverABI,
-  address: '0x1e9C655f946c06c2c6bC915145818546BeE79c5d'
+  address: '0x0036D7d2312b2f5a2a0583314c94b59dA0Fc4efB'
 }
 
 export const InsurancePoolContract: ContractType = {

@@ -1,5 +1,6 @@
 import { COVER_FEE_RATE } from "@/constant/config";
 import { formatUnits, parseUnits } from "viem";
+import { RiskType, riskTypeNames } from "@/types/main";
 
 export const calculateCoverFee = (coverAmount: number, coverPeriod: number) => {
   return coverAmount * COVER_FEE_RATE * coverPeriod / 365;
@@ -31,3 +32,7 @@ export function formatDate(date: Date): string {
   return `${month}/${day}/${year}`;
 }
 
+export function getRiskTypeName(value: number | undefined): string | undefined {
+  if (value === undefined) return '';
+  return riskTypeNames[value] as string | undefined;
+}

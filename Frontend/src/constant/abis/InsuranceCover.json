@@ -83,6 +83,11 @@
 		"type": "error"
 	},
 	{
+		"inputs": [],
+		"name": "WrongPool",
+		"type": "error"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -93,14 +98,8 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "string",
-				"name": "chains",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "enum CoverLib.CoverType",
-				"name": "coverType",
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
 				"type": "uint8"
 			}
 		],
@@ -130,14 +129,8 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "coverPeriod",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "enum CoverLib.CoverType",
-				"name": "coverType",
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
 				"type": "uint8"
 			}
 		],
@@ -228,7 +221,7 @@
 				"type": "string"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "riskType",
 				"type": "uint8"
 			},
@@ -239,17 +232,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "dailyCost",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "capacity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "securityRating",
 				"type": "uint256"
 			},
 			{
@@ -259,18 +242,8 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "currentBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "poolId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -305,7 +278,7 @@
 	{
 		"inputs": [
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "_riskType",
 				"type": "uint8"
 			},
@@ -321,49 +294,16 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_dailyCost",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "_capacity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_securityRating",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
 				"name": "_poolId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_description",
-				"type": "string"
 			}
 		],
 		"name": "createCover",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_coverId",
-				"type": "uint256"
-			}
-		],
-		"name": "deleteExpiredCovers",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -385,7 +325,7 @@
 						"type": "string"
 					},
 					{
-						"internalType": "enum CoverLib.CoverType",
+						"internalType": "enum CoverLib.RiskType",
 						"name": "riskType",
 						"type": "uint8"
 					},
@@ -396,17 +336,7 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "dailyCost",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
 						"name": "capacity",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "securityRating",
 						"type": "uint256"
 					},
 					{
@@ -416,18 +346,8 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "currentBalance",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
 						"name": "poolId",
 						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "description",
-						"type": "string"
 					}
 				],
 				"internalType": "struct CoverLib.Cover[]",
@@ -461,14 +381,14 @@
 						"type": "uint256"
 					},
 					{
+						"internalType": "enum CoverLib.RiskType",
+						"name": "riskType",
+						"type": "uint8"
+					},
+					{
 						"internalType": "string",
 						"name": "coverName",
 						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "chainId",
-						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
@@ -483,11 +403,6 @@
 					{
 						"internalType": "uint256",
 						"name": "coverPeriod",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "startDay",
 						"type": "uint256"
 					},
 					{
@@ -517,8 +432,8 @@
 				"type": "address"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
-				"name": "coverType",
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
 				"type": "uint8"
 			},
 			{
@@ -532,8 +447,8 @@
 			{
 				"components": [
 					{
-						"internalType": "enum CoverLib.CoverType",
-						"name": "coverType",
+						"internalType": "enum CoverLib.RiskType",
+						"name": "riskType",
 						"type": "uint8"
 					},
 					{
@@ -553,6 +468,19 @@
 	{
 		"inputs": [],
 		"name": "governance",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "initialOwner",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -629,7 +557,7 @@
 				"type": "string"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "riskType",
 				"type": "uint8"
 			},
@@ -640,17 +568,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "dailyCost",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "capacity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "securityRating",
 				"type": "uint256"
 			},
 			{
@@ -660,18 +578,8 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "currentBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "poolId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -680,7 +588,7 @@
 	{
 		"inputs": [
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "_riskType",
 				"type": "uint8"
 			},
@@ -693,11 +601,6 @@
 				"internalType": "string",
 				"name": "_coverName",
 				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_chainId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -762,7 +665,7 @@
 				"type": "string"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "riskType",
 				"type": "uint8"
 			},
@@ -773,17 +676,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "dailyCost",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "capacity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "securityRating",
 				"type": "uint256"
 			},
 			{
@@ -793,18 +686,8 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "currentBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "poolId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -850,7 +733,7 @@
 				"type": "string"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "riskType",
 				"type": "uint8"
 			},
@@ -861,17 +744,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "dailyCost",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "capacity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "securityRating",
 				"type": "uint256"
 			},
 			{
@@ -881,18 +754,8 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "currentBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "poolId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -938,7 +801,7 @@
 				"type": "string"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "riskType",
 				"type": "uint8"
 			},
@@ -949,17 +812,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "dailyCost",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "capacity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "securityRating",
 				"type": "uint256"
 			},
 			{
@@ -969,18 +822,8 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "currentBalance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
 				"name": "poolId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -1025,8 +868,8 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "enum CoverLib.CoverType",
-				"name": "coverType",
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
 				"type": "uint8"
 			},
 			{
@@ -1066,14 +909,14 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "string",
 				"name": "coverName",
 				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chainId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -1088,11 +931,6 @@
 			{
 				"internalType": "uint256",
 				"name": "coverPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "startDay",
 				"type": "uint256"
 			},
 			{
@@ -1135,14 +973,14 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "string",
 				"name": "coverName",
 				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chainId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -1157,11 +995,6 @@
 			{
 				"internalType": "uint256",
 				"name": "coverPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "startDay",
 				"type": "uint256"
 			},
 			{
@@ -1204,14 +1037,14 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "string",
 				"name": "coverName",
 				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chainId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -1226,11 +1059,6 @@
 			{
 				"internalType": "uint256",
 				"name": "coverPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "startDay",
 				"type": "uint256"
 			},
 			{
@@ -1273,14 +1101,14 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "string",
 				"name": "coverName",
 				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chainId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -1295,11 +1123,6 @@
 			{
 				"internalType": "uint256",
 				"name": "coverPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "startDay",
 				"type": "uint256"
 			},
 			{
@@ -1342,14 +1165,14 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "string",
 				"name": "coverName",
 				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chainId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -1364,11 +1187,6 @@
 			{
 				"internalType": "uint256",
 				"name": "coverPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "startDay",
 				"type": "uint256"
 			},
 			{

@@ -8,8 +8,10 @@ import Footer from '@/components/layout/footer/components';
 import Header from '@/components/layout/header/components';
 
 import { siteConfig } from '@/constant/config';
-import { ParticleConnectkit } from '@/contexts/connectkit';
 import { Providers } from "@/app/provider";
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -51,11 +53,24 @@ export default function RootLayout({
     <html>
       <body className='bg-dark text-light flex min-h-screen flex-col'>
         {/* <ParticleConnectkit> */}
-          <Providers>
-            <Header />
-            {children}
-            <Footer />
-          </Providers>
+        <Providers>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          // transition:Bounce,            
+          />
+          <Header />
+          {children}
+          <Footer />
+        </Providers>
         {/* </ParticleConnectkit> */}
       </body>
     </html>

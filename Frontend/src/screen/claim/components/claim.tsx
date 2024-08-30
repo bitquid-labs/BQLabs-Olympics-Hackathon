@@ -13,6 +13,9 @@ import { IUserCover } from "@/types/main";
 import { writeContract } from "@wagmi/core";
 import { config } from "@/lib/config";
 import { GovContract, ICoverContract } from "@/constant/contracts";
+import { useAllProposals } from "@/hooks/contracts/useAllProposals";
+import { numberToBN } from "@/lib/formulat";
+import { toast } from 'react-toastify';
 
 type ClaimScreenType = {
   coverId?: string | null
@@ -27,25 +30,40 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   const userCovers = useAllUserCovers(address as string);
 
   const products = useMemo(() => {
-    return userCovers.map((cover, index) => {
+    let foundMatch = false;
+  
+    const updatedProducts = userCovers.map((cover) => {
       let isSelected = false;
       if (Number(cover?.coverId).toString() === coverId) {
         isSelected = true;
-        setCurrentCover(cover);
+        setCurrentCover(cover); // Set the matching cover
+        foundMatch = true;
       }
       return {
         name: cover?.coverName,
         isSelected: isSelected
-      }
+      };
     });
-  }, [userCovers]);
+  
+    // If no match was found, select the first item
+    if (!foundMatch && updatedProducts.length > 0) {
+      setCurrentCover(userCovers[0]);
+      updatedProducts[0].isSelected = true;
+    }
+  
+    return updatedProducts;
+  }, [userCovers, coverId]);
+  
+  
 
-  const [lossEventDate, setLossEventDate] = useState('');
+  const [lossEventDate, setLossEventDate] = useState<Date | null>(new Date());
   const [claimValueStr, setClaimValueStr] = useState<string>('');
   const [slashingTx, setSlashingTx] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
   const [isSlashing, setIsSlashing] = useState<boolean>(false);
+
+  // useAllProposals();
 
 
   const error = useMemo(() => {
@@ -66,11 +84,11 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   const handleSubmitClaim = async () => {
     const params = {
       user: address,
-      riskType: 0n, // riskType
+      riskType: 0, // riskType
       coverId: currentCover?.coverId,
-      description: 'test claim',
+      description: description,
       poolId: 1n, // poolId
-      claimAmount: 1000000n, // claimAmount
+      claimAmount: numberToBN(claimValueStr), // claimAmount
       // currentCover?.
     };
 
@@ -79,18 +97,23 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
         abi: GovContract.abi,
         address: GovContract.address as `0x${string}`,
         functionName: 'createProposal',
-        args: [{
-          user: address as `0x${string}`,
-          riskType: 0, // riskType
-          coverId: 1,
-          description: "test claim",
-          poolId: 1, // poolId
-          claimAmount: 100, // claimAmount    
-        }],
-        chainId: 21000001
+        args: [params],
       })
-    } catch (e) {
-      console.log('error', e);
+
+      toast.success("Proposal submitted!");
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        } else {
+          errorMsg = "Failed to submit proposal";
+        }
+      } else {
+        errorMsg = "Unexpected error";
+      }
+
+      toast.error(errorMsg);
     }
   }
 
@@ -103,15 +126,13 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
     setClaimValueStr(event.target.value);
   }
 
-  const handleLossEventDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('event date change')
-    setLossEventDate(event.target.value);
-  }
+  const handleLossEventDateChange = (date: Date | null) => {
+    setLossEventDate(date);
+  };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(event.target.value);
   }
-
 
   return (
     <section className='flex h-full flex-auto flex-col'>
@@ -133,7 +154,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
             claimValueStr={claimValueStr}
             slashingTx={slashingTx}
             description={description}
-            error={''}
+            error={error}
             isSlashing={isSlashing}
             handleLossEventDateChange={handleLossEventDateChange}
             handleClaimValueChange={handleClaimValueChange}
