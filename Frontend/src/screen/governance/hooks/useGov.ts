@@ -11,7 +11,7 @@ export type ProposalType = {
   deadline: number;
   executed: boolean;
   proposalParams: {
-    uesr: string;
+    user: string;
     validatorAddress: string;
     validator_score: number;
     riskType: string;
@@ -38,7 +38,7 @@ export const useGov = () => {
   });
 
   useEffect(() => {
-    console.log(contractData);
+    console.log('2222', contractData);
     if (contractData && contractData[0].result) {
       setProposals(contractData[0].result as ProposalType[]);
     }

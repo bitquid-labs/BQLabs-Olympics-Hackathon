@@ -1,20 +1,78 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Button from '@/components/button/button';
 
-import { ProposalDetail, tempProposlas } from '@/screen/governance/constants';
-import { ProposalType } from '@/screen/governance/hooks/useGov';
+import { ProposalDetail, TempProposalType } from '@/screen/governance/constants';
+import { ProposalType } from '@/types/main';
+import { convertTempProposalTypeData, convertTvl } from '@/lib/utils';
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
+import { GovContract } from '@/constant/contracts';
 
-export const Proposals = ({
-  proposals,
-}: {
-  proposals: ProposalType[];
-}): JSX.Element => {
-  console.log(proposals);
+
+type CurrencyProps = {
+  proposals: ProposalType[] | undefined;
+};
+
+export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {  
+  const { address, isConnected } = useAccount();
+  const { data: balance } = useBalance({ address });
+
+  const {
+    data: hash,
+    isPending,
+    writeContractAsync
+  } = useWriteContract({
+    mutation: {
+      async onSuccess(data) {
+        console.log(1)        
+      },
+      onError(error) {
+        console.log(1, error)   
+      }
+    }
+  });
+
+  const handleAcceptWriteContract = async (proposalId: number) => {
+    const params = [
+      proposalId,
+      true
+    ];
+
+    console.log('ProposalId: ', proposalId);
+    try {
+      const tx = await writeContractAsync({
+        ...GovContract,
+        functionName: 'vote',
+        args: params,
+      });  
+    } catch (e) {
+      console.log('error:', e);
+    }
+  }
+
+  const handleDeclineWriteContract = async (proposalId: number) => {
+    const params = [
+      proposalId,
+      false
+    ];
+
+    console.log('ProposalId: ', proposalId);
+    try {
+      const tx = await writeContractAsync({
+        ...GovContract,
+        functionName: 'vote',
+        args: params,
+      });  
+    } catch (e) {
+      console.log('error:', e);
+    }
+  }
+
   return (
     <div className='flex w-full flex-col gap-6'>
-      {tempProposlas.map((proposal, index) => (
+      {convertTempProposalTypeData(proposals ? proposals : []).map((proposal, index) => (
         <div
           key={index}
           className='bg-background-100 flex w-full gap-5 rounded-[15px] p-4'
@@ -30,13 +88,14 @@ export const Proposals = ({
             </div>
           ))}
           <div className='flex w-full flex-col gap-[13px]'>
-            <Button variant='primary' size='lg' className='w-full'>
+            <Button variant='primary' size='lg' className='w-full' onClick={() => handleAcceptWriteContract(index+1)}>
               Accept
             </Button>
             <Button
               variant='gradient-outline'
               size='lg'
               className='bg-background-100 w-full'
+              onClick={() => handleDeclineWriteContract(index+1)}
             >
               Decline
             </Button>

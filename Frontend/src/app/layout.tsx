@@ -1,18 +1,17 @@
 import { Metadata } from 'next';
-import { headers } from 'next/headers';
 import * as React from 'react';
-import { cookieToInitialState } from 'wagmi';
 
 import '@/styles/globals.css';
 import '@/styles/colors.css';
-
-import { config } from '@/lib/wagmi';
 
 import Footer from '@/components/layout/footer/components';
 import Header from '@/components/layout/header/components';
 
 import { siteConfig } from '@/constant/config';
-import AppKitProvider from '@/contexts/wagmiProvider';
+import { Providers } from "@/app/provider";
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -50,16 +49,29 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const initialState = cookieToInitialState(config, headers().get('cookie'));
-
   return (
     <html>
       <body className='bg-dark text-light flex min-h-screen flex-col'>
-        <AppKitProvider initialState={initialState}>
+        {/* <ParticleConnectkit> */}
+        <Providers>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          // transition:Bounce,            
+          />
           <Header />
           {children}
           <Footer />
-        </AppKitProvider>
+        </Providers>
+        {/* </ParticleConnectkit> */}
       </body>
     </html>
   );

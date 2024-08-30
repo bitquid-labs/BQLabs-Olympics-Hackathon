@@ -1,11 +1,26 @@
-import { CoverType, MyCoverType } from '@/screen/purchase/types';
+import { CoverType } from '@/screen/purchase/types';
 
 export const filters = [
-  'all cover product',
-  'slashing',
-  'smart contract risks',
-  'protocol risks',
-  'stable coin',
+  {
+    index: undefined,
+    riskType: 'all cover product'
+  },
+  {
+    index: 0,
+    riskType: 'slashing',
+  },
+  {
+    index: 1,
+    riskType: 'smart contract risks',
+  },
+  {
+    index: 2,
+    riskType: 'protocol risks'
+  },
+  {
+    index: 3,
+    riskType: 'stable coin'
+  }
 ];
 
 export const covers: CoverType[] = [
@@ -92,62 +107,5 @@ export const covers: CoverType[] = [
       'security rating',
       'cover wording',
     ],
-  },
-];
-
-export const myCovers: MyCoverType[] = [
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
-  },
-  {
-    id: 1,
-    logo: '',
-    name: 'Aave V2',
-    image: '',
-    detail: 'Smart Contract Vulnerability',
-    value: ' 2WBTC',
-    expiry: '12.12.2024',
   },
 ];

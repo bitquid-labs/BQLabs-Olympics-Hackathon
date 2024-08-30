@@ -2,13 +2,13 @@ import React from 'react';
 
 import { Currency } from '@/screen/pool/components/currency';
 import { Detail } from '@/screen/pool/components/detail';
-import { tempStacks } from '@/screen/stake/constants';
+import { tempStacks, StakeType } from '@/screen/stake/constants';
 
 import RiskImage from '~/svg/risk.svg';
 
-export const PoolScreen = ({ currency }: { currency: string }): JSX.Element => {
-  const pool = tempStacks.find((stake) => stake.currency === currency);
-
+export const PoolScreen = ({ currency, pools, poolId }: { currency: string, poolId: string, pools: StakeType[] }): JSX.Element => {
+  const pool = pools.find((stake) => stake.poolId === poolId);
+  // console.log("pool is ", pool);
   return (
     <section className='flex h-full flex-auto flex-col'>
       <div className='layout flex flex-auto flex-col items-center gap-10 p-10 pt-12'>
