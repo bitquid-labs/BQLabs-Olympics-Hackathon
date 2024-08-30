@@ -37,7 +37,6 @@ interface ICover {
     function updateUserCoverValue(
         address user,
         uint256 _coverId,
-        CoverLib.CoverType coverType,
         uint256 _claimPaid
     ) external;
 }
@@ -61,7 +60,7 @@ contract Governance is ReentrancyGuard, Ownable {
 
     struct ProposalParams {
         address user;
-        CoverLib.CoverType riskType;
+        CoverLib.RiskType riskType;
         uint256 coverId;
         string description;
         uint256 poolId;
@@ -78,7 +77,7 @@ contract Governance is ReentrancyGuard, Ownable {
         uint256 indexed proposalId,
         address indexed creator,
         string description,
-        CoverLib.CoverType riskType,
+        CoverLib.RiskType riskType,
         uint256 claimAmount
     );
     event VoteCast(
@@ -157,7 +156,7 @@ contract Governance is ReentrancyGuard, Ownable {
         emit VoteCast(msg.sender, _proposalId, _vote, voterWeight);
     }
 
-    function executeProposal(uint256 _proposalId) external nonReentrant {
+    function executeProposal(uint256 _proposalId) external onlyOwner nonReentrant {
         Proposal storage proposal = proposals[_proposalId];
         require(
             block.timestamp > proposal.deadline,
@@ -180,7 +179,6 @@ contract Governance is ReentrancyGuard, Ownable {
             coverContract.updateUserCoverValue(
                 proposal.proposalParam.user,
                 proposal.proposalParam.coverId,
-                proposal.proposalParam.riskType,
                 proposal.proposalParam.claimAmount
             );
 
