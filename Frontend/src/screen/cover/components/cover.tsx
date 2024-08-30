@@ -82,7 +82,10 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
       if (err instanceof Error) {
         if (err.message.includes("InsufficientPoolBalance")) {
           errorMsg = "Insufficient Pool Balance.";
-        } else {
+        } else if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        }
+         else {
           errorMsg = err.message
         }
       } else {
@@ -136,7 +139,7 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
           <Overview
             productName="Insurance Cover"
             coverAmount={coverAmount}
-            annualCost={Number(selectedCover?.dailyCost)}
+            annualCost={Number(selectedCover?.cost)}
             coverFee={coverFee}
             handleBuyCover={handleBuyCover}
             error={error}

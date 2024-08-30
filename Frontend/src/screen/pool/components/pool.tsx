@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import { Currency } from '@/screen/pool/components/currency';
 import { Detail } from '@/screen/pool/components/detail';
 import { tempStacks, StakeType } from '@/screen/stake/constants';
+import { PieChart } from 'react-minimal-pie-chart';
 
-import RiskImage from '~/svg/risk.svg';
-
-export const PoolScreen = ({ currency, pools, poolId }: { currency: string, poolId: string, pools: StakeType[] }): JSX.Element => {
+export const PoolScreen = ({
+  currency,
+  pools,
+  poolId,
+}: {
+  currency: string;
+  poolId: string;
+  pools: StakeType[];
+}): JSX.Element => {
   const pool = pools.find((stake) => stake.poolId === poolId);
+  const data = [
+    { title: 'Merlin Slashing', value: 20, color: '#c94047' },
+    { title: 'Babylon Slashing', value: 15, color: '#dcde8a' },
+    { title: 'PWR Slashing', value: 60, color: '#519e60' },
+  ];
+
   // console.log("pool is ", pool);
   return (
     <section className='flex h-full flex-auto flex-col'>
@@ -20,9 +33,26 @@ export const PoolScreen = ({ currency, pools, poolId }: { currency: string, pool
           <div className='text-[40px] font-bold leading-[50px]'>
             Risk Covered
           </div>
+
           <div className='flex w-full items-center justify-center'>
             <div className='flex items-center gap-6'>
-              <RiskImage className='h-[316px] w-[316px]' />
+              <PieChart
+                data={data}
+                animate
+                animationDuration={1200}
+                animationEasing='ease-out'
+                radius={42}
+                lineWidth={60}
+                label={({ dataEntry }) =>
+                  `${dataEntry.title} ${dataEntry.value}%`
+                }
+                labelStyle={{
+                  fontSize: '5px',
+                  fontFamily: 'sans-serif',
+                  fill: '#4fc4d1',
+                }}
+                labelPosition={80}
+              />
               <div className='flex min-w-[420px] flex-col gap-8'>
                 <div className='flex items-center justify-between'>
                   <div className='text-2xl'>Merlin Slashing</div>
