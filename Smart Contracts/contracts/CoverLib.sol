@@ -5,31 +5,28 @@ library CoverLib {
     struct Cover {
         uint256 id;
         string coverName;
-        CoverType riskType;
+        RiskType riskType;
         string chains;
-        uint256 dailyCost;
         uint256 capacity;
-        uint256 securityRating;
+        uint256 cost;
         uint256 maxAmount;
-        uint256 currentBalance;
         uint256 poolId;
-        string description;
+        string CID;
     }
 
     struct GenericCoverInfo {
         address user;
         uint256 coverId;
+        RiskType riskType;
         string coverName;
-        uint256 chainId;
         uint256 coverValue; // This is the value of the cover purchased
         uint256 claimPaid;
         uint256 coverPeriod; // This is the period the cover is purchased for in days
-        uint256 startDay; // When the cover starts
         uint256 endDay; // When the cover expires
         bool isActive;
     }
 
-    enum CoverType {
+    enum RiskType {
         Slashing,
         SmartContract,
         Stablecoin,
@@ -37,7 +34,8 @@ library CoverLib {
     }
 
     struct GenericCover {
-        CoverType coverType;
+        RiskType riskType;
         bytes coverData;
     }
+
 }
