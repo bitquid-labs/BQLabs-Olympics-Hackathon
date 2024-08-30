@@ -37,7 +37,6 @@ interface ICover {
     function updateUserCoverValue(
         address user,
         uint256 _coverId,
-        CoverLib.RiskType coverType,
         uint256 _claimPaid
     ) external;
 }
@@ -180,7 +179,6 @@ contract Governance is ReentrancyGuard, Ownable {
             coverContract.updateUserCoverValue(
                 proposal.proposalParam.user,
                 proposal.proposalParam.coverId,
-                proposal.proposalParam.riskType,
                 proposal.proposalParam.claimAmount
             );
 

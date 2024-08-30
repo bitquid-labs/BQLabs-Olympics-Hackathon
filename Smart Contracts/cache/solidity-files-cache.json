@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\CoverLib.sol": {
-      "lastModificationDate": 1724966192334,
-      "contentHash": "05e4042a355316a67a1c3d22d02f9a57",
+      "lastModificationDate": 1725006637294,
+      "contentHash": "381fdfeca5b1f9801efa7a0c01d0ae22",
       "sourceName": "contracts/CoverLib.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -38,8 +38,8 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsuranceCover.sol": {
-      "lastModificationDate": 1724981539136,
-      "contentHash": "e7c4223be35183d6fad484b96838bea2",
+      "lastModificationDate": 1725006665404,
+      "contentHash": "86fd9e4e35925743b412b40f7601f33a",
       "sourceName": "contracts/InsuranceCover.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -343,7 +343,7 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsurancePool.sol": {
-      "lastModificationDate": 1724980645561,
+      "lastModificationDate": 1725006680184,
       "contentHash": "07992ea636b174369743186dd2335aa4",
       "sourceName": "contracts/InsurancePool.sol",
       "solcConfig": {
@@ -384,8 +384,8 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\Gov.sol": {
-      "lastModificationDate": 1724964392873,
-      "contentHash": "4c2260fb18475be5b93a3a56b68dcf97",
+      "lastModificationDate": 1725006648282,
+      "contentHash": "47d9c8df535293961b069944698c01af",
       "sourceName": "contracts/Gov.sol",
       "solcConfig": {
         "version": "0.8.24",

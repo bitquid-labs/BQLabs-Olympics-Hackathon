@@ -8,8 +8,10 @@ library CoverLib {
         RiskType riskType;
         string chains;
         uint256 capacity;
+        uint256 cost;
         uint256 maxAmount;
         uint256 poolId;
+        string CID;
     }
 
     struct GenericCoverInfo {
@@ -35,4 +37,5 @@ library CoverLib {
         RiskType riskType;
         bytes coverData;
     }
+
 }
