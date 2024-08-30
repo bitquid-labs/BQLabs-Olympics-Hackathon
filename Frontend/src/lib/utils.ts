@@ -1,9 +1,20 @@
 import { TempProposalType } from '@/screen/governance/constants';
 import { covers, filters, riskTypes } from '@/screen/purchase/constants';
 import { MyStakeType, StakeType } from '@/screen/stake/constants';
-import { InsurancePoolType, ProposalType } from '@/types/main';
+import { InsurancePoolType, PoolCoverType, ProposalType } from '@/types/main';
 import clsx, { ClassValue } from 'clsx';
+import { Cpu } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
+
+const pieChartColors = [
+  '#00d4e1',
+  '#00a5d4',
+  '#00b5e1',
+  '#00a2c4',
+  '#0096d6',
+  '#00b1e6',
+  '#0089d6'
+];
 
 /** Merge classes with tailwind-merge with clsx full feature */
 export function cn(...inputs: ClassValue[]) {
@@ -66,3 +77,14 @@ export const convertMyStakeTypeData = (data: InsurancePoolType[]): MyStakeType[]
   return result;
 }
 
+export const convertPoolCoversData = (data: PoolCoverType[]): any[] => {
+  const result: any[] = [];
+  for (let i = 0; i < data.length; i++) {
+    result.push({
+      title: data[i].coverName,
+      value: Number(data[i].capacity),
+      color: pieChartColors[i]
+    });
+  }
+  return result;
+}

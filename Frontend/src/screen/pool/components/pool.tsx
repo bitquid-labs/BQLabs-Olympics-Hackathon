@@ -1,10 +1,11 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 
 import { Currency } from '@/screen/pool/components/currency';
 import { Detail } from '@/screen/pool/components/detail';
 import { StakeType } from '@/screen/stake/constants';
 import { PieChart } from 'react-minimal-pie-chart';
-import { usePoolCovers } from '#/src/hooks/contracts/pool/usePoolCovers';
+import { usePoolCovers } from '@/hooks/contracts/pool/usePoolCovers';
+import { cn, convertPoolCoversData } from '@/lib/utils';
 
 export const PoolScreen = ({
   currency,
@@ -16,16 +17,18 @@ export const PoolScreen = ({
   pools: StakeType[];
 }): JSX.Element => {
   const pool = pools.find((stake) => stake.poolId === poolId);
-  const data = [
-    { title: 'Merlin', value: 20, color: '#c94047' },
-    { title: 'Babylon', value: 15, color: '#dcde8a' },
-    { title: 'PWR', value: 60, color: '#519e60' },
-  ];
+  const [data, setData] = useState<any[]>([]);
+  // const data = [
+  //   { title: 'Merlin', value: 20, color: '#c94047' },
+  //   { title: 'Babylon', value: 15, color: '#dcde8a' },
+  //   { title: 'PWR', value: 60, color: '#519e60' },
+  // ];
 
   const poolCovers = usePoolCovers(poolId);
   useEffect(() => {
     if (poolCovers) {
       console.log('poolCovers', poolCovers);
+      setData(convertPoolCoversData(poolCovers));
       // setMyStacks(convertStakeTypeData(insurancePools as InsurancePoolType[]));
     }
   }, [poolCovers]);
@@ -48,33 +51,33 @@ export const PoolScreen = ({
               <PieChart
                 data={data}
                 animate
-                animationDuration={1200}
+                animationDuration={2000}
                 animationEasing='ease-out'
                 radius={42}
                 lineWidth={60}
                 label={({ dataEntry }) =>
-                  `${dataEntry.title} ${dataEntry.value}%`
+                  `${dataEntry.value}%`
                 }
                 labelStyle={{
                   fontSize: '5px',
                   fontFamily: 'sans-serif',
-                  fill: '#4fc4d1',
+                  fill: '#fff',
                 }}
-                labelPosition={80}
+                labelPosition={70}
               />
-              <div className='flex min-w-[420px] flex-col gap-8'>
-                <div className='flex items-center justify-between'>
-                  <div className='text-2xl'>Merlin Slashing</div>
-                  <div className='text-2xl font-bold'>20%</div>
-                </div>
-                <div className='flex items-center justify-between'>
-                  <div className='text-2xl'>Babylon Slashing</div>
-                  <div className='text-2xl font-bold'>15%</div>
-                </div>
-                <div className='flex items-center justify-between'>
-                  <div className='text-2xl'>PWR Slashing</div>
-                  <div className='text-2xl font-bold'>65%</div>
-                </div>
+              <div className='flex min-w-[420px] flex-col gap-2'>
+
+                {data.map((key, i) => (
+                  <div className='flex items-center justify-between'>
+                    <div
+                      className={cn(
+                        'text-2xl',
+                        `text-[${data[i].color}]`
+                      )}>
+                      {data[i].title}</div>
+                    <div className='text-2xl font-bold'>{data[i].value}%</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

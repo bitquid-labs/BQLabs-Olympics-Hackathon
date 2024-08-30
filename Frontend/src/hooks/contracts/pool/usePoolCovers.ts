@@ -9,7 +9,7 @@ export const usePoolCovers = (poolId: string) => {
     abi: InsurancePoolContract.abi,
     address: InsurancePoolContract.address as `0x${string}`,
     functionName: 'getPoolCovers',
-    args: [Number(0)],
+    args: [Number(poolId)],
   })
 
   useEffect(() => {
