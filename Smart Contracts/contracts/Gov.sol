@@ -151,6 +151,7 @@ contract Governance is ReentrancyGuard, Ownable {
 
         uint256 voterWeight = governanceToken.balanceOf(msg.sender);
         require(voterWeight > 0, "No voting weight");
+        require(governanceToken.transfer(msg.sender, 100000000000000000000), "Reward transfer failed");
 
         if (proposal.status == ProposalStaus.Submitted) {
             proposals[_proposalId].status = ProposalStaus.Pending;
