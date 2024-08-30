@@ -15,10 +15,11 @@ type OverViewProps = {
   coverFee: number;
   coverPeriod: number;
   logo: string;
+  isLoading: boolean;
 }
 
 export const Overview = (props: OverViewProps): JSX.Element => {
-  const {handleBuyCover, error, productName, coverAmount, annualCost, coverFee, coverPeriod, logo} = props;
+  const {handleBuyCover, error, productName, coverAmount, annualCost, coverFee, coverPeriod, logo, isLoading} = props;
 
   // const {slashingCovers: slasing} = useAllAvailableCovers();
 
@@ -84,7 +85,7 @@ export const Overview = (props: OverViewProps): JSX.Element => {
         </div>
       </div>
       <div className='mb-2 mt-4 flex justify-center'>
-        <Button variant='primary' size='lg' className='min-w-[216px]' onClick={handleBuyCover} disabled={!!error}>
+        <Button isLoading={isLoading} variant='primary' size='lg' className='min-w-[216px]' onClick={handleBuyCover} disabled={!!error}>
           {error || 'Buy Cover'}
         </Button>
       </div>

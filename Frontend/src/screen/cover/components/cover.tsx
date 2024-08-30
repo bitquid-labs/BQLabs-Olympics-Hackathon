@@ -35,6 +35,7 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
     address: address as `0x${string}`,
     unit: 'ether',
   })
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
   console.log('cover fee:', coverFee, coverAmount, coverPeriod)
@@ -54,6 +55,7 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
   if (!selectedCover) return <div>Loading...</div>;
 
   const handleBuyCover = async () => {
+    setIsLoading(true);
     const params = [
       // selectedCover?.riskType,
       Number(selectedCover?.id),
@@ -93,7 +95,7 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
       }
       toast.error(errorMsg);
     }
-
+    setIsLoading(false);
   }
 
   const handleCoverAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +147,7 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
             error={error}
             coverPeriod={coverPeriod}
             logo={selectedCover?.CID || ''}
+            isLoading={isLoading}
           />
         </div>
       </div>
