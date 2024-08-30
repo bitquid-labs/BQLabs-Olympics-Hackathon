@@ -48,6 +48,7 @@ contract Governance is ReentrancyGuard, Ownable {
         uint256 votesAgainst;
         uint256 createdAt;
         uint256 deadline;
+        ProposalStaus status;
         bool executed;
         ProposalParams proposalParam;
     }
@@ -67,6 +68,13 @@ contract Governance is ReentrancyGuard, Ownable {
         uint256 claimAmount;
     }
 
+    enum ProposalStaus {
+        Submitted, 
+        Pending,
+        Executed,
+        Rejected
+    }
+
     uint256 public proposalCounter;
     uint256 public votingDuration;
     mapping(uint256 => Proposal) public proposals;
@@ -78,7 +86,8 @@ contract Governance is ReentrancyGuard, Ownable {
         address indexed creator,
         string description,
         CoverLib.RiskType riskType,
-        uint256 claimAmount
+        uint256 claimAmount,
+        ProposalStaus status
     );
     event VoteCast(
         address indexed voter,
@@ -116,6 +125,7 @@ contract Governance is ReentrancyGuard, Ownable {
             createdAt: block.timestamp,
             deadline: block.timestamp + votingDuration,
             executed: false,
+            status: ProposalStaus.Submitted,
             proposalParam: params
         });
 
@@ -126,7 +136,8 @@ contract Governance is ReentrancyGuard, Ownable {
             params.user,
             params.description,
             params.riskType,
-            params.claimAmount
+            params.claimAmount,
+            ProposalStaus.Submitted
         );
     }
 
@@ -140,6 +151,10 @@ contract Governance is ReentrancyGuard, Ownable {
 
         uint256 voterWeight = governanceToken.balanceOf(msg.sender);
         require(voterWeight > 0, "No voting weight");
+
+        if (proposal.status == ProposalStaus.Submitted) {
+            proposals[_proposalId].status = ProposalStaus.Pending;
+        }
 
         voters[_proposalId][msg.sender] = Voter({
             voted: true,
@@ -163,7 +178,6 @@ contract Governance is ReentrancyGuard, Ownable {
             "Voting period is still active"
         );
         require(!proposal.executed, "Proposal already executed");
-
         proposal.executed = true;
 
         if (proposal.votesFor > proposal.votesAgainst) {
@@ -176,6 +190,10 @@ contract Governance is ReentrancyGuard, Ownable {
                 "Error Claiming pay"
             );
 
+            if (proposal.status == ProposalStaus.Pending) {
+                proposals[_proposalId].status = ProposalStaus.Executed;
+            }
+
             coverContract.updateUserCoverValue(
                 proposal.proposalParam.user,
                 proposal.proposalParam.coverId,
@@ -184,6 +202,9 @@ contract Governance is ReentrancyGuard, Ownable {
 
             emit ProposalExecuted(_proposalId, true);
         } else {
+            if (proposal.status == ProposalStaus.Pending) {
+                proposals[_proposalId].status = ProposalStaus.Rejected;
+            }
             emit ProposalExecuted(_proposalId, false);
         }
     }
