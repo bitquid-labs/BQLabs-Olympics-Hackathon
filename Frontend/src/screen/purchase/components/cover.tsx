@@ -13,7 +13,7 @@ export type CoverProps = {
 } & CoverType;
 
 export const Cover = (cover: ICover): JSX.Element => {
-  const { coverName, chains, cost, capacity, id, riskType, maxAmount } = cover;
+  const { coverName, chains, cost, capacity, id, riskType, maxAmount, CID } = cover;
   const riskTypeName = getRiskTypeName(riskType);
   const annualCost = useMemo(() => { return Number(cost) }, [cost]);
 
@@ -28,11 +28,13 @@ export const Cover = (cover: ICover): JSX.Element => {
   return (
     <div className='bg-background-100 flex w-full flex-col gap-5 rounded-[15px] p-5'>
       <div className='flex items-center gap-[10px]'>
-        <div className='h-[60px] w-[60px] rounded-full bg-white' />
+        <div className='h-[60px] w-[60px] overflow-hidden rounded-full'>
+          <img src={CID} className="w-full h-full" alt='logo' />
+        </div>
         <div className='flex flex-col gap-1'>
           <div className='text-lg font-semibold leading-[22px]'>{coverName}</div>
           <div className='flex items-center gap-1'>
-            <div className='h-5 w-5 rounded-full bg-white' />
+            {/* <div className='h-5 w-5 rounded-full bg-white' /> */}
             {riskTypeName && (<div className='text-sm'>{riskTypeName}</div>)}
           </div>
         </div>

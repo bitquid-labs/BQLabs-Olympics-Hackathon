@@ -49,6 +49,7 @@ export interface IUserCover {
   isActive?: boolean | undefined,
   startDay?: bigint | undefined,
   user?: string | undefined,
+  riskType?: number | undefined,
 }
 
 export const enum CoverToken {

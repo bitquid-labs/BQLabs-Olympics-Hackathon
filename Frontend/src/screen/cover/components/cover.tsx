@@ -137,13 +137,14 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
             maxCoverAmount={maxCoverAmount}
           />
           <Overview
-            productName="Insurance Cover"
+            productName={selectedCover?.coverName || ''}
             coverAmount={coverAmount}
             annualCost={Number(selectedCover?.cost)}
             coverFee={coverFee}
             handleBuyCover={handleBuyCover}
             error={error}
             coverPeriod={coverPeriod}
+            logo={selectedCover?.CID || ''}
           />
         </div>
       </div>
