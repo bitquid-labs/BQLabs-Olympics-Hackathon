@@ -56,10 +56,10 @@ The BQ Protocol is structured around three primary user roles, each interacting 
 
 Below is a list of the smart contracts deployed within the BQ Protocol:
 
-1. **Staking Contract:** [Contract Address]
-2. **Governance Contract:** [Contract Address]
-3. **Claim Module Contract:** [Contract Address]
-4. **Insurance Pool Contract:** [Contract Address]
+1. **Staking Contract:** 0x89AE684d499bDecC283EDdc1122390C6e2355504
+2. **Governance Contract:** 0x532656807B59DB53C940f984076D32fE653Db758
+3. **Claim Module Contract:** 0x9689a2EAdF13DE136E7c7AC993Bb4Fc114669160
+4. **Insurance Pool Contract:** 0x89AE684d499bDecC283EDdc1122390C6e2355504
 
 
 ## Conclusion
