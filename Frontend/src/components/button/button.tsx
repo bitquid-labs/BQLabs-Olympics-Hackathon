@@ -71,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           'transition-all',
           'active:scale-95',
           variant === 'gradient-outline' &&
-            'overflow-hidden rounded-full p-[1px]'
+          'overflow-hidden rounded-full p-[1px]'
         )}
       >
         {variant === 'gradient-outline' && (
@@ -82,7 +82,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           type='button'
           disabled={disabled}
           className={cn(
-            'box-border inline-flex items-center rounded-full',
+            'box-border inline-flex items-center rounded-full flex items-center',
             'focus-visible:ring-primary-100 focus:outline-none focus-visible:ring',
             'transition-all',
             'justify-center text-center',
@@ -117,24 +117,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             ],
             'disabled:cursor-not-allowed',
             isLoading &&
-              'relative text-transparent transition-none hover:text-transparent disabled:cursor-wait',
+            'relative transition-none disabled:cursor-wait opacity-[0.7]',
             className
           )}
           {...rest}
         >
-          {isLoading && (
-            <div
-              className={cn(
-                'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-                {
-                  'text-white': ['primary', 'dark'].includes(variant),
-                  'text-black': ['light'].includes(variant),
-                }
-              )}
-            >
-              <ImSpinner2 className='animate-spin' />
-            </div>
-          )}
           {LeftIcon &&
             renderIcon(
               LeftIcon,
@@ -154,6 +141,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               size === 'base' ? 'ml-2' : 'ml-1.5',
               classNames?.rightIcon
             )}
+          {isLoading && (
+            <div
+              className={cn(
+                // 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+                'pl-[4px]',
+                {
+                  'text-white': ['primary', 'dark'].includes(variant),
+                  'text-black': ['light'].includes(variant),
+                }
+              )}
+            >
+              <ImSpinner2 className='animate-spin' />
+            </div>
+          )}
+
         </button>
       </div>
     );

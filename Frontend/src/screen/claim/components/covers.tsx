@@ -25,6 +25,7 @@ export const Covers = (props: CoversType): JSX.Element => {
           <RectButton 
             onClick={() => router.push(`/claim/?coverId=${product.coverId}`)}
             variant={product.isSelected ? 'default': 'outline'}
+            key={index}
           >
             {product.name || ''}
           </RectButton>

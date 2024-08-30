@@ -12,6 +12,7 @@ type RequirementType = {
   error: string,
   maxClaimable: number,
   isSlashing: boolean,
+  isLoading: boolean,
   handleLossEventDateChange: (date: Date | null) => void,
   handleClaimValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   handleSlashingTxChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -20,7 +21,7 @@ type RequirementType = {
 }
 
 export const Requirement = (props: RequirementType): JSX.Element => {
-  const {lossEventDate, claimValueStr, slashingTx, description, maxClaimable, error, isSlashing, handleLossEventDateChange, handleClaimValueChange, handleSlashingTxChange, handleDescriptionChange, handleSubmitClaim} = props;
+  const {lossEventDate, claimValueStr, slashingTx, description, maxClaimable, error, isSlashing, isLoading, handleLossEventDateChange, handleClaimValueChange, handleSlashingTxChange, handleDescriptionChange, handleSubmitClaim} = props;
 
   return (
     <div className='flex w-full flex-col gap-10'>
@@ -83,7 +84,7 @@ export const Requirement = (props: RequirementType): JSX.Element => {
             </div>
           </div>
           <div className='flex items-center justify-center'>
-            <Button variant='primary' size='lg' className='min-w-[216px]' onClick={() => handleSubmitClaim()} disabled={!!error}>
+            <Button isLoading={isLoading} variant='primary' size='lg' className='min-w-[216px]' onClick={() => handleSubmitClaim()} disabled={!!error}>
               {error || 'Submit Claim'}
             </Button>
           </div>

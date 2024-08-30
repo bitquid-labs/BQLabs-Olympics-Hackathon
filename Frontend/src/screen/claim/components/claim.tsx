@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import { useProposalByCoverId } from "#/src/hooks/contracts/useProposalByCover";
 
 type ClaimScreenType = {
-  coverId?: string | undefined
+  coverId?: string | null
 }
 
 export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
@@ -27,6 +27,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   const { address } = useAccount();
   const router = useRouter();
   const [currentCover, setCurrentCover] = useState<IUserCover>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const currentCoverId = useMemo(() => {
     return currentCover?.coverId ? Number(currentCover?.coverId) : 0;
@@ -41,7 +42,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   const products = useMemo(() => {
     let foundMatch = false;
   
-    const updatedProducts = userCovers.map((cover) => {
+    const updatedProducts = userCovers.map((cover, index) => {
       let isSelected = false;
       if (Number(cover?.coverId).toString() === coverId) {
         isSelected = true;
@@ -96,6 +97,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
   ])
 
   const handleSubmitClaim = async () => {
+    setIsLoading(true);
     const params = {
       user: address,
       riskType: 0, // riskType
@@ -129,6 +131,8 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
 
       toast.error(errorMsg);
     }
+
+    setIsLoading(false);
   }
 
   const handleSlashingTxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +168,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
         />
         <div className='flex w-full'>
           <Requirement
+            isLoading={isLoading}
             lossEventDate={lossEventDate}
             claimValueStr={claimValueStr}
             slashingTx={slashingTx}
