@@ -41,7 +41,7 @@ describe("InsuranceCover", function () {
       await lpContractMock.connect(user2).deposit(1, 150, {
         value: ethers.parseEther("1000"),
       });
-      await lpContractMock.setInsuranceCover(insuranceCover.target);
+      await lpContractMock.setCover(insuranceCover.target);
     });
     it("Should create a new slashing cover", async function () {
       await insuranceCover
@@ -60,7 +60,7 @@ describe("InsuranceCover", function () {
       await lpContractMock.connect(user2).deposit(1, 150, {
         value: ethers.parseEther("1000"),
       });
-      await lpContractMock.setInsuranceCover(insuranceCover.target);
+      await lpContractMock.setCover(insuranceCover.target);
       await insuranceCover
         .connect(owner)
         .createCover(0, "Slashing Cover", "Ethereum", 50, 1);
