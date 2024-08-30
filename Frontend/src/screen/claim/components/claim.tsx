@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import { useProposalByCoverId } from "#/src/hooks/contracts/useProposalByCover";
 
 type ClaimScreenType = {
-  coverId?: string | undefined
+  coverId?: string | null
 }
 
 export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
