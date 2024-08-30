@@ -15,7 +15,8 @@ import {
 import { convertAmount, convertTvl } from '@/lib/utils';
 import { GovContract, MockERC20Contract } from '@/constant/contracts';
 import Grid from '~/svg/grid.svg';
-import { addTokenToMetaMask } from '../../../global';
+import { addTokenToMetaMask } from '@/hooks/global';
+import { toast } from 'react-toastify';
 
 export const Stake = (): JSX.Element => {
   const [amount, setAmount] = useState<string>('10');
@@ -48,40 +49,59 @@ export const Stake = (): JSX.Element => {
         functionName: 'mint',
         args: params,
       });
-    } catch (e) {
-      console.log('error:', e);
+      toast.success("Faucet Sent!");
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        }
+      }
+      toast.error(errorMsg);
     }
   };
 
-  const handleDepositContract = async (poolId: string, day: number) => {
-    console.log(
-      'Deposit is ',
-      GovContract,
-      BigInt(poolId),
-      BigInt(day.toString())
-    );
-    const realAmount = convertAmount(amount);
-    const params = [Number(poolId), Number(day)];
+    
 
-    console.log('params ', params);
-    console.log('Balance: ', balance, 'AMOUNT: ', realAmount);
+  // const handleDepositContract = async (poolId: string, day: number) => {
+  //   console.log(
+  //     'Deposit is ',
+  //     GovContract,
+  //     BigInt(poolId),
+  //     BigInt(day.toString())
+  //   );
+  //   const realAmount = convertAmount(amount);
+  //   const params = [Number(poolId), Number(day)];
 
-    try {
-      const tx = await writeContractAsync({
-        abi: GovContract.abi,
-        address: GovContract.address as `0x${string}`,
-        functionName: 'deposit',
-        args: params,
-        value: parseUnits(amount.toString(), 18),
-      });
-      // console.log(GovContract.address as `0x${string}`, tx)
-    } catch (e) {
-      console.log('error:', e);
-    }
-  };
+  //   console.log('params ', params);
+  //   console.log('Balance: ', balance, 'AMOUNT: ', realAmount);
+
+  //   try {
+  //     const tx = await writeContractAsync({
+  //       abi: GovContract.abi,
+  //       address: GovContract.address as `0x${string}`,
+  //       functionName: 'deposit',
+  //       args: params,
+  //       value: parseUnits(amount.toString(), 18),
+  //     });
+  //   } catch (e) {
+  //     console.log('error:', e);
+  //   }
+  // };
 
   const handleAddNetworkAndToken = async () => {
-    await addTokenToMetaMask(); // Then add the token
+    try {
+      await addTokenToMetaMask(); // Then add the token
+      toast.success("BQ Token Added on Metamask!");
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        }
+      }
+      toast.error(errorMsg);
+    }
   };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
