@@ -16,9 +16,9 @@ export const PoolScreen = ({
 }): JSX.Element => {
   const pool = pools.find((stake) => stake.poolId === poolId);
   const data = [
-    { title: 'Merlin Slashing', value: 20, color: '#c94047' },
-    { title: 'Babylon Slashing', value: 15, color: '#dcde8a' },
-    { title: 'PWR Slashing', value: 60, color: '#519e60' },
+    { title: 'Merlin', value: 20, color: '#c94047' },
+    { title: 'Babylon', value: 15, color: '#dcde8a' },
+    { title: 'PWR', value: 60, color: '#519e60' },
   ];
 
   // console.log("pool is ", pool);
