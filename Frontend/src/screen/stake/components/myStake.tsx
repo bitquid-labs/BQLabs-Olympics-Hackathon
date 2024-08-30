@@ -6,7 +6,7 @@ import LeftArrowIcon from '~/svg/left-arrow.svg';
 
 import { useChainId, useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { MyStackDetail, tempMyStacks, MyStakeType } from '@/screen/stake/constants';
-import { InsurancePoolContract } from '@/constant/contracts';
+import { InsurancePoolContract, ICoverContract } from '@/constant/contracts';
 import { MockERC20Contract } from '@/constant/contracts';
 import { useAllInsurancePoolsByAddress } from '@/hooks/contracts/pool/useAllInsurancePoolsByAddress';
 import { InsurancePoolType } from '@/types/main';
@@ -67,8 +67,8 @@ export const MyStakeScreen = (): JSX.Element => {
 
     try {
       await writeContractAsync({
-        ...InsurancePoolContract,
-        functionName: 'claimYield',
+        ...ICoverContract,
+        functionName: 'claimPayoutForLP',
         args: [BigInt(poolId.toString())],
       });
       toast.success("Claim Sucess!");
@@ -78,7 +78,7 @@ export const MyStakeScreen = (): JSX.Element => {
         if (err.message.includes("User denied transaction signature")) {
           errorMsg = "User denied transaction signature";
         } else {
-          errorMsg = "Yield already claimed for today";
+          errorMsg = "InsufficientPoolBalance!";
         }
       } else {
         errorMsg = "Unexpected error";
