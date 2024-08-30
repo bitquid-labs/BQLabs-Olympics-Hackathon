@@ -11,6 +11,8 @@ import { MockERC20Contract } from '@/constant/contracts';
 import { useAllInsurancePoolsByAddress } from '@/hooks/contracts/pool/useAllInsurancePoolsByAddress';
 import { InsurancePoolType } from '@/types/main';
 
+import { toast } from 'react-toastify';
+
 export const MyStakeScreen = (): JSX.Element => {
 
   const chainId = useChainId()
@@ -21,24 +23,69 @@ export const MyStakeScreen = (): JSX.Element => {
   const {
     data: hash,
     isPending,
-    writeContract
-  } = useWriteContract();
+    writeContractAsync
+  } = useWriteContract({
+    mutation: {
+      async onSuccess(data) {
+        console.log(1)        
+      },
+      onError(error) {
+        console.log(1, error)   
+      }
+    }
+  });
 
-  const handleWriteContract = (poolId: number, amount: string, day: number): void => {
+  const handleWriteContract = async (poolId: number): Promise<void> => {
     console.log('wallet address is: ', `${address}`);
 
-    writeContract({
-      ...MockERC20Contract,
-      functionName: 'approve',
-      args: [`${address}`, BigInt(amount)],
-    });
+    try {
+      await writeContractAsync({
+        ...InsurancePoolContract,
+        functionName: 'withdraw',
+        args: [BigInt(poolId.toString())],
+      })
+      // console.log("poolId is ", poolId);
+      toast.success("Withdraw Sucess!");
+    } catch(err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        } else {
+          errorMsg = "Can't withdraw before tenure passed!";
+        }
+      } else {
+        errorMsg = "Unexpected error";
+      }
 
-    writeContract({
-      ...InsurancePoolContract,
-      functionName: 'deposit',
-      args: [BigInt(poolId.toString()), BigInt(amount), BigInt(day.toString())],
-    });
-    // console.log("poolId is ", poolId);
+      toast.error(errorMsg);
+    }
+  }
+
+  const handleClaimWriteContract = async (poolId: number): Promise<void> => {
+    console.log('wallet address is: ', `${address}`);
+
+    try {
+      await writeContractAsync({
+        ...InsurancePoolContract,
+        functionName: 'claimYield',
+        args: [BigInt(poolId.toString())],
+      });
+      toast.success("Claim Sucess!");
+    } catch(err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        } else {
+          errorMsg = "Yield already claimed for today";
+        }
+      } else {
+        errorMsg = "Unexpected error";
+      }
+
+      toast.error(errorMsg);
+    }
   }
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
@@ -68,7 +115,7 @@ export const MyStakeScreen = (): JSX.Element => {
                   key={i}
                   className={cn(
                     'flex w-full flex-col items-center gap-6',
-                    (key === 'poolId' || key === 'tvl') && 'hidden'
+                    (key === 'poolId' || key === 'tvl' || key == 'currency') && 'hidden'
                   )}
                 >
                   <div
@@ -82,13 +129,25 @@ export const MyStakeScreen = (): JSX.Element => {
                   <div className='font-semibold'>
                     {stack[key as keyof typeof stack]}
                   </div>
+                  {key === 'apy' && (
+                    <div className='w-full'>
+                      <Button
+                        variant='gradient-outline'
+                        className='bg-background-100 w-full'
+                        size='lg'
+                        onClick={() => handleClaimWriteContract(index + 1)}
+                      >
+                        Claim Yield
+                      </Button>
+                    </div>
+                  )}
                   {key === 'claim' && (
                     <div className='w-full'>
                       <Button
                         variant='gradient-outline'
                         className='bg-background-100 w-full'
                         size='lg'
-                        onClick={() => handleWriteContract(index + 1, '10000000000000000000', 65)}
+                        onClick={() => handleWriteContract(index + 1)}
                       >
                         Withdraw Stake
                       </Button>

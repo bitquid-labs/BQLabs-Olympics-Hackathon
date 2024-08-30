@@ -10,8 +10,8 @@ export enum MyStackDetail {
   rating = 'Pool Rating',
   apy = 'APY',
   currency = 'Currency',
+  claim = 'Staked Value',
   tenure = 'Min Tenure',
-  claim = 'Claim Yield',
   poolId = '1',
   tvl = '10000',
 }

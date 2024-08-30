@@ -4,8 +4,18 @@ import { cn, convertStakeTypeData, convertTvl } from '@/lib/utils';
 import Button from '@/components/button/button';
 import LeftArrowIcon from '~/svg/left-arrow.svg';
 
-import { useReadContracts, useChainId, useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { MyStackDetail, tempMyStacks, StakeType } from '@/screen/stake/constants';
+import {
+  useReadContracts,
+  useChainId,
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi';
+import {
+  MyStackDetail,
+  tempMyStacks,
+  StakeType,
+} from '@/screen/stake/constants';
 import { MockERC20Contract } from '@/constant/contracts';
 import { useAllInsurancePools } from '@/hooks/contracts/pool/useAllInsurancePools';
 
@@ -19,23 +29,21 @@ export type InsurancePoolType = {
   isActive: boolean;
 };
 
-
 export const StakeScreen = (): JSX.Element => {
+  const chainId = useChainId();
 
-  const chainId = useChainId()
-
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useAccount();
 
   const [myStacks, setMyStacks] = useState<StakeType[]>([]);
 
   const insurancePools = useAllInsurancePools();
-  const {
-    data: hash,
-    isPending,
-    writeContract
-  } = useWriteContract();
+  const { data: hash, isPending, writeContract } = useWriteContract();
 
-  const handleWriteContract = (poolId: number, amount: string, day: number): void => {
+  const handleWriteContract = (
+    poolId: number,
+    amount: string,
+    day: number
+  ): void => {
     console.log('wallet address is: ', `${address}`);
 
     writeContract({
@@ -43,18 +51,17 @@ export const StakeScreen = (): JSX.Element => {
       functionName: 'approve',
       args: [`${address}`, BigInt(amount)],
     });
+  };
 
-  }
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
-  })
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   useEffect(() => {
     if (insurancePools) {
       setMyStacks(convertStakeTypeData(insurancePools as InsurancePoolType[]));
     }
-
   }, [insurancePools]);
 
   return (
@@ -80,10 +87,7 @@ export const StakeScreen = (): JSX.Element => {
                   <div
                     className={cn(
                       'w-full rounded-full px-5 py-3 text-center',
-                      key === 'rating' && 'bg-[#0699D8]',
-                      key === 'apy' && 'bg-[#449704]',
-                      key === 'currency' && 'bg-[#DF1A1A]',
-                      key === 'tenure' && 'bg-[#E915C7]'
+                      'bg-[#0699D8]'
                     )}
                   >
                     {MyStackDetail[key as keyof typeof MyStackDetail]}
@@ -94,8 +98,13 @@ export const StakeScreen = (): JSX.Element => {
                 </div>
               ))}
               <div className='flex w-full flex-col items-center gap-6'>
-                <div className='w-full rounded-full bg-[#CBA005] px-5 py-3 text-center'>
-                  Stack
+                <div className='w-full rounded-full bg-gradient-to-t from-teal-400 to-blue-500 px-5 py-3 text-center hover:from-pink-500 hover:to-orange-500'>
+                  <Link
+                    href={`/pool/${stack.currency}/${index + 1}`}
+                    className='font-semibold underline-offset-4'
+                  >
+                    Stack Now
+                  </Link>
                 </div>
                 <Link
                   href={`/pool/${stack.currency}/${index + 1}`}

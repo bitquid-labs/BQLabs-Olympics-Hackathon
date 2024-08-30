@@ -12,11 +12,11 @@ const Footer = (): JSX.Element => {
           <Copy className='h-5 w-5' />
           <div>2024 BitQuid Labs. all Right Reserved</div>
         </div>
-        <div className='flex items-center gap-7'>
+        {/* <div className='flex items-center gap-7'>
           <div>Contact Us</div>
           <div>Terms of Use</div>
           <div>Help Center</div>
-        </div>
+        </div> */}
         <Link />
       </div>
     </footer>

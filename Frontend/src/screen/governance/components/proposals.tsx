@@ -9,13 +9,14 @@ import { convertTempProposalTypeData, convertTvl } from '@/lib/utils';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useReadContracts, useWriteContract, useAccount, useBalance, useWaitForTransactionReceipt, useConnect } from 'wagmi';
 import { GovContract } from '@/constant/contracts';
-
+import { toast } from 'react-toastify';
+import { useUserVoted } from '@/hooks/contracts/governance/useUserVoted';
 
 type CurrencyProps = {
   proposals: ProposalType[] | undefined;
 };
 
-export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {  
+export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {
   const { address, isConnected } = useAccount();
   const { data: balance } = useBalance({ address });
 
@@ -46,9 +47,21 @@ export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {
         ...GovContract,
         functionName: 'vote',
         args: params,
-      });  
-    } catch (e) {
-      console.log('error:', e);
+      });
+      toast.success("Accept Vote Sucess!");
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        } else {
+          errorMsg = "Already voted";
+        }
+      } else {
+        errorMsg = "Unexpected error";
+      }
+
+      toast.error(errorMsg);
     }
   }
 
@@ -65,8 +78,19 @@ export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {
         functionName: 'vote',
         args: params,
       });  
-    } catch (e) {
-      console.log('error:', e);
+      toast.success("Decline Vote Sucess!");
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        } else {
+          errorMsg = "Already voted";
+        }
+      } else {
+        errorMsg = "Unexpected error";
+      }
+      toast.error(errorMsg);
     }
   }
 
@@ -83,7 +107,10 @@ export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {
                 {ProposalDetail[key as keyof typeof ProposalDetail]}
               </div>
               <div className='font-semibold'>
-                {proposal[key as keyof typeof proposal]}
+                {key === 'incentive' && (
+                  <div>100 BQ</div>
+                )}
+                {key !== 'incentive' && proposal[key as keyof typeof proposal]}
               </div>
             </div>
           ))}
@@ -100,14 +127,14 @@ export const Proposals = ({ proposals }: CurrencyProps): JSX.Element => {
               Decline
             </Button>
           </div>
-          <div className='flex w-full items-end justify-center gap-6'>
+          {/* <div className='flex w-full items-end justify-center gap-6'>
             <Link
               href='/'
               className='font-semibold underline underline-offset-4'
             >
               Details
             </Link>
-          </div>
+          </div> */}
         </div>
       ))}
     </div>
