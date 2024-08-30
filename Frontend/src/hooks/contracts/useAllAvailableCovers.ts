@@ -14,7 +14,7 @@ export const useAllAvailableCovers = () => {
     args: [],
   })
 
-  console.log('available:', availableCovers)
+  console.log('raw available:', availableCovers)
 
   // useEffect(() => {
   //   refetch();

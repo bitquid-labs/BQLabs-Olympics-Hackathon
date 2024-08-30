@@ -13,9 +13,9 @@ export type CoverProps = {
 } & CoverType;
 
 export const Cover = (cover: ICover): JSX.Element => {
-  const { coverName, chains, dailyCost, capacity, id, riskType, maxAmount } = cover;
+  const { coverName, chains, cost, capacity, id, riskType, maxAmount } = cover;
   const riskTypeName = getRiskTypeName(riskType);
-  const annualCost = useMemo(() => { return Number(dailyCost) * 365 }, [dailyCost]);
+  const annualCost = useMemo(() => { return Number(cost) }, [cost]);
 
   const { setSelectedCover } = useContext(CoverContext)!;
   const router = useRouter();
@@ -49,7 +49,7 @@ export const Cover = (cover: ICover): JSX.Element => {
         </div>
         <div className='text-base capitalize leading-[20px] flex items-center justify-between'>
           <div>Annual Cost</div>
-          <div className='font-semibold'>{annualCost}</div>
+          <div className='font-semibold'>{annualCost} %</div>
         </div>
         <div className='text-base capitalize leading-[20px] flex items-center justify-between'>
           <div>Max Capacity</div>
