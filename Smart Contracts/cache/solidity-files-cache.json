@@ -38,8 +38,8 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsuranceCover.sol": {
-      "lastModificationDate": 1724980615687,
-      "contentHash": "7a56d967d8621faf88585020d0c1799c",
+      "lastModificationDate": 1724981539136,
+      "contentHash": "e7c4223be35183d6fad484b96838bea2",
       "sourceName": "contracts/InsuranceCover.sol",
       "solcConfig": {
         "version": "0.8.24",

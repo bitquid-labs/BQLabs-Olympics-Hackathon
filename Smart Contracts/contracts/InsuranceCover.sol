@@ -142,7 +142,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             revert WrongPool();
         }
 
-        uint256 _maxAmount = tvl * (_capacity / 100);
+        uint256 _maxAmount = tvl * (_capacity * 1e18 / 100) / 1e18;
 
         lpContract.updatePercentageSplit(_poolId, _capacity);
         CoverLib.Cover memory cover = CoverLib.Cover({
