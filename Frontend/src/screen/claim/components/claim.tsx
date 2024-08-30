@@ -41,6 +41,7 @@ export const ClaimScreen: React.FC<ClaimScreenType> = (props): JSX.Element => {
       }
       return {
         name: cover?.coverName,
+        coverId: cover?.coverId ? Number(cover?.coverId) : '',
         isSelected: isSelected
       };
     });

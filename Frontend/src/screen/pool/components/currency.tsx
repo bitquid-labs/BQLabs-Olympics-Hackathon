@@ -44,8 +44,7 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
     console.log("Deposit is ", InsurancePoolContract, BigInt(poolId), BigInt(day.toString()));
     const realAmount = convertAmount(amount);
     const params = [
-      Number(poolId),
-      Number(day)
+      Number(poolId)
     ];
 
     console.log("params ", params)
@@ -91,16 +90,16 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
               Max
             </button>
           </div>
-          <div className='grid grid-cols-3 gap-11'>
-            <Button variant={ period === 90 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(90)}>
-              3 months
+          <div className='grid grid-cols-2 gap-11'>
+            <Button variant={'primary'} size='lg' className='w-full'>
+              Tenure Period
             </Button>
-            <Button variant={ period === 180 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(180)}>
+            {/* <Button variant={ period === 180 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(180)}>
               6 months
             </Button>
             <Button variant={ period === 365 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(365)}>
               1 year
-            </Button>
+            </Button> */}
           </div>
           <div className='mb-2 mt-4 flex justify-center'>
             {/* <Button variant='primary' size='lg' className='min-w-[216px] mr-6' onClick={() => handleApproveTokenContract(amount)}>

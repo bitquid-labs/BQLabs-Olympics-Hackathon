@@ -23,6 +23,8 @@ export interface ICover {
   riskType?: RiskType | undefined,
   capacity?: bigint | undefined,
   chains?: string | string,
+  CID?: string | undefined,
+  cost?: bigint | undefined,
   coverName?: string | undefined,
   currentBalance?: bigint | undefined,
   dailyCost?: bigint | undefined,
@@ -47,6 +49,7 @@ export interface IUserCover {
   isActive?: boolean | undefined,
   startDay?: bigint | undefined,
   user?: string | undefined,
+  riskType?: number | undefined,
 }
 
 export const enum CoverToken {

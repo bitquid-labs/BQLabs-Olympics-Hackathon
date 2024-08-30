@@ -5,31 +5,31 @@ import { ICoverContract } from "@/constant/contracts";
 import {useBlockNumber, useReadContract} from 'wagmi';
 import { IUserCover } from "@/types/main";
 
-export const useAllUserCovers = (address: string) => {
+export const useUserCoverInfo = (address: string, coverId: number) => {
   const {data: blockNumber} = useBlockNumber({watch: true});
-  const {data: userCovers, refetch} = useReadContract({
+  const {data: userCover, refetch} = useReadContract({
     abi: ICoverContract.abi,
     address: ICoverContract.address as `0x${string}`,
-    functionName: 'getAllUserCovers',
-    args: [address],
+    functionName: 'getUserCoverInfo',
+    args: [address, coverId],
   })
 
-  console.log('raw user:', userCovers)
+  console.log('raw user cover info:', userCover)
 
   useEffect(() => {
     refetch();
   }, [blockNumber]);
 
-  if (!userCovers) return [];
+  if (!userCover) return undefined;
 
   try {
-    const result = userCovers as IUserCover[];
-    if (!result) return [];
+    const result = userCover as IUserCover;
+    if (!result) return undefined;
 
     return result;
 
 
   } catch (error) {
-    return [];
+    return undefined;
   }
 };

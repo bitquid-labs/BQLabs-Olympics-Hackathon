@@ -14,10 +14,11 @@ type OverViewProps = {
   annualCost: number;
   coverFee: number;
   coverPeriod: number;
+  logo: string;
 }
 
 export const Overview = (props: OverViewProps): JSX.Element => {
-  const {handleBuyCover, error, productName, coverAmount, annualCost, coverFee, coverPeriod} = props;
+  const {handleBuyCover, error, productName, coverAmount, annualCost, coverFee, coverPeriod, logo} = props;
 
   // const {slashingCovers: slasing} = useAllAvailableCovers();
 
@@ -36,15 +37,18 @@ export const Overview = (props: OverViewProps): JSX.Element => {
         <div className='flex flex-col gap-4'>
           <div className='flex items-center justify-between'>
             <div>Product</div>
-            <div className='flex gap-[10px]'>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+            <div className='flex gap-[10px] items-center'>
+              <div className='h-[32px] w-[32px] overflow-hidden'>
+                <img className='w-full h-full rounded-full' src={logo} alt='logo' />
+              </div>
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
               <div>{productName}</div>
             </div>
           </div>
           <div className='flex items-center justify-between'>
             <div className='flex gap-[10px]'>
               <div>Cover amount</div>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
             <div className='flex gap-[10px]'>
               <div className='font-semibold'>{coverAmount} BTCP</div>
@@ -53,14 +57,14 @@ export const Overview = (props: OverViewProps): JSX.Element => {
           <div className='flex items-center justify-between'>
             <div className='flex gap-[10px]'>
               <div>Cover period</div>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
             <div className='font-semibold'>{formatDate(startDate)} - {formatDate(endDate)}</div>
           </div>
           <div className='flex items-center justify-between'>
             <div className='flex gap-[10px]'>
               <div>Yearly Cost</div>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
             <div className='font-semibold'>{annualCost}%</div>
           </div>
@@ -69,7 +73,7 @@ export const Overview = (props: OverViewProps): JSX.Element => {
         <div className='flex items-center justify-between'>
           <div className=''>Cover fee</div>
           <div className='flex items-center gap-2'>
-          {!!coverFee && (<div>{coverFee.toFixed(4)}</div>)}
+          {!!coverFee && (<div>{coverFee.toFixed(5)}</div>)}
             {/* <Dropdown
               value={selectedToken}
               setValue={setSelectedToken}

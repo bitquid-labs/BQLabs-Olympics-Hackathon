@@ -34,11 +34,11 @@ export const Detail = (props: DetailProps): JSX.Element => {
           <div className='flex items-center justify-between'>
             <div className='flex gap-[10px]'>
               <div>Cover amount</div>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
             <div className='flex gap-[10px]'>
               <div className='font-semibold'>Max: {(maxCoverAmount).toFixed(2)} BTCP</div>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
           </div>
           <div className='flex items-center justify-between'>
@@ -61,7 +61,7 @@ export const Detail = (props: DetailProps): JSX.Element => {
           <div className='flex items-center justify-between'>
             <div className='flex gap-[10px]'>
               <div>Cover period</div>
-              <div className='bg-background-200 h-5 w-5 rounded-full' />
+              {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
             <div className='flex items-center gap-3 font-semibold'>
               <div>28 Days</div>

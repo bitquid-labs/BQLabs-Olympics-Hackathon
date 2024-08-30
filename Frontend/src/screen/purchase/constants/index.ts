@@ -23,6 +23,13 @@ export const filters = [
   }
 ];
 
+export const riskTypes = [
+  "Slashing",
+  "Smart Contract",
+  "Stablecoin",
+  "Protocol"
+]
+
 export const covers: CoverType[] = [
   {
     id: 1,
