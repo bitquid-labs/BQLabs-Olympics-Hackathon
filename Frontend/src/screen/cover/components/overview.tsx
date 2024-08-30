@@ -69,7 +69,7 @@ export const Overview = (props: OverViewProps): JSX.Element => {
         <div className='flex items-center justify-between'>
           <div className=''>Cover fee</div>
           <div className='flex items-center gap-2'>
-          {!!coverFee && (<div>{coverFee.toFixed(4)}</div>)}
+          {!!coverFee && (<div>{coverFee.toFixed(5)}</div>)}
             {/* <Dropdown
               value={selectedToken}
               setValue={setSelectedToken}
