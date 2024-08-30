@@ -84,3 +84,8 @@ export interface IIcon {
   className?: string;
   fill?: string;
 }
+export type VoterType = {
+  voted: boolean,
+  vote: boolean, 
+  weight: number
+};

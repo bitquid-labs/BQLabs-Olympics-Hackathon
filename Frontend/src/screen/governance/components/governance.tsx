@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Proposals } from '@/screen/governance/components/proposals';
 import { Stake } from '@/screen/governance/components/stake';
 import { VotingPower } from '@/screen/governance/components/votingPower';
-import { ProposalType } from '@/types/main';
+import { ProposalType, VoterType } from '@/types/main';
 import { useAllLiveProposals } from '@/hooks/contracts/governance/useAllLiveProposals';
 
 export const GovernanceScreen = (): JSX.Element => {
