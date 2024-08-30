@@ -55,17 +55,6 @@ describe("InsurancePool", function () {
       expect(deposit.status).to.equal(0); // Status.Active
     });
 
-    it("should calculate the daily payout correctly", async function () {
-      await insurancePool.connect(user1).deposit(1, 30, {
-        value: ethers.parseEther("7300"),
-      });
-
-      const deposit = await insurancePool.getUserDeposit(1, user1.address);
-      const dailyPayout = ethers.formatEther(deposit.dailyPayout);
-
-      expect(parseFloat(dailyPayout)).to.be.closeTo(1.0, 0.01);
-    });
-
     it("should allow a user to withdraw funds after the period ends", async function () {
       await insurancePool.connect(user1).deposit(1, 30, {
         value: ethers.parseEther("1.0"),

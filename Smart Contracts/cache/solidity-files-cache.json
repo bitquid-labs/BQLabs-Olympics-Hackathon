@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\CoverLib.sol": {
-      "lastModificationDate": 1724911421587,
-      "contentHash": "a58d9c6864f87e5141c9b75e65b7c5ce",
+      "lastModificationDate": 1724966192334,
+      "contentHash": "05e4042a355316a67a1c3d22d02f9a57",
       "sourceName": "contracts/CoverLib.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -38,8 +38,8 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsuranceCover.sol": {
-      "lastModificationDate": 1724911421588,
-      "contentHash": "211af5424897ab1e58b117a07b4cdc6e",
+      "lastModificationDate": 1724980615687,
+      "contentHash": "7a56d967d8621faf88585020d0c1799c",
       "sourceName": "contracts/InsuranceCover.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -343,8 +343,8 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\InsurancePool.sol": {
-      "lastModificationDate": 1724945900649,
-      "contentHash": "f543f1372b86c8478465c383c779abf3",
+      "lastModificationDate": 1724980645561,
+      "contentHash": "07992ea636b174369743186dd2335aa4",
       "sourceName": "contracts/InsurancePool.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -373,7 +373,8 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "./CoverLib.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -383,8 +384,8 @@
       ]
     },
     "C:\\Users\\Mr. OLA\\Documents\\bitquid\\BQLabs-Olympics-Hackathon\\Smart Contracts\\contracts\\Gov.sol": {
-      "lastModificationDate": 1724927714434,
-      "contentHash": "cde350d11735312fc5005dd3564fe5b2",
+      "lastModificationDate": 1724964392873,
+      "contentHash": "4c2260fb18475be5b93a3a56b68dcf97",
       "sourceName": "contracts/Gov.sol",
       "solcConfig": {
         "version": "0.8.24",

@@ -22,12 +22,10 @@ describe("Governance Contract", function () {
       ethers.parseEther("1000000")
     );
     governanceTokenAdreess = governanceToken.target;
-    console.log("Governance Token Address:", governanceToken.target);
 
     const LPContract = await ethers.getContractFactory("InsurancePool");
     lpContract = await LPContract.deploy(owner.address);
     lpContractAddress = lpContract.target;
-    console.log("Address:", lpContract.target);
 
     Governance = await ethers.getContractFactory("Governance");
     governance = await Governance.deploy(
@@ -37,7 +35,6 @@ describe("Governance Contract", function () {
       owner.address
     );
     governanceAddress = governance.target;
-    console.log("Address:", governanceAddress);
 
     const CoverContract = await ethers.getContractFactory("InsuranceCover");
     coverContract = await CoverContract.deploy(
@@ -46,7 +43,6 @@ describe("Governance Contract", function () {
       governance.target
     );
     coverContractAddress = coverContract.target;
-    console.log("Address:", coverContractAddress);
 
     await lpContract.setGovernance(governanceAddress);
 
@@ -67,7 +63,7 @@ describe("Governance Contract", function () {
       claimAmount: ethers.parseEther("100"),
     };
 
-    await lpContract.createPool("Random Pool", 3, 28);
+    await lpContract.createPool(0, "Random Pool", 3, 28);
 
     await governance.connect(addr1).createProposal(proposalParams);
 
@@ -89,7 +85,7 @@ describe("Governance Contract", function () {
       claimAmount: ethers.parseEther("100"),
     };
 
-    await lpContract.createPool("Random Pool", 3, 28);
+    await lpContract.createPool(0, "Random Pool", 3, 28);
     await governance.connect(addr1).createProposal(proposalParams);
 
     await governanceToken.transfer(addr2.address, ethers.parseEther("100"));
@@ -112,15 +108,13 @@ describe("Governance Contract", function () {
 
     console.log();
 
-    await lpContract.createPool("Random Pool", 3, 28);
+    await lpContract.createPool(0, "Random Pool", 3, 28);
     const pool = await lpContract.getPool(1);
-    console.log("Pool created:", pool);
     await lpContract.connect(addr2).deposit(1, 150, {
       value: ethers.parseEther("1000"),
     });
 
     const updatedPool = await lpContract.getPool(1);
-    console.log("Pool TVL after deposit:", updatedPool);
     // await governance.connect(owner).setCoverContract(coverContract.target);
 
     await governance.connect(addr1).createProposal(proposalParams);
@@ -135,12 +129,9 @@ describe("Governance Contract", function () {
     await ethers.provider.send("evm_mine", []);
 
     const poolBalance = await ethers.provider.getBalance(lpContract.target);
-    console.log("InsurancePool balance before claim:", poolBalance);
-
     try {
       const tx = await governance.connect(owner).executeProposal(1);
       const receipt = await tx.wait();
-      console.log("Proposal executed successfully. Gas used:", receipt.gasUsed);
     } catch (error) {
       console.error("Error executing proposal:", error.message);
       if (error.data) {
@@ -151,7 +142,6 @@ describe("Governance Contract", function () {
         console.error("Decoded error:", decodedError);
       }
     }
-
     const proposal = await governance.getProposalDetails(1);
     expect(proposal.executed).to.be.true;
 

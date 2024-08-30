@@ -12,11 +12,16 @@ describe("InsuranceCover", function () {
 
     const LPContractMock = await ethers.getContractFactory("InsurancePool");
     lpContractMock = await LPContractMock.deploy(owner.address);
-    console.log("Address:", lpContractMock.target);
 
     // const CoverLibFactory = await ethers.getContractFactory("CoverLib");
     // CoverLib = await CoverLibFactory.deploy();
-
+    Governance = await ethers.getContractFactory("Governance");
+    governance = await Governance.deploy(
+      governanceToken.target,
+      lpContract.target,
+      1,
+      owner.address
+    );
     const InsuranceCoverFactory = await ethers.getContractFactory(
       "InsuranceCover"
     );
@@ -24,24 +29,24 @@ describe("InsuranceCover", function () {
     insuranceCover = await InsuranceCoverFactory.deploy(
       lpContractMock.target,
       owner.address,
-      governance.address
+      governance.target
     );
   });
 
   describe("Cover Creation", function () {
+    beforeEach(async function () {
+      await lpContractMock
+        .connect(owner)
+        .createPool(0, "Slashing pool", 3, 120);
+      await lpContractMock.connect(user2).deposit(1, 150, {
+        value: ethers.parseEther("1000"),
+      });
+      await lpContractMock.setInsuranceCover(insuranceCover.target);
+    });
     it("Should create a new slashing cover", async function () {
       await insuranceCover
         .connect(owner)
-        .createCover(
-          0,
-          "Slashing Cover",
-          "Ethereum",
-          ethers.parseEther("1"),
-          ethers.parseEther("1000"),
-          5,
-          1,
-          "Slashing protection for Ethereum validators"
-        );
+        .createCover(0, "Slashing Cover", "Ethereum", 40, 1);
 
       const cover = await insuranceCover.slashingCovers(1);
       expect(cover.coverName).to.equal("Slashing Cover");
@@ -51,34 +56,27 @@ describe("InsuranceCover", function () {
 
   describe("Cover Purchase", function () {
     beforeEach(async function () {
-      await lpContractMock.createPool("Random Pool", 3, 28);
-      const pool = await lpContractMock.getPool(1);
-      console.log("Pool created:", pool);
+      await lpContractMock.connect(owner).createPool(0, "Random Pool", 3, 28);
       await lpContractMock.connect(user2).deposit(1, 150, {
         value: ethers.parseEther("1000"),
       });
+      await lpContractMock.setInsuranceCover(insuranceCover.target);
       await insuranceCover
         .connect(owner)
-        .createCover(
-          0,
-          "Slashing Cover",
-          "Ethereum",
-          ethers.parseEther("1"),
-          ethers.parseEther("1000"),
-          5,
-          1,
-          "Slashing protection for Ethereum validators"
-        );
+        .createCover(0, "Slashing Cover", "Ethereum", 50, 1);
+
+      await lpContractMock.deposit(1, 50, { value: ethers.parseEther("300") });
     });
 
     it("Should allow a user to purchase a slashing cover", async function () {
       const coverValue = ethers.parseEther("100");
+      const covers = await insuranceCover.getAllAvailableCovers();
+      console.log("Covers: ", covers);
 
       await insuranceCover.connect(user1).purchaseCover(
         0, // Slashing
         1, // Cover ID
         "Slashing Cover",
-        1, // Chain ID
         coverValue,
         30, // Cover period (days)
         { value: ethers.parseEther("1") } // Cover fee
@@ -128,21 +126,13 @@ describe("InsuranceCover", function () {
     beforeEach(async function () {
       await lpContractMock.createPool("Random Pool", 5, 28);
       const pool = await lpContractMock.getPool(1);
-      console.log("Pool created:", pool);
       await lpContractMock.connect(user2).deposit(1, 150, {
         value: ethers.parseEther("1000"),
       });
       // Create a cover and simulate a purchase
-      await insuranceCover.connect(owner).createCover(
-        0, // Slashing
-        "Slashing Cover",
-        "Ethereum",
-        ethers.parseEther("1"),
-        ethers.parseEther("1000"),
-        5,
-        1,
-        "Slashing protection for Ethereum validators"
-      );
+      await insuranceCover
+        .connect(owner)
+        .createCover(0, "Slashing Cover", "Ethereum", 56, 1);
 
       await insuranceCover.connect(user1).purchaseCover(
         0, // Slashing
@@ -179,7 +169,6 @@ describe("InsuranceCover", function () {
       );
       const deposit = await lpContractMock.getUserDeposit(1, user1);
       const dailyPayout = ethers.formatEther(deposit.dailyPayout);
-      console.log(dailyPayout);
       expect(parseFloat(dailyPayout)).to.be.eq(1.0);
     });
   });

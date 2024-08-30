@@ -4,17 +4,21 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./CoverLib.sol";
 
 contract InsurancePool is ReentrancyGuard, Ownable {
+    using CoverLib for *;
     error LpNotActive();
 
     struct Pool {
         string poolName;
+        CoverLib.RiskType riskType;
         uint256 apy;
         uint256 minPeriod;
         uint256 tvl;
         uint256 tcp; // Total claim paid to users
         bool isActive; // Pool status to handle soft deletion
+        uint256 percentageSplitBalance;
         mapping(address => Deposits) deposits; // Mapping of user address to their deposit
     }
 
@@ -46,6 +50,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     mapping(uint256 => Pool) public pools;
     uint256 public poolCount;
     address public governance;
+    address public coverContract;
     address public initialOwner;
 
     event Deposited(address indexed user, uint256 amount, string pool);
@@ -60,6 +65,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     }
 
     function createPool(
+        CoverLib.RiskType _riskType,
         string memory _poolName,
         uint256 _apy,
         uint256 _minPeriod
@@ -71,6 +77,8 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         newPool.minPeriod = _minPeriod;
         newPool.tvl = 0;
         newPool.isActive = true;
+        newPool.riskType = _riskType;
+        newPool.percentageSplitBalance = 100;
 
         emit PoolCreated(poolCount, _poolName);
     }
@@ -90,6 +98,10 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         emit PoolUpdated(_poolId, _apy, _minPeriod);
     }
 
+    function updatePercentageSplit(uint256 _poolId,uint256 __poolPercentageSplit) public onlyCover {
+        pools[_poolId].percentageSplitBalance -= __poolPercentageSplit;
+    }
+
     function deactivatePool(uint256 _poolId) public onlyOwner {
         if (!pools[_poolId].isActive) {
             revert LpNotActive();
@@ -104,19 +116,23 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         view
         returns (
             string memory name,
+            CoverLib.RiskType riskType,
             uint256 apy,
             uint256 minPeriod,
             uint256 tvl,
-            bool isActive
+            bool isActive,
+            uint256 percentageSplitBalance
         )
     {
         Pool storage pool = pools[_poolId];
         return (
             pool.poolName,
+            pool.riskType,
             pool.apy,
             pool.minPeriod,
             pool.tvl,
-            pool.isActive
+            pool.isActive,
+            pool.percentageSplitBalance
         );
     }
 
@@ -254,9 +270,23 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         governance = _governance;
     }
 
+    function setCover(address _coverContract) external onlyOwner {
+        require(coverContract == address(0), "Governance already set");
+        require(_coverContract != address(0), "Governance address cannot be zero");
+        coverContract = _coverContract;
+    }
+
     modifier onlyGovernance() {
         require(
             msg.sender == governance || msg.sender == initialOwner,
+            "Caller is not the governance contract"
+        );
+        _;
+    }
+
+    modifier onlyCover() {
+        require(
+            msg.sender == coverContract || msg.sender == initialOwner,
             "Caller is not the governance contract"
         );
         _;

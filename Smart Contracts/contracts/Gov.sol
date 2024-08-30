@@ -37,7 +37,7 @@ interface ICover {
     function updateUserCoverValue(
         address user,
         uint256 _coverId,
-        CoverLib.CoverType coverType,
+        CoverLib.RiskType coverType,
         uint256 _claimPaid
     ) external;
 }
@@ -61,7 +61,7 @@ contract Governance is ReentrancyGuard, Ownable {
 
     struct ProposalParams {
         address user;
-        CoverLib.CoverType riskType;
+        CoverLib.RiskType riskType;
         uint256 coverId;
         string description;
         uint256 poolId;
@@ -78,7 +78,7 @@ contract Governance is ReentrancyGuard, Ownable {
         uint256 indexed proposalId,
         address indexed creator,
         string description,
-        CoverLib.CoverType riskType,
+        CoverLib.RiskType riskType,
         uint256 claimAmount
     );
     event VoteCast(
