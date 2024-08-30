@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '@/components/button/button';
 
-import { PropsalStatus } from "#/src/types/main";
+import { PropsalStatus } from '@/types/main';
 
 type StatusType = {
   status: PropsalStatus | undefined;

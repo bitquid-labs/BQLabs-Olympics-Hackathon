@@ -16,7 +16,7 @@ import { GovContract, ICoverContract } from "@/constant/contracts";
 import { useAllProposals } from "@/hooks/contracts/useAllProposals";
 import { bnToNumber, numberToBN } from "@/lib/formulat";
 import { toast } from 'react-toastify';
-import { useProposalByCoverId } from "#/src/hooks/contracts/useProposalByCover";
+import { useProposalByCoverId } from '@/hooks/contracts/useProposalByCover';
 
 type ClaimScreenType = {
   coverId?: string | null
