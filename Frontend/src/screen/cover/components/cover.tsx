@@ -55,9 +55,9 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
 
   const handleBuyCover = async () => {
     const params = [
-      selectedCover?.riskType,
+      // selectedCover?.riskType,
       Number(selectedCover?.id),
-      selectedCover.coverName,
+      // selectedCover.coverName,
       numberToBN(coverAmount),
       coverPeriod
     ];
@@ -134,7 +134,7 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
             handleCoverAmountChange={handleCoverAmountChange}
             handleCoverPeriodChange={handleCoverPeriodChange}
             dueTo={coverDueTo}
-            maxCoverAmount={maxCoverAmount}
+            maxCoverAmount={bnToNumber(selectedCover?.maxAmount)}
           />
           <Overview
             productName={selectedCover?.coverName || ''}

@@ -300,6 +300,16 @@
 			},
 			{
 				"internalType": "uint256",
+				"name": "capacityAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "coverValues",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
 				"name": "maxAmount",
 				"type": "uint256"
 			},
@@ -394,6 +404,16 @@
 					{
 						"internalType": "uint256",
 						"name": "cost",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capacityAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverValues",
 						"type": "uint256"
 					},
 					{
@@ -572,6 +592,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "lpAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "lpContract",
 		"outputs": [
 			{
@@ -635,6 +668,19 @@
 			}
 		],
 		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_coverId",
+				"type": "uint256"
+			}
+		],
+		"name": "updateMaxAmount",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

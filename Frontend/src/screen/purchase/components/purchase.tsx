@@ -29,6 +29,8 @@ export const PurchaseScreen = (): JSX.Element => {
       return matchesCategory && matchesSearch;
     });
   }, [availableCovers, searchKeyword, filterCategory]);
+
+  console.log('filtered:', filteredCovers)
   
   return (
     <section className='flex h-full flex-auto flex-col'>

@@ -22,10 +22,12 @@ export interface ICover {
   id?: bigint | undefined,
   riskType?: RiskType | undefined,
   capacity?: bigint | undefined,
+  capacityAmount?: bigint | undefined,
   chains?: string | string,
   CID?: string | undefined,
   cost?: bigint | undefined,
   coverName?: string | undefined,
+  coverValues?: bigint | undefined,
   currentBalance?: bigint | undefined,
   dailyCost?: bigint | undefined,
   maxAmount?: bigint | undefined,
@@ -72,6 +74,7 @@ export type ProposalType = {
   votesAgainst: number;
   createdAt: number;
   deadline: number;
+  status: PropsalStatus;
   executed: boolean;
   proposalParam: {
     user: string;
@@ -105,4 +108,11 @@ export type PoolCoverType = {
   maxAmount: number;
   poolId: number;
   CID: string;
+}
+
+export enum PropsalStatus {
+  Submitted, 
+  Pending,
+  Executed,
+  Rejected
 }
