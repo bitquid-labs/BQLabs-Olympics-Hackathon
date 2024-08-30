@@ -48,58 +48,81 @@ export const HomeScreen = (): JSX.Element => {
           </Button>
         </div>
         <div className='flex gap-9'>
-          <div className='to-[#4FFF4C]/52 relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#12EF0E] px-12 py-6'>
-            <div className='to-[#4FFF4C]/52 absolute bg-gradient-to-br from-[#12EF0E]'></div>
-            <Grid className='absolute inset-0' />
-            <div className='relative z-10 flex h-full w-full flex-col justify-between'>
-              <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
-                About BQ Labs
-                <div className='text-[14px]'>Learn more about BQ Labs</div>
-              </div>
-              <div className='flex justify-center'>
-                {/* <div className='h-40 w-40 rounded-full bg-[#D9D9D9]'></div> */}
-                <AboutSectionImage className='h-[200px] w-[200px]' />
-              </div>
-            </div>
-            <Button
-              variant='primary'
-              size='lg'
-              className='min-w-[216px]'
-            >
-              Learn
-            </Button>
-          </div>
-          <div className='to-[#FFDC5E]/63 relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#FCC608] px-12 py-6'>
-            <div className='to-[#FFDC5E]/63 absolute bg-gradient-to-br from-[#FCC608]'></div>
-            <Grid className='absolute inset-0' />
-            <div className='relative z-10 flex h-full w-full flex-col justify-between'>
-              <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
-                BQ Token Faucet
-                <div className='text-[14px]'>
-                  Participate in governance and earn BQ.
+          <div>
+            <div className='to-[#4FFF4C]/40 relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#12EF0E] px-12 py-6'>
+              <div className='to-[#4FFF4C]/52 absolute bg-gradient-to-br from-[#12EF0E]'></div>
+              <Grid className='absolute inset-0' />
+              <div className='relative z-10 flex h-full w-full flex-col justify-between'>
+                <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
+                  About BQ Labs
+                  <div className='text-[14px]'>Learn more about BQ Labs</div>
+                </div>
+                <div className='flex justify-center'>
+                  {/* <div className='h-40 w-40 rounded-full bg-[#D9D9D9]'></div> */}
+                  <AboutSectionImage className='h-[200px] w-[200px]' />
                 </div>
               </div>
-              <div className='flex justify-center'>
-                {/* <div className='h-40 w-40 rounded-full bg-[#D9D9D9]'></div> */}
-                <BQTokenSectionImage className='h-[200px] w-[200px]' />
-              </div>
             </div>
+            <div className='flex justify-center my-8 '>
+              <Button
+                variant='primary'
+                size='lg'
+                className='min-w-[216px]'
+              >
+                Learn
+              </Button></div>
           </div>
-          <div className='relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#6EBDFF] to-[#3DA5FC]/75 px-12 py-6'>
-            <div className='absolute bg-gradient-to-br from-[#6EBDFF] to-[#3DA5FC]/75'></div>
-            <Grid className='absolute inset-0' />
-            <div className='relative z-10 flex h-full w-full flex-col justify-between'>
-              <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
-                BTCP Token Faucet
-                <div className='text-[14px]'>
-                  Participate in staking and purchase cover.
+          <div>
+            <div className='to-[#FFDC5E]/40 relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#FCC608] px-12 py-6'>
+              <div className='to-[#FFDC5E]/63 absolute bg-gradient-to-br from-[#FCC608]'></div>
+              <Grid className='absolute inset-0'/>
+              <div className='relative z-10 flex h-full w-full flex-col justify-between'>
+                <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
+                  BQ Token Faucet
+                  <div className='text-[14px]'>
+                    Participate in governance and earn BQ.
+                  </div>
+                </div>
+                <div className='flex justify-center'>
+                  {/* <div className='h-40 w-40 rounded-full bg-[#D9D9D9]'></div> */}
+                  <BQTokenSectionImage className='h-[200px] w-[200px]' />
                 </div>
               </div>
-              <div className='flex justify-center'>
-                {/* <div className='h-40 w-40 rounded-full bg-[#D9D9D9]'></div> */}
-                <BTCPSectionImage className='h-[200px] w-[200px]' />
+            </div>
+            <div className='flex justify-center my-8 '>
+              <Button
+                variant='primary'
+                size='lg'
+                className='min-w-[216px]'
+              >
+                Claim Now
+              </Button></div>
+          </div>
+          <div>
+            <div className='relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#6EBDFF] to-[#3DA5FC]/75 px-12 py-6'>
+              <div className='absolute bg-gradient-to-br from-[#6EBDFF] to-[#3DA5FC]/75'></div>
+              <Grid className='absolute inset-0' />
+              <div className='relative z-10 flex h-full w-full flex-col justify-between'>
+                <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
+                  BTCP Token Faucet
+                  <div className='text-[14px]'>
+                    Participate in staking and purchase cover.
+                  </div>
+                </div>
+                <div className='flex justify-center'>
+                  {/* <div className='h-40 w-40 rounded-full bg-[#D9D9D9]'></div> */}
+                  <BTCPSectionImage className='h-[200px] w-[200px]' />
+                </div>
               </div>
             </div>
+            <div className='flex justify-center my-8 '>
+              <Button
+                variant='primary'
+                size='lg'
+                className='min-w-[216px]'
+              >
+                Claim Now
+              </Button></div>
           </div>
         </div>
       </div>
