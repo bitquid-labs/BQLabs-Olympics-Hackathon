@@ -2,55 +2,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
-		"name": "claimYield",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_poolName",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_apy",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_minPeriod",
-				"type": "uint256"
-			}
-		],
-		"name": "createPool",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
-		"name": "deactivatePool",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "_initialOwner",
 				"type": "address"
@@ -58,6 +9,11 @@
 		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "LpNotActive",
+		"type": "error"
 	},
 	{
 		"inputs": [
@@ -90,9 +46,34 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "ClaimAttempt",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "token",
+				"name": "recipient",
 				"type": "address"
 			},
 			{
@@ -112,50 +93,12 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
-		"name": "deposit",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "Deposited",
-		"type": "event"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "token",
 				"type": "address"
 			},
 			{
@@ -194,24 +137,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "poolId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "claimAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "payClaim",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -219,6 +144,12 @@
 				"internalType": "uint256",
 				"name": "id",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "poolName",
+				"type": "string"
 			}
 		],
 		"name": "PoolCreated",
@@ -250,87 +181,12 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_governance",
-				"type": "address"
-			}
-		],
-		"name": "setGovernance",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_apy",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_minPeriod",
-				"type": "uint256"
-			}
-		],
-		"name": "updatePool",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "token",
 				"type": "address"
 			},
 			{
@@ -350,23 +206,89 @@
 		"type": "event"
 	},
 	{
-		"anonymous": false,
+		"inputs": [],
+		"name": "ICoverContract",
+		"outputs": [
+			{
+				"internalType": "contract ICover",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "coverContract",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
+				"internalType": "enum CoverLib.RiskType",
+				"name": "_riskType",
+				"type": "uint8"
 			},
 			{
-				"indexed": false,
+				"internalType": "string",
+				"name": "_poolName",
+				"type": "string"
+			},
+			{
 				"internalType": "uint256",
-				"name": "amount",
+				"name": "_apy",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_minPeriod",
 				"type": "uint256"
 			}
 		],
-		"name": "Withdrawn",
-		"type": "event"
+		"name": "createPool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			}
+		],
+		"name": "deactivatePool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_period",
+				"type": "uint256"
+			}
+		],
+		"name": "deposit",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -429,6 +351,11 @@
 				"type": "string"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "uint256",
 				"name": "apy",
 				"type": "uint256"
@@ -447,6 +374,106 @@
 				"internalType": "bool",
 				"name": "isActive",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "percentageSplitBalance",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPoolCovers",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "coverName",
+						"type": "string"
+					},
+					{
+						"internalType": "enum CoverLib.RiskType",
+						"name": "riskType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "string",
+						"name": "chains",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capacity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cost",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capacityAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverValues",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "CID",
+						"type": "string"
+					}
+				],
+				"internalType": "struct CoverLib.Cover[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPoolTVL",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -509,25 +536,6 @@
 				"internalType": "uint256",
 				"name": "_poolId",
 				"type": "uint256"
-			}
-		],
-		"name": "getPoolTVL",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
 			},
 			{
 				"internalType": "address",
@@ -573,11 +581,6 @@
 						"internalType": "uint256",
 						"name": "expiryDate",
 						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "lastClaimed",
-						"type": "uint256"
 					}
 				],
 				"internalType": "struct InsurancePool.Deposits",
@@ -603,6 +606,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "initialOwner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "owner",
 		"outputs": [
 			{
@@ -612,6 +628,29 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "poolId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "claimAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address payable",
+				"name": "recipient",
+				"type": "address"
+			}
+		],
+		"name": "payClaim",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -662,6 +701,11 @@
 				"type": "string"
 			},
 			{
+				"internalType": "enum CoverLib.RiskType",
+				"name": "riskType",
+				"type": "uint8"
+			},
+			{
 				"internalType": "uint256",
 				"name": "apy",
 				"type": "uint256"
@@ -685,9 +729,189 @@
 				"internalType": "bool",
 				"name": "isActive",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "percentageSplitBalance",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_coverContract",
+				"type": "address"
+			}
+		],
+		"name": "setCover",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_governance",
+				"type": "address"
+			}
+		],
+		"name": "setGovernance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "__poolPercentageSplit",
+				"type": "uint256"
+			}
+		],
+		"name": "updatePercentageSplit",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_apy",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_minPeriod",
+				"type": "uint256"
+			}
+		],
+		"name": "updatePool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "coverName",
+						"type": "string"
+					},
+					{
+						"internalType": "enum CoverLib.RiskType",
+						"name": "riskType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "string",
+						"name": "chains",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capacity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "cost",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capacityAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverValues",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "CID",
+						"type": "string"
+					}
+				],
+				"internalType": "struct CoverLib.Cover",
+				"name": "_cover",
+				"type": "tuple"
+			}
+		],
+		"name": "updatePoolCovers",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_poolId",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

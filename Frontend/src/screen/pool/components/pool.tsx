@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 
 import { Currency } from '@/screen/pool/components/currency';
 import { Detail } from '@/screen/pool/components/detail';
-import { tempStacks, StakeType } from '@/screen/stake/constants';
+import { StakeType } from '@/screen/stake/constants';
 import { PieChart } from 'react-minimal-pie-chart';
+import { usePoolCovers } from '#/src/hooks/contracts/pool/usePoolCovers';
 
 export const PoolScreen = ({
   currency,
@@ -20,6 +21,14 @@ export const PoolScreen = ({
     { title: 'Babylon', value: 15, color: '#dcde8a' },
     { title: 'PWR', value: 60, color: '#519e60' },
   ];
+
+  const poolCovers = usePoolCovers(poolId);
+  useEffect(() => {
+    if (poolCovers) {
+      console.log('poolCovers', poolCovers);
+      // setMyStacks(convertStakeTypeData(insurancePools as InsurancePoolType[]));
+    }
+  }, [poolCovers]);
 
   // console.log("pool is ", pool);
   return (
