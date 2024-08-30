@@ -11,6 +11,7 @@ import { InsurancePoolType } from '@/types/main';
 import { parseUnits } from 'ethers';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { convertAmount, convertTvl } from '@/lib/utils';
+import { toast } from 'react-toastify';
 
 type CurrencyProps = {
   pool: StakeType | undefined;
@@ -44,7 +45,8 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
     console.log("Deposit is ", InsurancePoolContract, BigInt(poolId), BigInt(day.toString()));
     const realAmount = convertAmount(amount);
     const params = [
-      Number(poolId)
+      Number(poolId),
+      Number(day)
     ];
 
     console.log("params ", params)
@@ -58,9 +60,15 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
         args: params,
         value: parseUnits((amount).toString(), 18)
       });
-      console.log(InsurancePoolContract.address as `0x${string}`, tx)
-    } catch (e) {
-      console.log('error:', e);
+      toast.success("Deposit Success!");
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("User denied transaction signature")) {
+          errorMsg = "User denied transaction signature";
+        }
+      }
+      toast.error(errorMsg);
     }
   }
 
@@ -90,16 +98,16 @@ export const Currency = ({ pool }: CurrencyProps): JSX.Element => {
               Max
             </button>
           </div>
-          <div className='grid grid-cols-2 gap-11'>
-            <Button variant={'primary'} size='lg' className='w-full'>
-              Tenure Period
+          <div className='grid grid-cols-3 gap-11'>
+            <Button variant={ period === 90 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(90)}>
+              3 months
             </Button>
-            {/* <Button variant={ period === 180 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(180)}>
+            <Button variant={ period === 180 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(180)}>
               6 months
             </Button>
             <Button variant={ period === 365 ? 'primary' : 'outline'} size='lg' className='w-full' onClick={() => setPeriod(365)}>
               1 year
-            </Button> */}
+            </Button>
           </div>
           <div className='mb-2 mt-4 flex justify-center'>
             {/* <Button variant='primary' size='lg' className='min-w-[216px] mr-6' onClick={() => handleApproveTokenContract(amount)}>

@@ -95,6 +95,7 @@ export const MyStakeScreen = (): JSX.Element => {
   useEffect(() => {
     if (pools) {
       setMyStacks(convertMyStakeTypeData(pools as InsurancePoolType[]));
+      console.log(myStacks)
     }
   }, [pools]);
 

@@ -60,7 +60,7 @@ export const convertTempProposalTypeData = (data: ProposalType[]): TempProposalT
 }
 
 export const convertMyStakeTypeData = (data: InsurancePoolType[]): MyStakeType[] => {
-  console.log("mystakes size is", data.length);
+  console.log("mystakes size is", data, data.length);
   const result: MyStakeType[] = [];
   for (let i = 0; i < data.length; i++) {
     const tvl = convertTvl(Number(data[i].tvl));
