@@ -15,7 +15,7 @@ type DetailProps = {
   coverPeriod: number;
   handleCoverPeriodChange: (val: number) => void;
   dueTo: CoverDueTo;
-  maxCoverAmount: number;
+  maxCoverAmount: string;
 }
 
 export const Detail = (props: DetailProps): JSX.Element => {
@@ -37,7 +37,7 @@ export const Detail = (props: DetailProps): JSX.Element => {
               {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
             <div className='flex gap-[10px]'>
-              <div className='font-semibold'>Max: {(maxCoverAmount).toFixed(2)} BTCP</div>
+              <div className='font-semibold'>Max: {parseFloat(maxCoverAmount).toFixed(2)} BTCP</div>
               {/* <div className='bg-background-200 h-5 w-5 rounded-full' /> */}
             </div>
           </div>

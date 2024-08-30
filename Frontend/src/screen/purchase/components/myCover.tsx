@@ -27,6 +27,8 @@ export const MyCover = (props: CoverProps): JSX.Element => {
 
   const coverInfo = useCoverInfo(Number(coverId))
 
+  console.log('coverinfo:', coverInfo)
+
   const handleLinkDetail = useCallback(() => {
     router.push(`/claim/?coverId=${coverId}`);
   }, [coverId, router]);

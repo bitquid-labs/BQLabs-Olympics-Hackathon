@@ -10,6 +10,7 @@ type RequirementType = {
   slashingTx: string,
   description: string,
   error: string,
+  maxClaimable: number,
   isSlashing: boolean,
   handleLossEventDateChange: (date: Date | null) => void,
   handleClaimValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -19,7 +20,7 @@ type RequirementType = {
 }
 
 export const Requirement = (props: RequirementType): JSX.Element => {
-  const {lossEventDate, claimValueStr, slashingTx, description, error, isSlashing, handleLossEventDateChange, handleClaimValueChange, handleSlashingTxChange, handleDescriptionChange, handleSubmitClaim} = props;
+  const {lossEventDate, claimValueStr, slashingTx, description, maxClaimable, error, isSlashing, handleLossEventDateChange, handleClaimValueChange, handleSlashingTxChange, handleDescriptionChange, handleSubmitClaim} = props;
 
   return (
     <div className='flex w-full flex-col gap-10'>
@@ -46,7 +47,7 @@ export const Requirement = (props: RequirementType): JSX.Element => {
           </div>
           <div className='flex items-center justify-between'>
             <div>Max Claimable</div>
-            <div>4 WBTC</div>
+            <div>{maxClaimable} WBTC</div>
           </div>
           <div className='flex items-center justify-between'>
             <div>Claim Value</div>
