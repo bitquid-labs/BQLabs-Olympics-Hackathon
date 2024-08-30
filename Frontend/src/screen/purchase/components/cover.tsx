@@ -6,14 +6,15 @@ import Button from '@/components/button/button';
 import { CoverType } from '@/screen/purchase/types';
 import { ICover } from "@/types/main";
 import { CoverContext } from "@/contexts/CoverContext";
+import { bnToNumber, getRiskTypeName } from "@/lib/formulat";
 
 export type CoverProps = {
   onSubmit?: () => void;
 } & CoverType;
 
 export const Cover = (cover: ICover): JSX.Element => {
-  const { coverName, chains, dailyCost, capacity, id } = cover;
-  console.log('cover:', cover)
+  const { coverName, chains, dailyCost, capacity, id, riskType, maxAmount } = cover;
+  const riskTypeName = getRiskTypeName(riskType);
   const annualCost = useMemo(() => { return Number(dailyCost) * 365 }, [dailyCost]);
 
   const { setSelectedCover } = useContext(CoverContext)!;
@@ -32,7 +33,7 @@ export const Cover = (cover: ICover): JSX.Element => {
           <div className='text-lg font-semibold leading-[22px]'>{coverName}</div>
           <div className='flex items-center gap-1'>
             <div className='h-5 w-5 rounded-full bg-white' />
-            <div className='text-sm'>Smart Contract Vulnerability</div>
+            {riskTypeName && (<div className='text-sm'>{riskTypeName}</div>)}
           </div>
         </div>
       </div>
@@ -52,7 +53,7 @@ export const Cover = (cover: ICover): JSX.Element => {
         </div>
         <div className='text-base capitalize leading-[20px] flex items-center justify-between'>
           <div>Max Capacity</div>
-          <div className='font-semibold'>{capacity}</div>
+          <div className='font-semibold'>{bnToNumber(maxAmount || 0n)}</div>
         </div>
       </div>
       <div className='flex justify-center'>

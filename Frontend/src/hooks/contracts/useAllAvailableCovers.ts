@@ -10,13 +10,15 @@ export const useAllAvailableCovers = () => {
   const { data: availableCovers, refetch } = useReadContract({
     abi: ICoverContract.abi,
     address: ICoverContract.address as `0x${string}`,
-    functionName: 'getAllAvailableCovers',
+    functionName: "getAllAvailableCovers",
     args: [],
   })
 
-  useEffect(() => {
-    refetch();
-  }, [blockNumber]);
+  console.log('available:', availableCovers)
+
+  // useEffect(() => {
+  //   refetch();
+  // }, [blockNumber]);
 
   if (!availableCovers) return [];
 

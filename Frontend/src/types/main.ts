@@ -5,6 +5,13 @@ export const enum RiskType {
   Protocol
 }
 
+export const riskTypeNames = [
+  "Slashing Vulnerability",
+  "SmartContract Vulnerability",
+  "Stablecoin Vulnerability",
+  "Protocol Vulnerability"
+];
+
 export const enum CoverDueTo {
   NoneSelected,
   SmartContract,
@@ -73,6 +80,10 @@ export type ProposalType = {
   };
 };
 
+export interface IIcon {
+  className?: string;
+  fill?: string;
+}
 export type VoterType = {
   voted: boolean,
   vote: boolean, 

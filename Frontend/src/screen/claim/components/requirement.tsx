@@ -2,15 +2,16 @@ import React from 'react';
 
 import Input from '@/components/input';
 import Button from "@/components/button/button";
+import CustomDatePicker from "@/components/DatePicker";
 
 type RequirementType = {
-  lossEventDate: string,
+  lossEventDate: Date | null,
   claimValueStr: string,
   slashingTx: string,
   description: string,
   error: string,
   isSlashing: boolean,
-  handleLossEventDateChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  handleLossEventDateChange: (date: Date | null) => void,
   handleClaimValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   handleSlashingTxChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   handleDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -30,13 +31,17 @@ export const Requirement = (props: RequirementType): JSX.Element => {
           <div className='flex items-center justify-between'>
             <div>Loss Event Date</div>
             <div className='h-[40px] w-[140px]'>
-              <Input
+              <CustomDatePicker
+                selectedDate={lossEventDate}
+                handleDateChange={handleLossEventDateChange}
+              />
+              {/* <Input
                 type='number'
                 className='border-border-200 max-w-full border'
                 value={lossEventDate}
                 onChange={(e) => {
                   handleLossEventDateChange(e)}}
-              />
+              /> */}
             </div>
           </div>
           <div className='flex items-center justify-between'>
@@ -69,7 +74,11 @@ export const Requirement = (props: RequirementType): JSX.Element => {
           <div className='flex items-center justify-between'>
             <div>Description</div>
             <div className='h-[40px] w-[140px]'>
-              <Input className='border-border-200 border' />
+              <Input 
+                className='border-border-200 border'
+                value={description}  
+                onChange={(e) => handleDescriptionChange(e)}
+              />
             </div>
           </div>
           <div className='flex items-center justify-center'>

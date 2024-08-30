@@ -19,6 +19,8 @@ import { useAccount } from "wagmi";
 import { bnToNumber, calculateCoverFee, numberToBN } from "@/lib/formulat";
 import { parseEther, parseUnits } from "viem";
 import { useBalance } from 'wagmi'
+import { toast } from 'react-toastify';
+
 export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
   const router = useRouter();
 
@@ -56,7 +58,6 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
       selectedCover?.riskType,
       Number(selectedCover?.id),
       selectedCover.coverName,
-      0,
       numberToBN(coverAmount),
       coverPeriod
     ];
@@ -72,8 +73,22 @@ export const CoverScreen = ({ id }: { id: number }): JSX.Element => {
         value: parseUnits((coverFee).toString(), 18),
         chainId: 21000001
       })
-    } catch (e) {
-      console.log('error:', e);
+
+      setTimeout(() => {
+        toast.success("Cover purchased!");
+      }, 3000);
+    } catch (err) {
+      let errorMsg = "";
+      if (err instanceof Error) {
+        if (err.message.includes("InsufficientPoolBalance")) {
+          errorMsg = "Insufficient Pool Balance.";
+        } else {
+          errorMsg = err.message
+        }
+      } else {
+        errorMsg = 'Unexpected error.';
+      }
+      toast.error(errorMsg);
     }
 
   }

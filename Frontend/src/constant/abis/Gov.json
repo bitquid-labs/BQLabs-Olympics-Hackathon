@@ -2,64 +2,6 @@
 	{
 		"inputs": [
 			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					},
-					{
-						"internalType": "enum CoverLib.CoverType",
-						"name": "riskType",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint256",
-						"name": "coverId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "description",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "poolId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "claimAmount",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct Governance.ProposalParams",
-				"name": "params",
-				"type": "tuple"
-			}
-		],
-		"name": "createProposal",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_proposalId",
-				"type": "uint256"
-			}
-		],
-		"name": "executeProposal",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "_governanceToken",
 				"type": "address"
@@ -152,7 +94,7 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "enum CoverLib.CoverType",
+				"internalType": "enum CoverLib.RiskType",
 				"name": "riskType",
 				"type": "uint8"
 			},
@@ -184,70 +126,6 @@
 		],
 		"name": "ProposalExecuted",
 		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_coverContract",
-				"type": "address"
-			}
-		],
-		"name": "setCoverContract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_newDuration",
-				"type": "uint256"
-			}
-		],
-		"name": "setVotingDuration",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_proposalId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "_vote",
-				"type": "bool"
-			}
-		],
-		"name": "vote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -294,6 +172,64 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "enum CoverLib.RiskType",
+						"name": "riskType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "coverId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "claimAmount",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct Governance.ProposalParams",
+				"name": "params",
+				"type": "tuple"
+			}
+		],
+		"name": "createProposal",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_proposalId",
+				"type": "uint256"
+			}
+		],
+		"name": "executeProposal",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "getAllProposals",
 		"outputs": [
@@ -337,7 +273,7 @@
 								"type": "address"
 							},
 							{
-								"internalType": "enum CoverLib.CoverType",
+								"internalType": "enum CoverLib.RiskType",
 								"name": "riskType",
 								"type": "uint8"
 							},
@@ -425,7 +361,7 @@
 								"type": "address"
 							},
 							{
-								"internalType": "enum CoverLib.CoverType",
+								"internalType": "enum CoverLib.RiskType",
 								"name": "riskType",
 								"type": "uint8"
 							},
@@ -582,7 +518,7 @@
 						"type": "address"
 					},
 					{
-						"internalType": "enum CoverLib.CoverType",
+						"internalType": "enum CoverLib.RiskType",
 						"name": "riskType",
 						"type": "uint8"
 					},
@@ -613,6 +549,70 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_coverContract",
+				"type": "address"
+			}
+		],
+		"name": "setCoverContract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_newDuration",
+				"type": "uint256"
+			}
+		],
+		"name": "setVotingDuration",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_proposalId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "_vote",
+				"type": "bool"
+			}
+		],
+		"name": "vote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
