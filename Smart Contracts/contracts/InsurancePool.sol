@@ -6,6 +6,10 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CoverLib.sol";
 
+interface ICover {
+    function updateMaxAmount(uint256 _coverId) external ;
+}
+
 contract InsurancePool is ReentrancyGuard, Ownable {
     using CoverLib for *;
     error LpNotActive();
@@ -47,9 +51,11 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         Withdrawn
     }
 
+    mapping (uint256 => CoverLib.Cover[]) poolToCovers;
     mapping(uint256 => Pool) public pools;
     uint256 public poolCount;
     address public governance;
+    ICover public ICoverContract;
     address public coverContract;
     address public initialOwner;
 
@@ -154,6 +160,14 @@ contract InsurancePool is ReentrancyGuard, Ownable {
         return result;
     }
 
+    function updatePoolCovers(uint256 _poolId, CoverLib.Cover memory _cover) public onlyCover {
+        poolToCovers[_poolId].push(_cover);
+    }
+
+    function getPoolCovers(uint256 _poolId) public view returns (CoverLib.Cover[] memory) {
+        return poolToCovers[_poolId];
+    }
+
     function getPoolsByAddress(
         address _userAddress
     ) public view returns (PoolInfo[] memory) {
@@ -187,6 +201,10 @@ contract InsurancePool is ReentrancyGuard, Ownable {
 
         userDeposit.status = Status.Withdrawn;
         selectedPool.tvl -= userDeposit.amount;
+        CoverLib.Cover[] memory poolCovers = getPoolCovers(_poolId);
+        for (uint i = 0; i < poolCovers.length; i++) {
+            ICoverContract.updateMaxAmount(poolCovers[i].id);
+        }
 
         (bool success, ) = msg.sender.call{value: userDeposit.amount}("");
         require(success, "Withdrawal failed");
@@ -207,24 +225,30 @@ contract InsurancePool is ReentrancyGuard, Ownable {
             "Deposit period is less than the minimum required"
         );
 
-        uint256 dailyPayout = (msg.value * selectedPool.apy) / 100 / 365;
-
-        require(
-            selectedPool.deposits[msg.sender].amount == 0,
-            "Existing deposit found for this address"
-        );
-
-        selectedPool.deposits[msg.sender] = Deposits({
-            lp: msg.sender,
-            amount: msg.value,
-            poolId: _poolId,
-            period: _period,
-            dailyPayout: dailyPayout,
-            status: Status.Active,
-            expiryDate: block.timestamp + (_period * 1 days)
-        });
+        if (selectedPool.deposits[msg.sender].amount > 0) {
+            uint256 amount = selectedPool.deposits[msg.sender].amount + msg.value;
+            selectedPool.deposits[msg.sender].amount = amount;
+            selectedPool.deposits[msg.sender].period = _period;
+            selectedPool.deposits[msg.sender].expiryDate = block.timestamp + (_period * 1 days);
+            selectedPool.deposits[msg.sender].dailyPayout = (amount * selectedPool.apy) / 100 / 365;
+        } else {
+            uint256 dailyPayout = (msg.value * selectedPool.apy) / 100 / 365;
+            selectedPool.deposits[msg.sender] = Deposits({
+                lp: msg.sender,
+                amount: msg.value,
+                poolId: _poolId,
+                period: _period,
+                dailyPayout: dailyPayout,
+                status: Status.Active,
+                expiryDate: block.timestamp + (_period * 1 days)
+            });
+        }
 
         selectedPool.tvl += msg.value;
+        CoverLib.Cover[] memory poolCovers = getPoolCovers(_poolId);
+        for (uint i = 0; i < poolCovers.length; i++) {
+            ICoverContract.updateMaxAmount(poolCovers[i].id);
+        }
 
         emit Deposited(msg.sender, msg.value, selectedPool.poolName);
     }
@@ -244,6 +268,10 @@ contract InsurancePool is ReentrancyGuard, Ownable {
 
         pool.tcp += claimAmount;
         pool.tvl -= claimAmount;
+        CoverLib.Cover[] memory poolCovers = getPoolCovers(poolId);
+        for (uint i = 0; i < poolCovers.length; i++) {
+            ICoverContract.updateMaxAmount(poolCovers[i].id);
+        }
 
         emit ClaimPaid(msg.sender, pool.poolName, claimAmount);
     }
@@ -273,6 +301,7 @@ contract InsurancePool is ReentrancyGuard, Ownable {
     function setCover(address _coverContract) external onlyOwner {
         require(coverContract == address(0), "Governance already set");
         require(_coverContract != address(0), "Governance address cannot be zero");
+        ICoverContract = ICover(_coverContract);
         coverContract = _coverContract;
     }
 
