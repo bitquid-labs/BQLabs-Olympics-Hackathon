@@ -55,6 +55,7 @@ interface ILP {
         );
 
         function updatePercentageSplit(uint256 _poolId,uint256 __poolPercentageSplit) external ;
+        function updatePoolCovers(uint256 _poolId, CoverLib.Cover memory _cover) external ;
 }
 
 contract InsuranceCover is ReentrancyGuard, Ownable {
@@ -71,6 +72,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     uint public coverFeeBalance;
     ILP public lpContract;
+    address public lpAddress;
     address public governance;
 
     mapping(uint256 => bool) public coverExists;
@@ -103,6 +105,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         address _governace
     ) Ownable(_initialOwner) {
         lpContract = ILP(_lpContract);
+        lpAddress = _lpContract;
         governance = _governace;
     }
 
@@ -124,20 +127,24 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         uint256 _maxAmount = tvl * (_capacity * 1e18 / 100) / 1e18;
 
         lpContract.updatePercentageSplit(_poolId, _capacity);
+
         coverCount++;
-        covers[coverCount] = CoverLib.Cover({
+        CoverLib.Cover memory cover =  CoverLib.Cover({
             id: coverCount,
             coverName: _coverName,
             riskType: _riskType,
             chains: _chains,
             capacity: _capacity,
             cost: _cost,
+            capacityAmount: _maxAmount,
+            coverValues: 0,
             maxAmount: _maxAmount,
             poolId: _poolId,
             CID: _cid
         });
+        covers[coverCount] = cover;
+        lpContract.updatePoolCovers(_poolId, cover);
         coverExists[coverCount] = true;
-
 
         emit CoverCreated(_coverName, _riskType);
     }
@@ -162,7 +169,9 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
             revert InsufficientPoolBalance();
         }
 
-        cover.maxAmount -= _coverValue;
+        cover.capacityAmount -= _coverValue;
+        cover.coverValues += _coverValue;
+        cover.maxAmount = (cover.capacityAmount - cover.coverValues);
         CoverLib.GenericCoverInfo storage userCover = userCovers[msg.sender][_coverId];
         
         if (userCover.coverValue == 0) {
@@ -178,9 +187,10 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
                 isActive: true
             });
         } else {
+            require((userCover.coverPeriod + _coverPeriod) < 366, "Total cover period must be less than 365");
             userCover.coverValue += _coverValue;
             userCover.coverPeriod += _coverPeriod;
-            userCover.endDay += (_coverPeriod * 1 days);
+            userCover.endDay += (userCover.coverPeriod * 1 days);
         }
 
         emit CoverPurchased(msg.sender, _coverValue, msg.value, cover.riskType);
@@ -214,11 +224,9 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
                 actualCount++;
             }
         }
-
         assembly {
             mstore(availableCovers, actualCount)
         }
-
         return availableCovers;
     }
 
@@ -227,9 +235,18 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
     }
 
     function updateUserCoverValue(address user, uint256 _coverId, uint256 _claimPaid) public onlyGovernance nonReentrant {
-        CoverLib.GenericCoverInfo storage userCover = userCovers[user][_coverId];
-        userCover.coverValue -= _claimPaid;
-        userCover.claimPaid += _claimPaid;
+        userCovers[user][_coverId].coverValue -= _claimPaid;
+        userCovers[user][_coverId].claimPaid += _claimPaid;
+    }
+
+    function updateMaxAmount(uint256 _coverId) public onlyPool nonReentrant {
+        CoverLib.Cover storage cover = covers[_coverId];
+        (, , , , uint256 tvl, , ) = lpContract.getPool(cover.poolId);
+        require(tvl > 0, "TVL is zero");
+        require(cover.capacity > 0, "Invalid cover capacity");
+        uint256 amount = tvl * (cover.capacity * 1e18 / 100) / 1e18;
+        covers[_coverId].capacityAmount = amount;
+        covers[_coverId].maxAmount = (covers[_coverId].capacityAmount - covers[_coverId].coverValues);
     }
 
     function claimPayoutForLP(uint256 _poolId) external nonReentrant {
@@ -237,7 +254,7 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
         if (depositInfo.status != ILP.Status.Active) {
             revert LpNotActive();
         }
-
+        
         uint256 lastClaimTime = NextLpClaimTime[msg.sender];
         uint256 claimableDays = (block.timestamp - lastClaimTime) / 1 days;
 
@@ -261,6 +278,11 @@ contract InsuranceCover is ReentrancyGuard, Ownable {
 
     modifier onlyGovernance() {
         require(msg.sender == governance, "Not authorized");
+        _;
+    }
+
+    modifier onlyPool() {
+        require(msg.sender == lpAddress, "Not authorized");
         _;
     }
 }

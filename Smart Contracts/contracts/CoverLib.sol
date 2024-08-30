@@ -9,6 +9,8 @@ library CoverLib {
         string chains;
         uint256 capacity;
         uint256 cost;
+        uint256 capacityAmount;
+        uint256 coverValues;
         uint256 maxAmount;
         uint256 poolId;
         string CID;

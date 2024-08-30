@@ -16,11 +16,14 @@ import Grid from '~/svg/grid.svg';
 import AboutSectionImage from '~/images/home/locker-dynamic-premium.svg';
 import BQTokenSectionImage from '~/images/home/star.svg';
 import BTCPSectionImage from '~/images/home/shield.svg';
+import { Link } from 'lucide-react';
+import router, { useRouter } from 'next/navigation';
 
 export const HomeScreen = (): JSX.Element => {
   const { open, close } = useWeb3Modal();
   const { address, isConnecting, isConnected, isDisconnected } = useAccount();
   const { disconnectAsync } = useDisconnect();
+  const router = useRouter();
   const handleDisconnect = async () => {
     try {
       await disconnectAsync();
@@ -49,7 +52,7 @@ export const HomeScreen = (): JSX.Element => {
         </div>
         <div className='flex gap-9'>
           <div>
-            <div className='to-[#4FFF4C]/40 relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#12EF0E] px-12 py-6'>
+            <div className='relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#12EF0E] to-[#4FFF4C]/40 px-12 py-6'>
               <div className='to-[#4FFF4C]/52 absolute bg-gradient-to-br from-[#12EF0E]'></div>
               <Grid className='absolute inset-0' />
               <div className='relative z-10 flex h-full w-full flex-col justify-between'>
@@ -63,19 +66,18 @@ export const HomeScreen = (): JSX.Element => {
                 </div>
               </div>
             </div>
-            <div className='flex justify-center my-8 '>
-              <Button
-                variant='primary'
-                size='lg'
-                className='min-w-[216px]'
-              >
-                Learn
-              </Button></div>
+            <div className='my-8 flex justify-center '>
+              <Button variant='primary' size='lg' className='min-w-[216px]'>
+                <a href='https://www.bqlabs.xyz/' target='blank'>
+                  Learn
+                </a>
+              </Button>
+            </div>
           </div>
           <div>
-            <div className='to-[#FFDC5E]/40 relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#FCC608] px-12 py-6'>
+            <div className='relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#FCC608] to-[#FFDC5E]/40 px-12 py-6'>
               <div className='to-[#FFDC5E]/63 absolute bg-gradient-to-br from-[#FCC608]'></div>
-              <Grid className='absolute inset-0'/>
+              <Grid className='absolute inset-0' />
               <div className='relative z-10 flex h-full w-full flex-col justify-between'>
                 <div className='text-dark text-center text-[32px] font-bold leading-[50px]'>
                   BQ Token Faucet
@@ -89,14 +91,11 @@ export const HomeScreen = (): JSX.Element => {
                 </div>
               </div>
             </div>
-            <div className='flex justify-center my-8 '>
-              <Button
-                variant='primary'
-                size='lg'
-                className='min-w-[216px]'
-              >
-                Claim Now
-              </Button></div>
+            <div className='my-8 flex justify-center '>
+              <Button variant='primary' size='lg' className='min-w-[216px]' onClick={() => router.push('/governance')}>
+                  Claim Now
+              </Button>
+            </div>
           </div>
           <div>
             <div className='relative h-[345px] w-[388px] overflow-hidden rounded-[15px] bg-gradient-to-br from-[#6EBDFF] to-[#3DA5FC]/75 px-12 py-6'>
@@ -115,14 +114,13 @@ export const HomeScreen = (): JSX.Element => {
                 </div>
               </div>
             </div>
-            <div className='flex justify-center my-8 '>
-              <Button
-                variant='primary'
-                size='lg'
-                className='min-w-[216px]'
-              >
-                Claim Now
-              </Button></div>
+            <div className='my-8 flex justify-center '>
+              <Button variant='primary' size='lg' className='min-w-[216px]'>
+                <a href='https://faucet.pwrlabs.io/' target='blank'>
+                  Claim Now
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

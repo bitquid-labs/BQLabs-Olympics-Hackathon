@@ -1,10 +1,6 @@
 import { GovContract, MockERC20Contract } from '@/constant/contracts';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 
-interface Window {
-  ethereum: MetaMaskInpageProvider;
-}
-
 export async function addTokenToMetaMask() {
   const tokenAddress = MockERC20Contract.address; // Replace with your token contract address
   const tokenSymbol = 'BQ'; // Replace with your token's symbol (e.g., 'SYM')
