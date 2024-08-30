@@ -103,7 +103,7 @@ export const StakeScreen = (): JSX.Element => {
                     href={`/pool/${stack.currency}/${index + 1}`}
                     className='font-semibold underline-offset-4'
                   >
-                    Stack Now
+                    Stake Now
                   </Link>
                 </div>
                 <Link

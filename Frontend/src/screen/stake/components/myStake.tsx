@@ -27,10 +27,10 @@ export const MyStakeScreen = (): JSX.Element => {
   } = useWriteContract({
     mutation: {
       async onSuccess(data) {
-        console.log(1)        
+        console.log(1)
       },
       onError(error) {
-        console.log(1, error)   
+        console.log(1, error)
       }
     }
   });
@@ -46,7 +46,7 @@ export const MyStakeScreen = (): JSX.Element => {
       })
       // console.log("poolId is ", poolId);
       toast.success("Withdraw Sucess!");
-    } catch(err) {
+    } catch (err) {
       let errorMsg = "";
       if (err instanceof Error) {
         if (err.message.includes("User denied transaction signature")) {
@@ -72,7 +72,7 @@ export const MyStakeScreen = (): JSX.Element => {
         args: [BigInt(poolId.toString())],
       });
       toast.success("Claim Sucess!");
-    } catch(err) {
+    } catch (err) {
       let errorMsg = "";
       if (err instanceof Error) {
         if (err.message.includes("User denied transaction signature")) {
@@ -100,7 +100,7 @@ export const MyStakeScreen = (): JSX.Element => {
 
   return (
     <section className='flex h-full flex-auto flex-col'>
-      <div className='layout flex flex-auto flex-col items-center gap-10 p-10 pt-12'>
+      <div className='container mx-auto flex flex-auto flex-col items-center gap-10 pt-12'>
         <div className='text-[40px] font-bold leading-[50px]'>
           Active Stake Positions
         </div>
@@ -108,53 +108,92 @@ export const MyStakeScreen = (): JSX.Element => {
           {myStacks?.map((stack, index) => (
             <div
               key={index}
-              className='bg-background-100 flex w-full gap-5 rounded-[15px] p-4'
+              className='bg-background-100 flex justify-around gap-5 rounded-[15px] p-4'
             >
-              {Object.keys(stack).map((key, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    'flex w-full flex-col items-center gap-6',
-                    (key === 'poolId' || key === 'tvl' || key == 'currency') && 'hidden'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-full rounded-full px-5 py-3 text-center',
-                      'bg-[#0699D8]'
-                    )}
-                  >
-                    {MyStackDetail[key as keyof typeof MyStackDetail]}
-                  </div>
-                  <div className='font-semibold'>
-                    {stack[key as keyof typeof stack]}
-                  </div>
-                  {key === 'apy' && (
-                    <div className='w-full'>
-                      <Button
-                        variant='gradient-outline'
-                        className='bg-background-100 w-full'
-                        size='lg'
-                        onClick={() => handleClaimWriteContract(index + 1)}
-                      >
-                        Claim Yield
-                      </Button>
+              <div className='flex flex-col w-2/4 px-16 py-6'>
+                <div className='flex'>
+                  {Object.keys(stack).map((key, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        `flex w-full flex-row justify-center items-center gap-6 ${i > 1 ? 'hidden' : ''}`,
+                        (key === 'poolId' || key === 'tvl' || key == 'currency') && 'hidden'
+                      )}
+                    >
+                      {i < 2 && <div className='w-11/12 gap-x-1'>
+                        <div
+                          className={cn(
+                            `w-full rounded-full px-5 py-3 text-center `,
+                            'bg-[#0699D8]'
+                          )}
+                        >
+                          {MyStackDetail[key as keyof typeof MyStackDetail]}
+                        </div>
+                        <div className='font-semibold my-5 text-center'>
+                          {stack[key as keyof typeof stack]}
+                        </div>
+                      </div>
+                      }
+
                     </div>
-                  )}
-                  {key === 'claim' && (
-                    <div className='w-full'>
-                      <Button
-                        variant='gradient-outline'
-                        className='bg-background-100 w-full'
-                        size='lg'
-                        onClick={() => handleWriteContract(index + 1)}
-                      >
-                        Withdraw Stake
-                      </Button>
-                    </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+                <div className='flex justify-center'>
+                  <Button
+                    variant='gradient-outline'
+                    className='bg-background-100 w-full'
+                    size='lg'
+                    onClick={() => handleClaimWriteContract(index + 1)}
+                  >
+                    Claim Yield
+                  </Button>
+                </div>
+              </div>
+              <div className='border-[0.5px] border-gray-700 w-px flex justify-center items-end relative'>
+                <div className='bg-gray-700 w-1.5 h-1.5 rotate-45 absolute'></div>
+              </div>
+              <div className='flex flex-col w-2/4 px-16 py-6'>
+                <div className='flex'>
+                  {Object.keys(stack).map((key, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        `flex w-full flex-col items-center gap-6 ${i < 2 ? 'hidden' : ''}`,
+                        (key === 'poolId' || key === 'tvl' || key == 'currency') && 'hidden'
+                      )}
+                    >
+                      {i > 1 && <div className='w-11/12 gap-x-1'>
+                        <div
+                          className={cn(
+                            'w-full rounded-full px-5 py-3 text-center',
+                            'bg-[#0699D8]'
+                          )}
+                        >
+                          {MyStackDetail[key as keyof typeof MyStackDetail]}
+                        </div>
+                        <div className='font-semibold my-5 text-center'>
+                          {stack[key as keyof typeof stack]}
+                        </div>
+                      </div>
+                      }
+
+                    </div>
+                  ))}
+                </div>
+
+                <div className='flex justify-center'>
+                  <Button
+                    variant='gradient-outline'
+                    className='bg-background-100 w-full'
+                    size='lg'
+                    onClick={() => handleWriteContract(index + 1)}
+                  >
+                    Withdraw Stake
+                  </Button>
+                </div>
+
+              </div>
+
             </div>
           ))}
         </div>
